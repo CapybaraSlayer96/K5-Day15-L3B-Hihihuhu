@@ -52,8 +52,8 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 |---|---|---|---|---|---|---|---|
 | A1 | Chấm cột `pass` lượt 2 + `score`, ghi kết quả vào spec §7 và eval/README mục 5 | Bảo | — | 09:45 | `eval/run-2.csv` đã chấm | Không còn ô `pass` trống; số khớp `score` | xong · 20/22 (91%) |
 | U1 | Video 30 giây CLI gọi AI thật (1 câu thường + 1 câu khó) | Bảo | — | 09:45 | link video (ẩn danh mở được) | token > 0 trên màn hình; ≤ 30 giây | |
-| B1 | Khung FastAPI + Postgres 7 bảng, nạp dữ liệu lúc khởi động | Minh | — | 10:00 (kéo sang CP4) | `app/` | Khởi động lại không nạp trùng; eval vẫn chạy không cần DB | |
-| B2 | Docker compose (`db`, `app`, cổng 8000) | Minh | — | 10:00 (kéo sang CP4) | `Dockerfile`, `docker-compose.yml` | `docker compose up` → mở được localhost:8000 | |
+| B1 | Khung FastAPI + Postgres 7 bảng, nạp dữ liệu lúc khởi động | Minh | — | 10:00 (kéo sang CP4) | `app/` | Khởi động lại không nạp trùng; eval vẫn chạy không cần DB | xong · `app/db.py`, 7 bảng, upsert, test khởi động lại qua Postgres thật |
+| B2 | Docker compose (`db`, `app`, cổng 8000) | Minh | — | 10:00 (kéo sang CP4) | `Dockerfile`, `docker-compose.yml` | `docker compose up` → mở được localhost:8000 | xong · build và chạy app + Postgres 16, healthcheck |
 | A2 | Thử mô phỏng chi phí 10 phiên | Hải | — | 09:50 | `cost/simulate-try.csv` (không commit) | token > 0 | |
 | A3 | `build_deck` + `plan_group` theo hợp đồng mục 2 | Hải | — | 10:30 (kéo sang CP4) | `codebase/` + assert trong `tests/test_core.py` | Bộ thẻ không có điểm đóng vào ngày đi; lịch luôn 0 vi phạm | |
 | D1 | `evidence/summary.md` + kết quả khảo sát đã bỏ cột nhận diện | Hùng → Bảo làm | — | 09:30 | `evidence/summary.md`, `evidence/survey/` | ≥ 20 phản hồi đúng vai; x/N, %; ≥ 5 trích nguyên văn; kết luận giả thuyết | xong · 31 người, 23/31 (74%) |
@@ -69,7 +69,7 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API | |
 | U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console | |
 | U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | |
-| B3 | API nhóm, bộ thẻ, quẹt, tiến độ, chi tiết địa điểm + JSON mẫu | Minh | B1 | 11:30 (JSON mẫu 10:30) | `app/`, `docs/api-examples.md` | 409 biệt danh trùng, 422 thiếu ngày, quẹt lại ghi đè | |
+| B3 | API nhóm, bộ thẻ, quẹt, tiến độ, chi tiết địa điểm + JSON mẫu | Minh | B1 | 11:30 (JSON mẫu 10:30) | `app/`, `docs/api-examples.md` | 409 biệt danh trùng, 422 thiếu ngày, quẹt lại ghi đè | xong · `docs/api-examples.md`, 8 integration test qua; deck tạm có nhãn, chờ A3 |
 | B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Minh | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm | |
 | B5 | Test end-to-end qua HTTP | Minh | B4 | 13:30 | `tests/test_api.py` | In ok; `tests/test_core.py` vẫn ok | |
 | A4 | Lượt cải tiến: gom nhóm lỗi → một cải tiến → eval trọn bộ → chấm → `score` | Hải | A1 | 12:30 | `eval/run-3.csv` đã chấm | Chạy đủ 22 câu (+ câu mới chỉ thêm); ghi cấu hình đổi gì | |
@@ -178,17 +178,17 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 
 ### Minh · BE
 
-**B1 · Khung FastAPI + Postgres** — Chờ: không — Trạng thái:
+**B1 · Khung FastAPI + Postgres** — Chờ: không — Trạng thái: xong, `app/db.py` + `app/main.py`, 7 bảng và nạp lại không trùng.
 - Làm: `app/main.py` (FastAPI, phục vụ template + static), `app/db.py`; 7 bảng theo PRD (`places`, `travel_times`, `groups`, `members`, `deck_cards`, `swipes UNIQUE(member_id, place_id)`, `itineraries status draft|approved|stale`); lúc khởi động tự tạo bảng và nạp `data/hanoi_places.json` + `data/travel_times.json`.
 - Deliverable: `app/`, `requirements.txt` (fastapi, uvicorn, psycopg / psycopg2, jinja2).
 - DoD: khởi động lại không nạp trùng; `SELECT count(*) FROM places` = số dòng JSON.
 - Yêu cầu output: lõi `codebase/` vẫn chạy **không cần Postgres** (`python run.py eval` không đổi).
 
-**B2 · Docker compose** — Chờ: không — Trạng thái:
+**B2 · Docker compose** — Chờ: không — Trạng thái: xong, build và chạy app + DB thật, cả hai container healthy.
 - Làm: `Dockerfile` (Python 3.12), `docker-compose.yml` (`db` postgres:16 có volume, `app` cổng 8000, đọc file cấu hình môi trường), thêm mục "Chạy web" vào `README.md`.
 - DoD: máy sạch chạy `docker compose up` → mở `http://localhost:8000` được; key không nằm trong image hay compose.
 
-**B3 · API nhóm, bộ thẻ, quẹt** — Chờ: B1 (gọi `build_deck` của Hải; khi A3 chưa xong dùng tạm 20 điểm rating cao nhất đã lọc) — Trạng thái:
+**B3 · API nhóm, bộ thẻ, quẹt** — Chờ: B1 (gọi `build_deck` của Hải; khi A3 chưa xong dùng tạm 20 điểm rating cao nhất đã lọc) — Trạng thái: xong, có `docs/api-examples.md` và 8 integration test đạt; bộ thẻ `provisional_rating` chờ nối A3, chưa bao gồm B4/B5.
 - Làm: `GET /api/config/options` · `POST /api/groups` · `GET /api/groups/{code}` · `POST /api/groups/{code}/members` · `POST|GET /api/groups/{code}/deck` · `POST /api/groups/{code}/swipes` · `GET /api/groups/{code}/progress` · `GET /api/places/{id}`. Ghi JSON mẫu từng endpoint vào `docs/api-examples.md` trước 10:30.
 - DoD: mã nhóm 6 ký tự duy nhất; biệt danh trùng trả 409; thiếu ngày đi trả 422; quẹt lại ghi đè phiếu cũ.
 

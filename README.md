@@ -50,6 +50,49 @@ Trong README này lệnh viết là `python …`; máy nhóm cần `python3` hay
 
 ## Lệnh
 
+### Chạy backend web B1–B3
+
+Cần Docker Desktop đang chạy, Docker Compose v2. Từ thư mục repo:
+
+```sh
+docker compose up --build -d
+```
+
+Mở [localhost:8000](http://localhost:8000) và [tài liệu API](http://localhost:8000/docs). Đây là backend cấu hình/tạo và vào nhóm/bộ thẻ/quẹt/tiến độ; giao diện quẹt và API xếp lịch nhóm B4 đang chờ triển khai. JSON mẫu và hợp đồng nối UI: [docs/api-examples.md](docs/api-examples.md).
+
+- Compose chờ Postgres khỏe, tạo bảy bảng và upsert dữ liệu lúc khởi động. Dữ liệu nhóm/phiếu lưu trong volume `postgres-data`, giữ qua `docker compose restart` và `docker compose down`.
+- Web chỉ mở trên `127.0.0.1:8000`; Postgres mặc định không mở cổng ra máy host. Kiểm tra: `docker compose ps`, `docker compose logs app`, hoặc `GET /health`.
+- Bộ thẻ hiện là phương án **tạm theo rating trong dữ liệu** sau lọc ngày/giờ/giá; response có `source: provisional_rating`. Chưa gọi AI chọn thẻ; có adapter chờ hàm `build_deck` của Hải. Không cần API key để thử B1–B3.
+- Image chỉ chép thư mục app/codebase/data, không chép `.env`, khảo sát hoặc trace. Compose dùng mật khẩu DB mẫu chỉ cho demo nội bộ và `MODEL_PROVIDER=fake`; không đọc key vào image. Có thể đổi cổng qua `TRIPSWIPE_PORT` và mật khẩu qua `TRIPSWIPE_DB_PASSWORD` (dùng ký tự an toàn trong URL: chữ/số/gạch dưới/gạch ngang).
+- Dừng: `docker compose down`. Tránh thêm `-v` nếu muốn giữ dữ liệu nhóm.
+
+Nếu chạy Python trực tiếp với Postgres riêng:
+
+```sh
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+export DATABASE_URL='postgresql://tripswipe:tripswipe_local_only@127.0.0.1:54329/tripswipe'
+.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+
+`DATABASE_URL` phải trỏ DB của bạn đang chạy; ví dụ trên dùng cổng test localhost. Backend đọc URL từ môi trường, không tự nạp `.env`. Lõi `python run.py`, eval và simulate vẫn chạy theo cách cũ, không cần Postgres hoặc các gói web.
+
+### Kiểm thử backend
+
+Integration test dùng Postgres thật, tạo schema ngẫu nhiên và tự xóa sau test; không gọi model, không sửa benchmark hoặc lượt eval:
+
+```sh
+docker compose -f docker-compose.yml -f docker-compose-test.yml up -d db
+.venv/bin/python -m pip install -r requirements-dev.txt
+TEST_DATABASE_URL='postgresql://tripswipe:tripswipe_local_only@127.0.0.1:54329/tripswipe' .venv/bin/python tests/test_api.py
+python3 tests/test_core.py
+python3 run.py check
+```
+
+Nếu chưa có `.venv`, tạo theo hướng dẫn chạy Python trực tiếp ở trên. Override test chỉ mở Postgres trên `127.0.0.1:54329`; URL test cần dùng đúng mật khẩu nếu bạn đã đổi. Sau khi test, chạy lại `docker compose up -d db` để bỏ cổng DB trên host.
+
+### Lệnh CLI và đánh giá của BTC
+
 | Lệnh | Làm gì |
 |---|---|
 | `python run.py` | Chạy bản chạy thử (gõ đầu vào, nhận kết quả, kèm số lần gọi model / token) |
@@ -88,7 +131,8 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 | Giờ mở cửa, ngày đóng, giá | **Thật** (dữ liệu công khai) | `data/hanoi_places.json`, đối chiếu trang chính thức (nguồn từng điểm ở `data/DATA_CARD.md`) |
 | Thời gian di chuyển | **Ước tính** | Ma trận OSRM tính sẵn, lấy max với tốc độ đô thị; không phải giao thông thời gian thực |
 | Xếp lịch, kiểm lịch | **Thật** (code) | `codebase/planner.py`, không qua model |
-| Web nhóm / quẹt thẻ | Đang build (CP4) | `app/` — xem `TASKS.md` |
+| Backend nhóm / phiếu quẹt | **Thật** (B1–B3) | FastAPI + Postgres + Docker; bộ thẻ tạm có nhãn, API mẫu trong `docs/api-examples.md` |
+| Giao diện nhóm / quẹt thẻ và API lịch nhóm | Đang build (CP4) | U2–U5, A3, B4 — xem `TASKS.md` |
 | Chế độ `MODEL_PROVIDER=fake` | Giả | Chỉ để chạy khung khi chưa có key; không tính lượt |
 
 ## Dùng AI vào việc gì

@@ -1,15 +1,33 @@
 # TripSwipe — Kiến trúc giải pháp
 
 > Bản thiết kế CP2 · 27/11/2026 · Phạm vi Hà Nội, một ngày.
-> Đồng bộ với [PRD.md](PRD.md) và [spec.md §4](../spec.md). Các module, schema và công cụ bên dưới là thiết kế cần triển khai; lần cập nhật này chỉ thay đổi tài liệu.
+> Cập nhật backend B1–B3 ngày 28/11/2026 ở mục 1.1. Mục 2–15 giữ bản thiết kế CP2 để đối chiếu, chưa phải mô tả toàn bộ code hiện hành; đồng bộ toàn bộ X4 còn chờ B4. Thiết kế nghiệp vụ hiện hành: [PRD.md](PRD.md), [spec.md §4](../spec.md). Hợp đồng HTTP đã triển khai: [api-examples.md](api-examples.md).
 
 ## 1. Hiện trạng và quyết định kiến trúc
 
-Repo hiện dùng Python và thư viện chuẩn, `answer(text)` làm điểm vào chung của app/eval/mô phỏng, decorator ghi trace và token. `agent.py` còn workflow ví dụ, `tools.py` còn `search_example`, `ai.py` còn nhánh fake và chỗ nối API chưa triển khai. Chưa có giao diện quẹt, bộ tối ưu hay bốn công cụ TripSwipe.
+Lõi `codebase/` dùng Python và thư viện chuẩn, `answer(text)` làm điểm vào chung của CLI/eval/mô phỏng. Đã có workflow đọc yêu cầu bằng model, bốn công cụ, `planner.plan`/`planner.check`, nối model thật và trace. Backend mới nằm độc lập trong `app/`, không làm CLI/eval phụ thuộc FastAPI hay Postgres. Giao diện quẹt và API lịch nhóm B4 chưa được triển khai ở nhánh công việc B1–B3.
 
-Dữ liệu chính là [data/hanoi_places.json](../data/hanoi_places.json): mảng 113 POI, 70 bản ghi mang nguồn `hanoi_core_curated`, 43 bản ghi `friend_curated_sheet`. JSON đã có thông tin phong phú cho thẻ nhưng giờ/giá chủ yếu ở dạng chuỗi. Chưa có ma trận thời gian di chuyển hoặc lịch mở cửa chuẩn hóa có thể kiểm bằng code.
+Dữ liệu hiện có: [data/hanoi_places.json](../data/hanoi_places.json) gồm 119 POI và [data/travel_times.json](../data/travel_times.json) là ma trận tính sẵn. `codebase/places.py` giải giờ theo ngày/thứ/mùa và chuẩn hóa thời gian tuyến ước tính. Backend nạp JSON gốc vào Postgres bằng upsert, tái sử dụng hàm giờ của lõi để lọc bộ thẻ.
 
 **Chọn workflow cố định**, với LLM ở bước hiểu yêu cầu và đề xuất điểm. Code kiểm ID, tính toán lịch, sửa và xác nhận ràng buộc. Không cần multi-agent hay vòng lặp model tự chọn công cụ: chuỗi công việc và điểm kiểm đã biết trước, cần chi phí và kết quả dễ truy vết.
+
+### 1.1. Backend B1–B3 đã triển khai
+
+| Module/tệp | Trách nhiệm thực tế |
+|---|---|
+| `app/main.py` | FastAPI lifespan, kết nối mỗi request, API cấu hình/nhóm/chi tiết/deck/quẹt/hoàn tác/tiến độ; `/health`, `/docs`, trang giới thiệu backend |
+| `app/db.py` | Bảy bảng Postgres và ràng buộc; khóa startup khi nạp/upsert POI và ma trận, không xóa nhóm/phiếu |
+| `app/schemas.py` | Kiểm ngày theo múi giờ Hà Nội, giờ cùng ngày, ngân sách, nickname, enum và boolean phiếu |
+| `app/catalogue.py` | Adapter dữ liệu lõi, điểm xuất phát, lọc giờ/phạm vi/giá, cfg cho hàm `build_deck` sau này |
+| `app/templates/`, `app/static/` | Nền phục vụ template/static cho UI; hiện chỉ có trang giới thiệu, chưa có wizard/quẹt |
+| `Dockerfile`, `docker-compose.yml` | Python 3.12/FastAPI, Postgres 16, healthcheck/chờ DB khỏe, volume dữ liệu; web chỉ bind localhost |
+| `tests/test_api.py`, `docker-compose-test.yml` | Test HTTP qua TestClient với Postgres thật, schema cô lập và xóa sau test; override mở cổng DB chỉ trên loopback |
+
+Luồng HTTP: request → Pydantic → transaction Postgres → kiểm nhóm/thành viên → đọc/ghi → JSON. Tạo nhóm và trưởng nhóm là một transaction; biệt danh và cặp member/place có unique constraint. Các thao tác thay đổi dùng khóa dòng nhóm để tránh đua khi nhiều request cùng lúc. Nhóm/tiến độ không công khai member ID của người khác; ID cấp khi vào nhóm là capability thao tác demo localhost.
+
+Bộ thẻ hiện dùng nhãn `provisional_rating`, lọc trước khi chọn tối đa 20 điểm; chưa gọi AI. `create_app(deck_builder=build_deck)` là điểm nối A3, kiểm dữ kiện và trả 502 nếu builder lỗi, không âm thầm fallback. Bộ thẻ đã tạo được giữ cố định; thành viên mới làm giảm budget/người thì ẩn thẻ vượt ngân sách nhưng giữ phiếu lịch sử. Progress chỉ tính thẻ hợp lệ hiện tại. Không triển khai thuật toán gộp phiếu hoặc endpoint itinerary của B4 trong phần này.
+
+Dependency web ghi trong `requirements.txt`, dependency HTTP test trong `requirements-dev.txt`. Không sửa file khung BTC, bộ metric hoặc kết quả eval đã chạy. Chi tiết payload, mã lỗi và ví dụ: [api-examples.md](api-examples.md).
 
 ## 2. Sơ đồ tổng thể
 

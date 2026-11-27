@@ -1,0 +1,5 @@
+# Chỉ dùng khi chạy integration test từ máy host; compose mặc định không mở cổng DB.
+services:
+  db:
+    ports:
+      - "127.0.0.1:54329:5432"

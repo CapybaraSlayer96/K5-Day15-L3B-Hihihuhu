@@ -7,6 +7,7 @@ README của nhóm có mục "Dùng AI vào việc gì" (2–3 dòng, bắt bu�
 | Việc | Công cụ AI | AI làm gì | Người kiểm/sửa gì | Ai phụ trách |
 |---|---|---|---|---|
 | Code bản chạy thử | Claude Code | Viết `codebase/places.py`, `planner.py`, `tools.py`, `agent.py`, `ai.py`, test | Bảo chạy 22 câu thử + `tests/test_core.py`, duyệt từng commit | Bảo |
+| Backend B1–B3 | Codex | Viết FastAPI/Postgres, Docker, API nhóm/quẹt, JSON mẫu và integration test | Codex chạy 8 test Postgres thật, core test, `run.py check`, build/chạy Docker; Minh cần review trước commit | Minh |
 | Prompt / thiết kế lời gọi mô hình | Claude Code | Viết prompt đọc yêu cầu và prompt lý do chọn | Bảo sửa sau lượt thử (lỗi đọc thứ, tour đêm); Hải tiếp quản prompt bộ thẻ | Bảo, Hải |
 | Đào data (viết script đếm, gợi ý nhãn) | Claude Code | Viết `evidence/survey/count.py`, tra giờ mở cửa trang chính thức | Đếm lại khớp bảng tổng hợp Google Form; 2 phiếu loại có lý do | Bảo |
 | Rà câu hỏi phỏng vấn / khảo sát | | Chỉ rà câu dẫn dắt | | |
