@@ -11,7 +11,7 @@
 | BA1 | Soạn và gửi khảo sát online cho 25 người ngoài nhóm; tổng hợp kết quả, rút trích dẫn nguyên văn (bỏ tên) | `evidence/survey/`, `evidence/summary.md` | gửi trước 17:30 · số đầu tiên 19:15 | | |
 | BA2 | Đào review công khai (Google Maps, Tripadvisor, group du lịch Hà Nội): ghi cách chọn mẫu, cách đếm trước khi đọc; x/N, %, ≥5 ví dụ | `evidence/data-mining.md` | 19:00 | | |
 | BA3 | Kiểm giờ mở cửa, ngày đóng cửa các địa điểm Hà Nội từ nguồn chính thức, ghi nguồn; viết DATA_CARD bản đầu | `data/DATA_CARD.md` | 18:30 | | |
-| BA4 | Viết `spec.md` §0–§3 và §5 (4 lớp chỗ khó, ≥6 kịch bản, 2 tấn công) | `spec.md` | 19:00 | | |
+| BA4 | Viết `spec.md` §0–§3 và §5 (4 lớp chỗ khó, ≥6 kịch bản, 2 tấn công) | `spec.md` | 19:00 | | xong (bản đầu): `spec.md` §0–§3, §5 |
 | BA5 | Cập nhật canvas (số bằng chứng đầu, dòng "Đã đổi gì so với CP1"); điền chuẩn "đạt" đã chốt vào `spec.md` §7; nộp CP2 | `canvas.md`, `spec.md` §7 | 19:30 | | |
 | BA6 | Chạy tay 10–20 yêu cầu lịch trình qua ChatGPT / Claude, ghi lỗi thấy được (dùng được / sửa được / không chấp nhận) | `eval/README.md` | 18:00 | | |
 | BA7 | Viết ≥3 metric từ lỗi ở BA6: định nghĩa kiểm chứng được · cách chấm · ngưỡng | `eval/metric_spec.yaml` | 18:30 | | |
