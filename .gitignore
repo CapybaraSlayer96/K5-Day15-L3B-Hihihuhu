@@ -45,3 +45,8 @@ evidence/**/raw-*
 # Nguyên file data BTC cấp (data/preclass, data/training-ops… của repo đề): để ở đây, không commit
 data-btc
 data-btc/
+# Tài liệu do skill sinh (chỉ để local)
+CONTEXT.md
+CONTEXT-MAP.md
+docs/adr/
+docs/agents/

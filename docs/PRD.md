@@ -1,207 +1,135 @@
-# TripSwipe — Tài liệu yêu cầu sản phẩm
+# TripSwipe — PRD (MVP hackathon)
 
-> Track C · Nhóm Hihihuhu · Thiết kế phục vụ CP2 ngày 27/11/2026.
-> Đây là yêu cầu cho bản triển khai tiếp theo, không phải xác nhận tính năng đã chạy. Phạm vi tài liệu: một ngày tham quan tại Hà Nội. Kiến trúc tương ứng: [ARCHITECTURE.md](ARCHITECTURE.md); thiết kế nộp BTC: [spec.md §4](../spec.md#4-thiết-kế-guide-22-32).
+> Bản 28/11/2026, chốt qua phiên grilling. Phạm vi: chỉ MVP hackathon, chạy hoàn toàn localhost bằng docker compose. Thiết kế chi tiết: [ARCHITECTURE.md](ARCHITECTURE.md) · bài toán, bằng chứng, chỗ khó, chuẩn "đạt": [spec.md](../spec.md).
 
-## 1. Tổng quan sản phẩm
+## Problem Statement
 
-TripSwipe giúp người phụ trách lên lịch cho nhóm bạn đi du lịch tự túc tại Hà Nội chọn địa điểm qua thẻ và nhận lịch trình nháp theo giờ. Người dùng chọn khu vực, quẹt thích/bỏ qua địa điểm, nhập ngày đi, điểm xuất phát, phương tiện và khung thời gian. LLM hiểu sở thích, đề xuất tập điểm và giải thích lựa chọn; thuật toán tính thứ tự, giờ đến/rời và code kiểm ràng buộc trước khi hiển thị. Người dùng duyệt lịch và các điểm phải bỏ trước khi chia sẻ thủ công với nhóm.
+Nhóm bạn đi chơi tự túc một ngày ở Hà Nội. Một người nhận việc lên lịch: tìm và đối chiếu thông tin từ Google Maps, TikTok, review để chọn địa điểm, hỏi cả nhóm qua group chat, rồi tự xếp thứ tự. Kết quả là các điểm xa nhau, đi vòng, đến nơi thì đã đóng hoặc chưa mở cửa, phải bỏ điểm giữa chừng; cả nhóm khó thống nhất chọn nơi nào. Khảo sát (16 phản hồi, 12 người từng lên lịch): 9/12 gặp đi vòng / đến nơi đã đóng / bỏ lỡ địa điểm; 6/12 đến nơi đã đóng hoặc chưa mở; 6/12 nói cả nhóm khó thống nhất. Thời gian lên lịch không dài (trung vị 15–30 phút) — chỗ đau là **lịch hỏng tại chỗ** và **chọn chung**.
 
-**Lát cắt:** Một người lên lịch cho nhóm bạn chọn các địa điểm yêu thích trong Hà Nội, nhận một lịch trình tham quan một ngày đã kiểm giờ mở cửa và thời gian di chuyển, hoặc thông báo cụ thể về phần chưa xếp được.
+## Solution
 
-## 2. Vấn đề và căn cứ
+Trưởng nhóm tạo nhóm trên web, trả lời vài câu cấu hình (tỉnh, phạm vi, ngày đi, khung giờ, điểm xuất phát, budget cả nhóm, phương tiện). Hệ thống lọc địa điểm hợp lệ, AI chọn 20 thẻ hợp sở thích. Mỗi thành viên vào bằng mã nhóm + biệt danh, quẹt thích / bỏ qua từng thẻ (vuốt lên xem chi tiết). Trưởng nhóm bấm "Xếp lịch": hệ thống gộp phiếu theo trung bình, code xếp thứ tự và giờ theo giờ mở cửa, thời gian di chuyển, budget; trả lịch từng khung giờ trên bản đồ, kèm danh sách điểm bị bỏ và lý do. Trưởng nhóm duyệt, sửa (bỏ / ghim điểm, tính lại), sao chép lịch gửi nhóm.
 
-Người lên lịch phải tìm và đối chiếu thông tin rời rạc để chọn điểm, rồi tự xếp thứ tự. Lịch ngược đường, tới ngoài giờ mở cửa hoặc nhồi quá nhiều điểm có thể làm nhóm mất thời gian và bỏ lỡ nơi muốn đến. Đây là giả thuyết sản phẩm đang được nhóm kiểm chứng, chưa có số liệu đủ để khẳng định mức độ phổ biến hay thời gian tiết kiệm.
+## User Stories
 
-| Căn cứ trong repo | Điều có thể sử dụng | Giới hạn |
-|---|---|---|
-| [canvas.md](../canvas.md), [spec.md §0–§2](../spec.md) | Vai người dùng, pain và phạm vi nhóm đã mô tả | Luồng hiện tại chưa được kiểm chứng với người ngoài nhóm |
-| Canvas CP2 được nhóm cập nhật trên `main` | Ghi nhận kết quả đào review app sơ bộ và khảo sát đã gửi | Tệp evidence tương ứng trong checkout chưa có kết quả để tái kiểm; không suy tỷ lệ gặp pain của nhóm du lịch Hà Nội từ review app |
-| [evidence/hypothesis.md](../evidence/hypothesis.md) | Giả thuyết và kế hoạch khảo sát 25 người; ngưỡng giả thuyết do nhóm tự chọn | Không phải kết quả khảo sát |
-| [evidence/summary.md](../evidence/summary.md), [evidence/data-mining.md](../evidence/data-mining.md) | Mẫu tổng hợp và cách lưu bằng chứng | Chưa có kết quả điền vào |
-| [eval/baseline-chatbot.md](../eval/baseline-chatbot.md) | Repo ghi nhận lỗi giờ, nghỉ trưa, thiếu ngày và thông tin không nguồn khi thử chatbot | Không phải bằng chứng pain người dùng; một số giờ chuẩn đang mâu thuẫn dataset |
-| [data/hanoi_places.json](../data/hanoi_places.json) | 113 bản ghi địa điểm; có tọa độ, sở thích và thời lượng tham quan | Có dữ liệu biên tập; thiếu chứng cứ theo từng trường và giờ có cấu trúc |
+**Tạo nhóm và cấu hình**
+1. As a trưởng nhóm, I want tạo nhóm không cần tài khoản, so that bắt đầu ngay.
+2. As a trưởng nhóm, I want chọn tỉnh từ danh sách, so that hệ thống biết nơi đi; chỉ Hà Nội được bật, tỉnh khác ghi "sắp có".
+3. As a trưởng nhóm, I want chọn phạm vi nội thành / ngoại thành, so that thẻ không quá xa; chỉ nội thành được bật.
+4. As a trưởng nhóm, I want nhập ngày đi, so that hệ thống biết điểm nào đóng cửa hôm đó.
+5. As a trưởng nhóm, I want nhập giờ bắt đầu và giờ kết thúc, so that lịch nằm trong khung nhóm rảnh.
+6. As a trưởng nhóm, I want chọn điểm xuất phát (từ danh sách điểm có sẵn hoặc toạ độ), so that chặng đầu tính đúng.
+7. As a trưởng nhóm, I want nhập budget cả nhóm, so that lịch không vượt tiền nhóm có.
+8. As a trưởng nhóm, I want chọn một phương tiện cho cả ngày (xe máy / ô tô / đi bộ), so that thời gian di chuyển sát thực tế.
+9. As a trưởng nhóm, I want nhận mã nhóm và link chia sẻ, so that gửi cho bạn bè vào quẹt.
+10. As a trưởng nhóm, I want bị chặn khi thiếu ngày đi, so that không có lịch dựa trên ngày tự đoán.
 
-Không đưa số người gặp pain, mức giảm thời gian hoặc trích dẫn khảo sát vào báo cáo như kết quả thật trước khi có bằng chứng. Các ngưỡng giả thuyết vẫn thuộc tài liệu bằng chứng gốc.
+**Vào nhóm và quẹt**
+11. As a thành viên, I want vào nhóm bằng mã / link và biệt danh, so that không phải đăng ký.
+12. As a thành viên, I want thấy thẻ tổng quan (ảnh, tên, loại, quận, câu mô tả ngắn, tag, khoảng giá, rating, mở hay đóng vào ngày đi), so that quyết định nhanh.
+13. As a thành viên, I want vuốt lên để xem chi tiết (mô tả, lý do nên đi, nên làm gì, giờ mở cả tuần, ngày đóng, thời lượng, mẹo, tóm tắt review, địa chỉ, link bản đồ, nguồn xác minh), so that hiểu kỹ trước khi chọn.
+14. As a thành viên, I want kéo thẻ sang phải để thích, sang trái để bỏ qua, so that chọn như Tinder.
+15. As a thành viên, I want có nút bấm thay cho kéo, so that dùng chuột dễ.
+16. As a thành viên, I want hoàn tác lượt quẹt vừa rồi, so that sửa khi lỡ tay.
+17. As a thành viên, I want thấy lý do AI gợi ý thẻ này, so that biết vì sao nó hợp nhóm.
+18. As a thành viên, I want thấy nhãn "chưa có dữ liệu giờ" trên thẻ thiếu giờ, so that không tin nhầm.
+19. As a thành viên, I want thấy mình còn bao nhiêu thẻ, so that biết sắp xong chưa.
 
-## 3. Chân dung người dùng và điểm vướng
+**Phòng chờ và gộp phiếu**
+20. As a thành viên, I want thấy ai đã quẹt xong, so that biết khi nào đủ.
+21. As a trưởng nhóm, I want bấm "Xếp lịch" bất cứ lúc nào, so that không phải chờ người chậm; chỉ tính phiếu của người đã quẹt.
+22. As a trưởng nhóm, I want thẻ được tính theo trung bình phiếu (thích = 1, bỏ qua = 0, cần ≥ 0,5), so that lịch theo ý số đông.
+23. As a trưởng nhóm, I want ghim điểm bắt buộc, so that điểm quan trọng không bị bỏ.
+24. As a thành viên, I want trang tự cập nhật tiến độ, so that không phải tải lại.
 
-**Persona theo vai, chưa phải người đã được phỏng vấn:** Người nhận việc lên lịch cho nhóm 3–6 bạn, đi tự túc một ngày tại Hà Nội. Họ cần gom sở thích, biết điểm nào ghép được trong ngày và gửi một lịch dễ hiểu vào nhóm chat. Họ có thể là người địa phương hoặc khách từ tỉnh khác; không giả định tuổi, thu nhập hay mức am hiểu Hà Nội.
+**Lịch trình**
+25. As a trưởng nhóm, I want lịch dạng dòng thời gian: mỗi điểm có giờ đến, giờ rời, chặng di chuyển, so that cả nhóm biết đi lúc nào.
+26. As a trưởng nhóm, I want mọi điểm trong lịch nằm trong giờ mở cửa của đúng thứ ngày đi, kể cả giờ nghỉ trưa, so that không đến nơi đóng cửa.
+27. As a trưởng nhóm, I want lịch tôn trọng giờ theo mùa (vd Lăng Bác mùa lạnh), so that không lệch giờ.
+28. As a trưởng nhóm, I want thứ tự ít đi vòng, so that tiết kiệm thời gian di chuyển.
+29. As a trưởng nhóm, I want hệ thống tự chèn slot ăn trưa / tối khi khung giờ trùm giờ ăn, lấy từ quán được thích, so that không quên ăn.
+30. As a trưởng nhóm, I want thấy chi phí ước tính mỗi người so với budget mỗi người, so that biết có vượt không.
+31. As a trưởng nhóm, I want điểm không có giá được ghi "chưa có giá", không cộng vào tổng, so that không tin con số bịa.
+32. As a trưởng nhóm, I want danh sách điểm bị bỏ, mỗi điểm có lý do (đóng hôm đó / ngoài giờ mở / không đủ thời gian / vượt budget) và gợi ý nới (đổi ngày, nới giờ, tăng budget, bỏ điểm), so that quyết định tiếp.
+33. As a trưởng nhóm, I want một lời giải thích ngắn vì sao chọn từng điểm, so that thuyết phục nhóm.
+34. As a trưởng nhóm, I want xem lịch trên bản đồ, so that hình dung cung đường.
+35. As a trưởng nhóm, I want thời gian di chuyển gắn nhãn "ước tính", so that biết không phải thời gian thực.
+36. As a trưởng nhóm, I want bỏ hoặc ghim điểm rồi tính lại, so that chỉnh theo ý nhóm.
+37. As a trưởng nhóm, I want bản cũ bị đánh dấu hết hiệu lực sau mỗi lần tính lại, so that không gửi nhầm.
+38. As a trưởng nhóm, I want duyệt lịch, so that chốt bản cuối.
+39. As a trưởng nhóm, I want sao chép lịch dạng văn bản kèm nguồn giờ mở cửa, so that dán vào group chat.
 
-| Điểm vướng giả định | Nhu cầu sản phẩm |
-|---|---|
-| Nhiều lựa chọn, phải mở từng trang để so sánh | Thẻ địa điểm có dữ kiện ngắn, nguồn và trạng thái dữ liệu |
-| Khó biến sở thích chung thành tập điểm | Quẹt thích/bỏ qua, xem lại, đánh dấu điểm bắt buộc |
-| Khó ghép vị trí với ngày/giờ mở cửa | Lịch tính bằng code, gồm cả chặng đi và thời gian chờ |
-| Không biết nên bỏ điểm nào khi quá tải | Liệt kê điểm bị bỏ, lý do và lựa chọn nới ràng buộc |
-| Lịch chatbot có vẻ hợp lý nhưng khó tin | Nguồn theo dữ kiện, trạng thái kiểm tra và giả định hiển thị rõ |
+**Giới hạn và an toàn**
+40. As a người dùng, I want hệ thống từ chối đặt vé, đặt bàn, thanh toán và nói rõ chỉ xếp lịch, so that không hiểu nhầm.
+41. As a người dùng, I want yêu cầu nhiều ngày hoặc ngoài Hà Nội bị từ chối kèm đề nghị xếp một ngày ở Hà Nội, so that biết phạm vi.
+42. As a người dùng, I want hệ thống không làm theo yêu cầu bỏ qua giờ mở cửa hay tin tự xưng "admin", so that lịch vẫn đúng.
+43. As a người dùng, I want thấy cảnh báo khi xếp điểm chưa có dữ liệu giờ, so that tự kiểm trước khi đi.
+44. As a người dùng, I want hệ thống báo rõ khi dịch vụ AI lỗi, so that không nhận lịch nửa vời.
 
-Một người đại diện nhập lựa chọn; MVP không thu phiếu hay đồng bộ sở thích của từng thành viên.
+**Đường văn bản (eval, CLI)**
+45. As a người chấm, I want gõ yêu cầu bằng văn bản ("thứ Bảy, Hồ Gươm, 8–17h, muốn đi A, B, C") và nhận lịch, so that chạy bộ câu thử không cần giao diện.
+46. As a người chấm, I want thiếu ngày đi thì nhận câu hỏi lại, không nhận lịch, so that đúng chuẩn "đạt".
+47. As a người chấm, I want chạy eval không cần Postgres hay internet, so that clone về là chạy được.
+48. As a nhóm phát triển, I want mọi lần gọi model và công cụ có trace, token, so that tính chi phí.
 
-## 4. Mục tiêu và phạm vi
+## Implementation Decisions
 
-### 4.1. Mục tiêu
+**Hình dạng và vai AI**
+- Workflow cố định, một lõi dùng chung cho web và đường văn bản. AI chỉ ở hai chỗ: (1) đọc yêu cầu / sở thích → cấu hình + danh sách ID địa điểm, hoặc chọn và xếp hạng 20 thẻ từ danh sách ứng viên đã lọc, kèm lý do; (2) viết câu "lý do chọn" từng điểm và lời nhắn khi không xếp được.
+- AI **không** tự sắp giờ, không viết số. Giờ, giá, thời gian di chuyển do code điền vào khuôn. Code loại mọi ID AI trả về không có trong danh sách ứng viên.
+- Model mặc định Gemini Flash (gói miễn phí); hỗ trợ đổi nhà cung cấp qua cấu hình môi trường. Token lấy từ `usage` của API.
 
-- Rút ngắn thao tác chọn điểm và xếp lịch; mức cải thiện phải đo qua dùng thử.
-- Mọi lịch được trình bày là đã kiểm phải vượt qua bộ kiểm ràng buộc bằng code.
-- Giải thích được vì sao chọn, đổi thứ tự hoặc bỏ một địa điểm.
-- Tái sử dụng dataset và hợp đồng chạy thử/eval/mô phỏng của repo.
+**Lõi (giữ hợp đồng khung BTC)**
+- Điểm vào `answer(text) → {"output": str}` giữ nguyên. Luồng văn bản: LLM rút cấu hình + ID → code kiểm thiếu thông tin (thiếu ngày đi → hỏi lại, dừng; thiếu điểm xuất phát → giả định nói rõ) → kiểm phạm vi (nhiều ngày, ngoài Hà Nội, đặt vé → từ chối phần đó) → bộ xếp lịch → bộ kiểm → khuôn output + lý do từ LLM.
+- Bốn công cụ có `@tool`, chỉ đọc: tra địa điểm, tra giờ mở cửa theo ngày, ước thời gian đi giữa hai điểm, kiểm lịch (trả danh sách vi phạm).
+- Mô-đun giờ mở cửa: chuẩn hoá chuỗi `opening_hours` + `closed_weekdays` (0 = thứ Hai) thành lịch theo từng thứ, nhiều khung / ngày (nghỉ trưa), có bộ giờ theo mùa chọn theo ngày đi. Chuỗi không đọc được → "chưa có dữ liệu giờ": vẫn cho quẹt, xếp thì gắn cảnh báo, không tính là đã kiểm.
+- Bộ xếp lịch: mục tiêu theo thứ tự — đủ điểm ghim → tổng điểm thích cao nhất → ít thời gian di chuyển nhất. ≤ 8 điểm vét cạn; nhiều hơn chèn tham lam + 2-opt. Thời gian ở mỗi điểm lấy `estimated_duration_mins`, thiếu thì 60 phút gắn "ước tính". Tự chèn slot ăn trưa (trùm 11:00–13:00) và ăn tối (trùm 18:00–20:00) từ quán được thích; không có thì slot "tự chọn".
+- Budget: tổng nhóm chia số thành viên đã vào; chi phí mỗi người = tổng `price_max_vnd` của điểm có giá; ràng buộc cứng; điểm không giá không cộng, gắn "chưa có giá".
+- Gộp phiếu: điểm = trung bình phiếu của người đã quẹt thẻ đó; vào ứng viên khi ≥ 0,5 và có ≥ 1 phiếu; hoà xếp theo rating; điểm ghim luôn vào.
+- Khi không xếp hết: một lịch hợp lệ + danh sách điểm bị bỏ, mỗi điểm một lý do + ≥ 1 gợi ý nới. Không trả nhiều phương án.
 
-### 4.2. Phạm vi MVP
+**Dữ liệu**
+- Nguồn sự thật: file JSON 118 địa điểm Hà Nội. Lệch với nguồn chính thức thì sửa theo nguồn chính thức, ghi vào data card (Hoàng thành mở mọi ngày; Bảo tàng Mỹ thuật đóng thứ Hai; Chùa Một Cột xoá giờ — chưa có nguồn). Văn Miếu ban ngày và tour đêm là hai địa điểm riêng.
+- Ma trận thời gian di chuyển: tính trước một lần bằng OSRM (server công cộng FOSSGIS, profile ô tô cho xe máy / ô tô, profile đi bộ cho đi bộ), lưu file JSON trong repo. Thiếu cặp hoặc lỗi mạng → đường chim bay × 1,3 ÷ tốc độ (xe máy 20, ô tô 15, đi bộ 4,5 km/h). Mọi thời gian di chuyển gắn "ước tính". Không gọi API bản đồ lúc người dùng đang dùng.
 
-| Trong phạm vi | Hành vi |
-|---|---|
-| Địa lý | Hà Nội; bản chạy đầu ưu tiên tập điểm nội thành đã chuẩn hóa và cho phép bằng cấu hình. Các điểm ngoại thành trong dataset chỉ hiện để xếp lịch khi được bật và đủ dữ liệu tuyến/giờ |
-| Thời gian | Một ngày lịch, giờ địa phương `Asia/Ho_Chi_Minh`; không kéo qua nửa đêm |
-| Chọn điểm | Chọn khu vực, quẹt thích/bỏ qua, hoàn tác, xem danh sách đã chọn; nút bấm tương đương quẹt |
-| Cá nhân hóa | Sở thích, nhịp độ, thời lượng tham quan, điểm thích và điểm bắt buộc do người dùng xác nhận |
-| Phương tiện | Một chế độ cho cả lịch: đi bộ hoặc ô tô khi có dữ liệu định tuyến tương ứng; không tự chuyển giữa các phương tiện |
-| Kết quả | Thứ tự điểm, giờ đến/rời, chặng di chuyển, chờ/nghỉ đã tính, nguồn, điểm bị bỏ và cảnh báo |
-| Sửa lịch | Bỏ/thêm điểm hoặc yêu cầu đổi thứ tự; tính lại và kiểm lại toàn bộ |
-| Hai đường nhập | Giao diện thẻ và đầu vào văn bản dùng chung workflow; CLI phục vụ lệnh BTC, không yêu cầu quẹt trước |
+**Web app**
+- Backend Python FastAPI, Postgres 16, giao diện HTML render phía server + JavaScript thuần (quẹt bằng pointer events), bản đồ Leaflet nền OpenStreetMap. Giao diện tiếng Việt, tối ưu cho máy tính.
+- Docker compose hai dịch vụ: `db` (Postgres, có volume) và `app` (cổng 8000; khởi động tạo bảng, nạp địa điểm + ma trận từ JSON). Key model đọc từ `.env`. Chỉ chạy localhost.
+- Đồng bộ nhóm bằng polling 3 giây.
+- Schema (7 bảng):
+  - `places(id, name, category, district, lat, lng, price_min_vnd, price_max_vnd, estimated_duration_mins, opening_hours JSONB, closed_weekdays INT[], card JSONB, detail JSONB, source)`
+  - `travel_times(from_id, to_id, mode, minutes, source)`
+  - `groups(id, code UNIQUE, province, scope, start_label, start_lat, start_lng, trip_date, start_time, end_time, budget_total_vnd, mode, status, created_at)`
+  - `members(id, group_id, nickname, is_leader, joined_at)`
+  - `deck_cards(group_id, place_id, rank, ai_reason)`
+  - `swipes(group_id, member_id, place_id, liked, created_at)` — `UNIQUE(member_id, place_id)`
+  - `itineraries(id, group_id, version, status ∈ {draft, approved, stale}, items JSONB, dropped JSONB, total_cost_vnd, model, created_at)`
+- API (10 endpoint): `GET /api/config/options` · `POST /api/groups` · `GET /api/groups/{code}` · `POST /api/groups/{code}/members` · `POST /api/groups/{code}/deck` · `GET /api/groups/{code}/deck?member_id=` · `POST /api/groups/{code}/swipes` · `GET /api/groups/{code}/progress` · `POST /api/groups/{code}/itinerary` (chỉ trưởng nhóm) · `PATCH /api/itineraries/{id}` (duyệt / bỏ / ghim → tính lại) · `GET /api/places/{id}`.
+- Trang (5): Tạo nhóm (wizard cấu hình) · Vào nhóm (biệt danh) · Quẹt (thẻ tổng quan, vuốt lên xem chi tiết, kéo / nút, hoàn tác) · Phòng chờ (tiến độ, nút "Xếp lịch" cho trưởng nhóm) · Lịch trình (dòng thời gian, bản đồ, điểm bị bỏ, duyệt / sửa, sao chép).
+- Tạo bộ thẻ: code lọc theo phạm vi, mở vào thứ của ngày đi và giao với khung giờ, giá trong budget mỗi người → AI chọn và xếp hạng 20 thẻ kèm lý do.
 
-Điểm xuất phát cần được xác định tọa độ hoặc chọn từ dữ liệu. Điểm kết thúc mặc định là điểm tham quan cuối, không mặc định quay về nơi xuất phát; nếu người dùng yêu cầu quay lại thì phải tính thêm chặng về trong khung giờ.
+**Thứ tự build** (theo mốc): (1) lõi + `answer(text)` + nối model + ma trận → eval lượt 1, video CLI cho CP3; (2) backend + Postgres + docker compose; (3) 5 trang; (4) mô phỏng chi phí.
 
-### 4.3. Không làm trong MVP
+## Testing Decisions
 
-- Lịch nhiều ngày, ngoài Hà Nội, lưu trú và tối ưu liên tỉnh.
-- Đặt vé, đặt bàn, giữ chỗ, thanh toán hoặc tự gửi lịch ra dịch vụ ngoài.
-- Dẫn đường trực tiếp, dự báo ùn tắc, hàng đợi, thời tiết thời gian thực.
-- Tài khoản, cộng tác thời gian thực, biểu quyết nhiều người và chia tiền.
-- Cam kết ngân sách chính xác khi thiếu giá vé/chi phí; `price_range` chỉ dùng tham khảo có nguồn.
-- Thu thập tự động mọi địa điểm trên Internet hoặc dùng LLM làm nguồn dữ kiện địa lý.
+- Test chỉ hành vi bên ngoài: đầu vào → lịch / câu hỏi lại / lời từ chối và danh sách vi phạm. Không test hàm nội bộ của bộ tối ưu.
+- **Seam 1 — `answer(text)`** (seam có sẵn của khung BTC): bộ câu thử `eval/benchmark.csv` chạy qua `python run.py eval`; chấm bằng 6 metric trong `eval/metric_spec.yaml` (4 metric chấm bằng code đọc lịch có cấu trúc, 2 chấm bằng người). Chuẩn "đạt" ở `spec.md` §7.
+- **Seam 2 — HTTP API** của web app: một test end-to-end bằng test client — tạo nhóm → 2 thành viên vào → quẹt → xếp lịch → lịch không vi phạm giờ mở cửa, chi phí ≤ budget mỗi người. Model chạy chế độ giả trong test.
+- Bộ kiểm lịch là thứ quyết định đúng sai, nên kiểm thêm một số lịch dựng tay có vi phạm đã biết (đóng thứ Hai, nghỉ trưa, chồng giờ) qua công cụ kiểm lịch.
+- Prior art: khung eval / score / simulate có sẵn trong repo; output chạy tay chatbot ở `eval/baseline-chatbot.md` làm mức so sánh.
 
-## 5. Hành trình người dùng
+## Out of Scope
 
-1. **Thiết lập:** Xác nhận Hà Nội, ngày đi, khung giờ, điểm xuất phát và phương tiện; bổ sung điểm kết thúc nếu cần. Thiếu ngày/thứ phải hỏi trước khi lập lịch.
-2. **Khám phá:** Chọn khu vực được hỗ trợ và xem thẻ lấy từ dataset. Thẻ thể hiện tên, loại, vị trí, thời lượng ước tính, giờ/giá nếu có nguồn và cảnh báo dữ liệu.
-3. **Chọn:** Quẹt thích/bỏ qua, hoàn tác; xem lại tập điểm, đánh dấu điểm bắt buộc. Quẹt thích là ưu tiên mềm, không đồng nghĩa tất cả bắt buộc phải xếp.
-4. **Đề xuất:** AI chuyển sở thích thành danh sách ID hợp lệ; hệ thống tra giờ, tuyến và tính lịch. Không có lượt thích thì hỏi người dùng cho phép gợi ý theo sở thích trước khi tự thêm điểm.
-5. **Kiểm tra:** Chỉ hiển thị lịch đã qua bộ kiểm. Nếu thiếu dữ liệu hoặc không xếp hết, hiển thị rõ điểm bị bỏ và cách điều chỉnh.
-6. **Duyệt:** Người phụ trách đọc lịch nháp, nguồn và giả định; đồng ý hoặc sửa. Sau mỗi sửa phải kiểm lại; bản cũ bị đánh dấu không còn hiện hành.
-7. **Sử dụng:** Người dùng sao chép lịch đã duyệt và tự gửi cho nhóm. Nguồn giờ mở cửa và điều kiện cần xác nhận trước khi đi đi kèm bản sao.
+- Mọi thứ ngoài MVP hackathon: tài khoản đăng nhập, triển khai lên internet, tối ưu cho điện thoại.
+- Tỉnh khác Hà Nội, ngoại thành, lịch nhiều ngày, lưu trú.
+- Đặt vé, đặt bàn, giữ chỗ, thanh toán, tự gửi lịch ra dịch vụ ngoài, chia tiền.
+- Dẫn đường, giao thông / thời tiết / hàng đợi thời gian thực; gọi API bản đồ lúc chạy.
+- "Siêu thích", trả nhiều phương án lịch, WebSocket.
+- Dùng LLM làm nguồn dữ kiện giờ, giá, toạ độ.
 
-## 6. Câu chuyện người dùng và tiêu chí chấp nhận
+## Further Notes
 
-| ID | Câu chuyện | Tiêu chí chấp nhận |
-|---|---|---|
-| US-01 | Là người lên lịch, tôi muốn chọn nhanh điểm theo khu vực và sở thích | Thẻ chỉ chứa ID trong dữ liệu thuộc phạm vi; thích/bỏ qua/hoàn tác cập nhật đúng danh sách, không nhân đôi điểm |
-| US-02 | Tôi muốn giữ điểm mình nhất định phải đi | Điểm được đánh dấu bắt buộc không bị bỏ âm thầm; nếu không thể ghép đủ thì báo chưa có lịch đáp ứng và hỏi người dùng |
-| US-03 | Tôi muốn nhận lịch vừa khung giờ | Khi có đủ dữ kiện, lịch bắt đầu từ xuất phát, tính cả chặng đầu và chặng về nếu có, không chồng giờ và không vượt giờ kết thúc |
-| US-04 | Tôi muốn tới nơi khi còn mở cửa | Toàn bộ thời gian tham quan nằm trong một khoảng mở hợp lệ; không đi xuyên giờ nghỉ trưa hoặc suy giờ tour đêm từ giờ tham quan ngày |
-| US-05 | Tôi muốn biết vì sao không đi được tất cả điểm | Mỗi điểm đã chọn không có trong lịch xuất hiện trong danh sách bị bỏ với lý do đúng dữ kiện và ít nhất một hướng điều chỉnh |
-| US-06 | Tôi muốn sửa lịch theo ý nhóm | Mỗi lần sửa tạo phiên bản mới, tính lại tuyến và kiểm lại; bản sửa chưa kiểm không có nhãn đã kiểm |
-| US-07 | Tôi muốn tin được thông tin AI nêu | Không có ID lạ; giờ, ngày đóng, giá và tuyến truy được đến kết quả công cụ; trường chưa biết hiển thị chưa có dữ liệu |
-| US-08 | Tôi muốn biết hệ thống đang thiếu gì | Thiếu ngày/thứ trả câu hỏi, chưa trả lịch; lỗi tuyến/giờ không bị biến thành thời gian bằng 0 hoặc mở cửa cả ngày |
-| US-09 | Tôi muốn tự quyết trước khi dùng lịch | Lịch luôn là bản nháp cho tới khi người dùng duyệt; đặt vé, thanh toán và gửi tin không được thực hiện |
-
-## 7. Yêu cầu chức năng
-
-| ID | Yêu cầu | Mức |
-|---|---|---|
-| FR-01 | Chuẩn hóa đầu vào từ thẻ hoặc văn bản thành một yêu cầu chuyến đi; kiểm phạm vi, ngày, giờ, tọa độ và phương tiện | Bắt buộc |
-| FR-02 | Lọc theo khu vực/cấu hình, loại, nhãn sở thích; không dùng lựa chọn mềm thay cho điều kiện cứng | Bắt buộc |
-| FR-03 | Quản lý lượt thích/bỏ qua/hoàn tác và tập điểm bắt buộc; dữ liệu lựa chọn giữ trong phiên | Bắt buộc cho giao diện thẻ |
-| FR-04 | LLM phân tích sở thích và đề xuất ID, ưu tiên và lý do từ danh sách được cấp | Bắt buộc |
-| FR-05 | Tra thông tin địa điểm, giờ theo ngày/hoạt động, thời lượng và nguồn; trả rõ dữ liệu thiếu/xung đột | Bắt buộc |
-| FR-06 | Lấy ma trận thời gian theo phương tiện, cache có nguồn/phiên bản; phân biệt tuyến thật, cache thật và mock | Bắt buộc |
-| FR-07 | Tính thứ tự, thời điểm ghé, chờ và nghỉ bằng code; không dùng giờ model tự tính | Bắt buộc |
-| FR-08 | Kiểm ràng buộc bằng `kiem_lich_trinh`; trả vi phạm có mã và đối tượng, sửa có giới hạn | Bắt buộc |
-| FR-09 | Phân biệt đủ lịch, một phần, thiếu thông tin, không khả thi, thiếu dữ liệu và ngoài phạm vi | Bắt buộc |
-| FR-10 | Giữ lịch có cấu trúc trong chuỗi `output`, kèm bản tiếng Việt dựng từ cùng dữ liệu đã kiểm để chấm được | Bắt buộc |
-| FR-11 | Ghi mọi lời gọi model/công cụ qua decorator sẵn có; token lấy từ API, không ước lượng | Bắt buộc |
-| FR-12 | Hiển thị bản nháp, nguồn, giả định và kiểm lại khi sửa trước khi người dùng duyệt | Bắt buộc |
-
-## 8. Quy tắc nghiệp vụ
-
-| ID | Quy tắc |
-|---|---|
-| BR-01 | Chỉ lập lịch trong phạm vi Hà Nội được cấu hình, một ngày và một múi giờ; schema vẫn dùng mã thành phố/khu vực thay vì cố định chuỗi Hà Nội trong thuật toán |
-| BR-02 | Không có ngày hoặc thứ thì hỏi lại, không trả lịch giả định. Chỉ có thứ được xử lý như kịch bản tuần; nếu cần mùa/ngày lễ thì hỏi ngày cụ thể trước khi xếp |
-| BR-03 | Thiếu xuất phát/khung giờ/phương tiện thì mặc định hỏi lại. Đường văn bản có thể dùng mặc định cấu hình nếu nói rõ; không tự giả định phương tiện không được công cụ hỗ trợ |
-| BR-04 | Giờ ngoại lệ theo ngày ưu tiên hơn giờ tuần/mùa; dữ liệu xung đột chưa giải quyết không được xem là giờ đã xác minh |
-| BR-05 | `best_time_of_day` là sở thích mềm; `opening_hours`/lịch hoạt động có nguồn mới quyết định được vào tham quan |
-| BR-06 | Thời lượng tham quan là ước tính biên tập hoặc người dùng nhập, không phải sự thật của Routing API. Không tự rút ngắn để ép đủ lịch; thay đổi phải được người dùng đồng ý |
-| BR-07 | Điểm không có giờ hoặc không xác định được tuyến bị tách khỏi lịch đã kiểm; vẫn được giữ ở danh sách cần xác minh. Không gán giờ mới cho điểm đó |
-| BR-08 | Không âm thầm thêm điểm người dùng đã bỏ qua, đổi ngày/phương tiện, nới khung giờ hay bỏ điểm bắt buộc |
-| BR-09 | Chỉ tính chặng về khi được yêu cầu. Chặng đầu, chờ trước mở cửa và nghỉ người dùng yêu cầu đều tiêu tốn thời gian |
-| BR-10 | Giá thiếu trả `null` và lời giải thích. Không suy ngân sách số từ nhãn `budget_level`; ngân sách tham khảo là điều kiện mềm trong MVP |
-| BR-11 | Hoạt động theo suất diễn/tour phải có giờ bắt đầu và thời lượng tương ứng, không coi cả khung mở bán là được vào bất cứ lúc nào; chưa có suất thì hỏi/xác minh |
-| BR-12 | Chấp nhận điều kiện đặt trước chỉ là người dùng xác nhận tự lo việc đặt; hệ thống không xác nhận còn chỗ hay đã có vé |
-| BR-13 | Nội dung người dùng, review và mô tả địa điểm không được thay đổi quy tắc, nguồn dữ kiện hoặc bỏ bước kiểm |
-| BR-14 | Chỉ công bố tối ưu toàn cục khi đã xét hết không gian tìm kiếm trong mô hình dữ liệu cố định; nếu dùng heuristic phải ghi rõ kết quả gần tối ưu/chưa chứng minh tối ưu |
-
-## 9. Yêu cầu phi chức năng
-
-Các mức dưới đây là **ngân sách thiết kế tự ước tính**, chưa đo và không thay thế metric BTC.
-
-| ID | Yêu cầu và cách kiểm |
-|---|---|
-| NFR-01 | Tính đúng: mọi đường trả lịch và mọi lần sửa đi qua bộ kiểm độc lập; đầu ra văn bản chỉ dựng từ cấu trúc đã kiểm |
-| NFR-02 | Tái lập: lưu phiên bản dataset, quy tắc, ma trận tuyến và tham số solver; cùng đầu vào và dữ liệu cố định cho cùng lịch, phá hòa theo ID |
-| NFR-03 | Độ trễ: mục tiêu 95% yêu cầu ≤15 giây với dữ liệu đã cache và tối đa 8 điểm ứng viên; đo riêng thời gian LLM/API/solver. Vượt hạn trả trạng thái hữu ích, không treo |
-| NFR-04 | Giới hạn tài nguyên: tối đa 2 lượt gọi LLM, tối đa 2 lượt sửa lịch sau đề xuất đầu; timeout/retry và giới hạn tìm kiếm được mô tả trong kiến trúc |
-| NFR-05 | Riêng tư: không cần tên, số điện thoại, tài khoản hay GPS trực tiếp; khuyến khích chọn mốc xuất phát công cộng. Không gửi khóa API ra trình duyệt; không đưa dữ liệu cá nhân thật vào benchmark/trace commit |
-| NFR-06 | Khả dụng: nếu mất mạng thì dùng cache có nguồn đúng chế độ; thiếu cache trả thiếu dữ liệu. Mock luôn có nhãn, không tự thay mock vào kết quả thật |
-| NFR-07 | Trải nghiệm: tiếng Việt; thẻ có nút thích/bỏ qua và thao tác bàn phím; ảnh lỗi vẫn hiện tên, dữ kiện và lựa chọn |
-| NFR-08 | Tương thích: giữ `answer(text) -> {"output": str}`, `call_model`, `@model_call`, `@tool`; không sửa các file khung BTC |
-| NFR-09 | Truy vết: mỗi dữ kiện quan trọng mang nguồn và thời điểm kiểm khi có; không biến trạng thái biên tập của cả POI thành xác minh mọi trường |
-
-## 10. Thước đo thành công
-
-### 10.1. Thước đo kỹ thuật đã có trong repo
-
-Chép để tham chiếu từ [eval/metric_spec.yaml](../eval/metric_spec.yaml), không điều chỉnh định nghĩa, mẫu số hoặc ngưỡng tại tài liệu này:
-
-| Metric | Ngưỡng đang ghi |
-|---|---|
-| `dung_gio_mo_cua` | 100% câu có trả lịch, 0 vi phạm |
-| `khop_khung_gio_nguoi_dung` | 100% câu có trả lịch |
-| `khong_bia_du_lieu` | 100% câu |
-| `it_di_vong` | ≥80% câu thường có trả lịch; tổng di chuyển ≤1,2 lần tối thiểu của cùng tập điểm khả thi |
-| `bao_ro_khi_khong_xep_duoc` | ≥80% câu khó |
-| `hoi_lai_va_tu_choi_dung` | 100% câu từ chối; ≥80% câu khó thuộc loại thiếu thông tin |
-
-Chuẩn tổng thể đã được nhóm cập nhật tại `spec.md` §7 trên `main`: ≥80% câu qua, 0 vi phạm giờ mở/ngày đóng/nghỉ trưa trên câu có lịch, không bịa dữ liệu 100% và xử lý đúng 100% câu từ chối; mỗi câu đạt khi mọi metric áp dụng đều đạt. Tài liệu này chỉ tham chiếu, không sửa chuẩn hoặc tuyên bố đã đạt CP2. Bộ câu thử hiện có 16 câu; chưa có kết quả chạy thật của TripSwipe trong phạm vi công việc này.
-
-### 10.2. Thước đo sản phẩm cần thu
-
-| Thước đo | Cách đo dự kiến | Mục tiêu |
-|---|---|---|
-| Thời gian tạo lịch chấp nhận được | Từ bắt đầu chọn đến người phụ trách duyệt; so với cách tự làm trên tác vụ tương đương | Chốt sau đo baseline; chưa có số |
-| Tỷ lệ hoàn thành | Số phiên có lịch được người dùng duyệt / số phiên có đủ đầu vào trong phạm vi; báo riêng số thiếu dữ liệu, thiếu thông tin, từ chối | Chưa chốt |
-| Công sức chỉnh sửa | Số lần sửa trước khi duyệt; phân loại sửa vì dữ liệu sai, sở thích hoặc quá tải | Chưa chốt |
-| Mức đáp ứng điểm mong muốn | Số điểm thích được xếp / tổng điểm thích; báo riêng điểm bắt buộc và lý do bị bỏ | Theo dõi, không thay metric BTC |
-| Chi phí tác vụ thành công | Token API thực + chi phí dịch vụ ngoài / số phiên được duyệt; tách chi phí LLM và Routing API | Đo CP3/CP4; không dùng bảng giá mẫu làm giá thật |
-
-## 11. Trường hợp biên và hành vi chấp nhận
-
-| Tình huống | Hành vi |
-|---|---|
-| Không thích điểm nào hoặc bỏ qua hết | Hỏi sở thích/đề nghị xem lại khu vực, chưa gọi tối ưu với tập rỗng |
-| Thích quá nhiều điểm | Ưu tiên điểm bắt buộc và sở thích, báo mọi điểm không xếp; không ép đủ bằng giảm thời lượng |
-| Điểm bắt buộc đóng cửa | Báo không đáp ứng, đề nghị đổi ngày/bỏ bắt buộc; chỉ trình bày phương án thay thế như một đề xuất cần duyệt |
-| Thiếu ngày đi | Hỏi lại và chưa trả lịch; tương ứng B10 |
-| Thiếu giờ/nguồn hoặc dữ liệu xung đột | Giữ điểm cần xác minh ngoài lịch đã kiểm, không bịa giờ; tương ứng ý định kiểm B12 |
-| Nghỉ trưa, hai khoảng mở, giờ theo mùa | Mỗi lần ghé nằm trọn một khoảng; hỏi ngày cụ thể khi chỉ có thứ không đủ quyết định |
-| Mưa, đông người, ngày lễ/bảo dưỡng | Không khẳng định trạng thái thời gian thực; báo giới hạn và cần kiểm nguồn ngoại lệ trước khi đi |
-| Tên trùng/địa chỉ không rõ | Đưa các ID ứng viên để chọn, không lấy tùy ý kết quả đầu |
-| Tuyến không có hoặc tọa độ sai | Chặn chặng, thử cache hợp lệ; không dùng khoảng cách thẳng như thời gian đường đi |
-| Hết giờ tìm kiếm | Nói chưa tìm được lịch trong giới hạn; không khẳng định chắc chắn vô nghiệm |
-| Người dùng kéo đổi thứ tự | Tính lại và cảnh báo vi phạm; không giữ nhãn đã kiểm của bản trước |
-| Yêu cầu đặt chỗ, nhiều ngày hoặc bỏ kiểm | Từ chối phần ngoài phạm vi, đề nghị phần làm được; tương ứng B13–B16 |
-
-## 12. Rủi ro, giới hạn và việc cần chốt
-
-| Rủi ro/điểm chưa thống nhất | Cách xử lý thiết kế và việc còn lại |
-|---|---|
-| Chưa có kết quả khảo sát đúng vai người dùng và bằng chứng chi tiết chưa đồng bộ | Canvas đã ghi số review app sơ bộ nhưng evidence chưa có hồ sơ để tái kiểm; tiếp tục khảo sát/đào dữ liệu đúng kế hoạch, không tự điền số vào evidence |
-| Dataset và benchmark mâu thuẫn | B05 muốn xếp Hoàng thành thứ Hai trong khi `hn_10` ghi đóng thứ Hai; B08 coi Mỹ thuật đóng thứ Hai trong khi `hn_46` ghi mở; B12 dự kiến thiếu giờ Một Cột trong khi `hn_13` có chuỗi giờ nhưng thiếu nguồn chính thức. Ghi nhận để người phụ trách đối soát nguồn và báo ảnh hưởng; không sửa `expected` để khớp output |
-| Dữ liệu hoạt động đêm tách ID | B03 nói Văn Miếu buổi tối; dataset có `hn_09` tham quan ngày và `hn_68` tour đêm. Cần xác nhận hoạt động người dùng muốn, không nhập nhằng hai dịch vụ |
-| Thiếu hoặc không đủ xuất xứ | Data card nêu file CSV gốc và script xây dataset nhưng các file đó chưa có trong checkout. Chưa thể kiểm lại quy trình xây dữ liệu từ repo này |
-| Data card chưa khớp thống kê | JSON có 20 giá trị `district` khác nhau, data card ghi 19; đây là nhãn trong file, không xác nhận địa giới hành chính hiện hành |
-| Nhãn `verified` dễ gây hiểu nhầm | Chỉ 59/113 bản ghi có `verification.official_source` không rỗng; URL cấp miền và nhãn biên tập chưa đủ chứng minh từng giờ/giá |
-| Thời lượng, tuyến và giờ không phản ánh hiện trường | Công bố đây là lịch theo dữ liệu đã kiểm và ước tính tuyến, không cam kết tới nơi chắc chắn còn mở/còn chỗ |
-| Màn quẹt và tích hợp API chưa tồn tại | CP2 phân biệt sơ đồ/mock với tính năng thật; CP3 nối model thật, dữ liệu giờ chuẩn hóa và tuyến có nguồn trước khi đánh giá |
-
-Tài liệu này không sửa `canvas.md`, evidence, data, bộ câu thử, metric, chuẩn đạt §7 hay các file khung. Các mục chưa hoàn tất được giữ là việc cần xử lý, không coi là đã được nghiệm thu.
+- Bằng chứng: khảo sát đang thu (16/25 phản hồi lúc 19:17 27/11). Số trong Problem Statement cần cập nhật khi đủ mẫu.
+- Server OSRM công cộng chỉ dùng cho demo, giới hạn tốc độ gọi; ma trận tính một lần và commit để chạy không cần mạng.
+- Ảnh thẻ lấy từ `image_url` (Wikimedia); không có mạng thì hiện ảnh trống.
+- Chuẩn "đạt" chốt tại CP2: ≥ 75% câu qua + 100% không vi phạm giờ mở cửa + 0 bịa dữ liệu + 100% câu từ chối qua.
