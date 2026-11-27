@@ -85,6 +85,15 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | X4 | `docs/ARCHITECTURE.md` đồng bộ code thật (công cụ, thuật toán, ma trận, app) | Minh | B4 | 14:20 | `docs/ARCHITECTURE.md` | Không mô tả thứ code không có | |
 | D8 | Tự soát guide 4.4 + nộp form CP4 | Hùng | tất cả CP4 | 14:30 | form CP4 | Đủ 7 hạng mục; lượt 1 → cải tiến; chi phí / task; slide; video; phần chưa xong | |
 
+### Sau CP4 · demo 14:30–18:00 · hạn chót 23:59 hôm nay (28/11)
+
+| Mã | Việc | Người | Chờ | Hạn | Deliverable | DoD | Trạng thái |
+|---|---|---|---|---|---|---|---|
+| F1 | Demo Zone (14:30–16:00), Demo Phòng nếu vào top (16:00–18:00): Hùng — pain + impact · Bảo — demo web (1 thường + 1 khó) · Minh — kiến trúc + bộ kiểm lịch · Hải — đánh giá + chi phí; chạy câu thử lạ giám khảo đưa, mở trace 1 câu trượt; mạng hỏng thì chiếu video dự phòng | Cả nhóm | D8 | 18:00 | buổi demo | Mỗi người nói ≥ 1 phần; ai cũng trả lời được 4 câu guide 5.2 (vì sao chọn hình dạng này · lỗi nguy hiểm nhất · chi phí / task thành công tính thế nào · phần mình làm) | |
+| F2 | Sửa theo góp ý demo; mỗi thay đổi 1 dòng `spec.md` §10 "Sau CP4" (giờ · đổi gì · vì sao); chạy thêm thì thành lượt mới (`run-N` tiếp theo) | Người sở hữu phần bị góp ý | F1 | 23:00 | commit + dòng §10 | Không sửa chuẩn "đạt", câu thử đã có, số bằng chứng, kết quả các lượt đã chạy | |
+| F3 | Reflection: mỗi người 1 file `reflection/<ten-khong-dau>.md` theo `reflection/TEMPLATE.md` (vai + phần mình làm trỏ file / commit · AI hỗ trợ thế nào · một bài học từ một câu thử trượt của nhóm) | Bảo, Minh, Hải, Hùng | — | 23:30 | 4 file `reflection/doan-xuan-duy-bao.md`, `nguyen-dinh-minh.md`, `nguyen-dinh-vu-hai.md`, `vu-tien-hung.md` | Đủ 4 file, mỗi file đủ 3 ý | |
+| F4 | Checklist cuối guide 5.2: repo đủ thư mục bắt buộc · không có API key / dữ liệu cá nhân thật · video mở được bằng cửa sổ ẩn danh · `TEAMS.md` khớp vai · README không còn `____` · `python run.py check` sạch · commit cuối trước 23:59 | Hùng | F2, F3 | 23:45 | checklist tích đủ (ghi vào `TASKS.md`) | Mọi mục tích; commit cuối đã push trước 23:59 | |
+
 ## 0. Luật chung cho mọi việc
 
 - Không sửa chuẩn "đạt" (`spec.md` §7), không sửa / xoá câu thử đã có, không sửa `expected` cho khớp output. Câu thử chỉ được **thêm**.
