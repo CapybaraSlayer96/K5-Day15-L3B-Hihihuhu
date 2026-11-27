@@ -4,8 +4,8 @@
 > Viết **trước** khi đọc dòng data đầu tiên hay hỏi người đầu tiên, để không sửa cho khớp kết quả. Kết quả ngược giả thuyết vẫn đủ điểm nếu số là thật.
 
 - Ngày giờ viết: 27/11/2026
-- Người dùng chính (một vai cụ thể): người được nhóm giao lên kế hoạch cho nhóm 3–6 bạn tự túc đi một thành phố 2–3 ngày (Đà Lạt), ngân sách chung chốt trước.
-- **Mình nghĩ:** người lên kế hoạch cho nhóm bạn gặp khó khi ghép lịch 2–3 ngày từ nhiều nguồn rời rạc (TikTok, blog, Google Maps, group chat) vì phải tự khớp giờ mở cửa, quãng đường và tổng chi phí với ngân sách chung, hậu quả là mất nhiều giờ lên lịch, và khi đi thật thì lệch giờ, gặp chỗ đóng cửa hoặc vượt ngân sách.
-- **Có thể còn cách giải thích khác:** việc khó nhất không phải xếp lịch mà là thống nhất sở thích trong nhóm; hoặc nhóm chấp nhận đi "ngẫu hứng" và không thấy lệch lịch là vấn đề.
-- **Mình đúng nếu thấy:** ≥2/3 người được phỏng vấn kể được ít nhất một lần trong 3 tháng qua bị lệch lịch / gặp chỗ đóng cửa / vượt ngân sách vì lịch tự ghép, **và** thời gian lên lịch trung vị ≥2 giờ cho chuyến 2–3 ngày *(ngưỡng nhóm tự chọn)*.
-- **Nguồn sẽ dùng** (≥1 nguồn đạt ngưỡng, guide 1.2): [ ] đào data · [x] phỏng vấn ≥3 · [x] khảo sát ≥20 — nguồn chính: phỏng vấn ≥3 người ngoài nhóm · nguồn để kiểm lại: khảo sát ≥20 người ngoài nhóm + đọc review / bài hỏi đáp công khai về du lịch Đà Lạt
+- Người dùng chính (một vai cụ thể): người đi du lịch tự túc 2–3 ngày ở một thành phố lần đầu đến (thành phố demo: Đà Lạt), tự lên lịch trên điện thoại.
+- **Mình nghĩ:** người đi tự túc gặp khó khi chọn điểm đến và xếp lịch từ nhiều nguồn rời rạc (TikTok, blog, Google Maps) vì thông tin quá nhiều và không có sẵn thứ tự đi theo cung đường hay khung giờ đẹp, hậu quả là mất hàng giờ lọc trước chuyến đi, rồi đi ngược đường, lỡ khung giờ đẹp hoặc gặp chỗ đóng cửa.
+- **Có thể còn cách giải thích khác:** người dùng không thấy mất thời gian lọc là vấn đề (lọc chính là phần vui của chuyến đi); hoặc đã dùng một lịch trình có sẵn (tour, bài review "lịch trình 3 ngày") nên không tự xếp.
+- **Mình đúng nếu thấy:** ≥2/3 người được phỏng vấn kể được ít nhất một lần trong 3 tháng qua đi ngược đường / lỡ khung giờ đẹp / gặp chỗ đóng cửa vì lịch tự xếp, **và** thời gian chọn điểm + xếp lịch trung vị ≥2 giờ cho chuyến 2–3 ngày *(ngưỡng nhóm tự chọn)*.
+- **Nguồn sẽ dùng** (≥1 nguồn đạt ngưỡng, guide 1.2): [ ] đào data · [x] phỏng vấn ≥3 · [x] khảo sát ≥20 — nguồn chính: phỏng vấn ≥3 người ngoài nhóm · nguồn để kiểm lại: khảo sát ≥20 người ngoài nhóm + đọc review / bài hỏi đáp công khai về du lịch tự túc

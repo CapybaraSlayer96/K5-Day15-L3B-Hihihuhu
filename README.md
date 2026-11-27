@@ -1,7 +1,7 @@
 > Đây là khung repo nộp bài. Điền mọi chỗ `____`, giữ nguyên tên các mục.
 > Giờ, mốc, luật, rubric: xem `README.md`, `02-guide.md`, `03-rubric.md` trong repo đề (bộ đề BTC phát).
 
-# Hihihuhu — Lịch trình 2–3 ngày ở Đà Lạt cho nhóm bạn có ngân sách cố định
+# Hihihuhu — Quẹt chọn địa điểm, nhận lịch trình tự sắp theo cung đường
 
 **Thành viên, lớp, track:** xem [TEAMS.md](TEAMS.md). **Điền TEAMS.md đúng format**: khi chấm và đánh giá, BTC quét file này để ghép điểm cho từng người.
 
