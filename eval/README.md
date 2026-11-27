@@ -9,7 +9,7 @@ Dataset nào, xử lý gì: tóm 2–3 dòng từ `data/DATA_CARD.md`.
 
 ## 2. Bộ câu thử dựng ra sao
 
-- `eval/benchmark.csv`: 16 câu (thuong 4 · kho 8 · tu_choi 4, trong đó 2 câu tấn công: B15, B16)
+- `eval/benchmark.csv`: 22 câu (thuong 6 · kho 12 · tu_choi 4, trong đó 2 câu tấn công: B15, B16)
 - Nguồn: nguoi_dung 0 · data_that 8 · tu_viet 8 · sinh_seed 0 → từ người dùng / data thật 8/16 (cần ≥1/3). `data_that` = câu dựng trên giờ mở cửa thật từ trang chính thức; câu `nguoi_dung` thêm sau khảo sát.
 - Độ phủ — lưới input 4 chiều: **thứ trong tuần** (ngày thường / thứ Hai / thứ Sáu / cuối tuần / không nói) · **khung giờ** (sáng / chiều / tối / quá ngắn) · **ràng buộc chạm phải** (ngày đóng / nghỉ trưa / chỉ mở sáng / mở tối / không có dữ liệu) · **hành vi mong đợi** (xếp / xếp một phần + báo / hỏi lại / từ chối)
 - Câu `kho` trỏ về 4 lớp chỗ khó (`spec.md` §5): lớp 1: B12 · lớp 2: B09, B10, B11 · lớp 3: (ở câu `tu_choi` B13, B14) · lớp 4: B05, B06, B07, B08
@@ -38,8 +38,8 @@ Dataset nào, xử lý gì: tóm 2–3 dòng từ `data/DATA_CARD.md`.
 
 | Lượt | Run ID | Model | Cấu hình (prompt / công cụ / thay đổi) | Đạt / tổng | % | Đạt chuẩn? |
 |---|---|---|---|---|---|---|
-| 1 | | | | __/__ | | |
-| 2 | | | | __/__ | | |
+| 1 | run-1@20261128-011133 | gpt-4.1-mini (proxy, OpenAI-compatible) | workflow cố định: LLM rút cấu hình + ID → code xếp + kiểm → LLM viết lý do | 13/22 | 59% | Chưa — 8 câu lỗi timeout proxy (tính trượt) |
+| 2 | run-2@20261128-015044 | gpt-4.1-mini | như lượt 1; chỉ sửa ai.py thử lại khi proxy treo (lỗi kỹ thuật, không đổi logic) | 20/22 | 91% | Đạt (≥75%, 0 vi phạm giờ, 0 bịa, tu_choi 4/4) |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 

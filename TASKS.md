@@ -42,6 +42,45 @@
 > Thiết kế: `docs/PRD.md` (TS-01…TS-08), `docs/ARCHITECTURE.md`. Ticket chi tiết (local): `.scratch/tripswipe/issues/`.
 > Cách dùng: làm theo thứ tự mã trong cột của mình; việc có "Chờ" thì chỉ bắt đầu khi việc kia xong. Xong việc: sửa dòng **Trạng thái** của việc đó thành `xong · <commit>` rồi push.
 
+## Bảng tổng hợp
+
+Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song song: các việc cùng giờ, cột "Chờ" trống thì làm ngay.
+
+### Checkpoint 3 · hạn 10:00 hôm nay (28/11)
+
+| Mã | Việc | Người | Chờ | Hạn | Deliverable | DoD | Trạng thái |
+|---|---|---|---|---|---|---|---|
+| A1 | Chấm cột `pass` lượt 2 + `score`, ghi kết quả vào spec §7 và eval/README mục 5 | Bảo | — | 09:45 | `eval/run-2.csv` đã chấm | Không còn ô `pass` trống; số khớp `score` | xong · 20/22 (91%) |
+| U1 | Video 30 giây CLI gọi AI thật (1 câu thường + 1 câu khó) | Bảo | — | 09:45 | link video (ẩn danh mở được) | token > 0 trên màn hình; ≤ 30 giây | |
+| B1 | Khung FastAPI + Postgres 7 bảng, nạp dữ liệu lúc khởi động | Minh | — | 10:00 (kéo sang CP4) | `app/` | Khởi động lại không nạp trùng; eval vẫn chạy không cần DB | |
+| B2 | Docker compose (`db`, `app`, cổng 8000) | Minh | — | 10:00 (kéo sang CP4) | `Dockerfile`, `docker-compose.yml` | `docker compose up` → mở được localhost:8000 | |
+| A2 | Thử mô phỏng chi phí 10 phiên | Hải | — | 09:50 | `cost/simulate-try.csv` (không commit) | token > 0 | |
+| A3 | `build_deck` + `plan_group` theo hợp đồng mục 2 | Hải | — | 10:30 (kéo sang CP4) | `codebase/` + assert trong `tests/test_core.py` | Bộ thẻ không có điểm đóng vào ngày đi; lịch luôn 0 vi phạm | |
+| D1 | `evidence/summary.md` + kết quả khảo sát đã bỏ cột nhận diện | Hùng | — | 09:30 | `evidence/summary.md`, `evidence/survey/` | ≥ 20 phản hồi đúng vai; x/N, %; ≥ 5 trích nguyên văn; kết luận giả thuyết | |
+| D2 | `spec.md` §1 (số khảo sát), §2 (impact có nguồn), §6 (bốn đường đi) | Hùng | — | 09:45 | `spec.md` | §0–§7 không còn ô trống | |
+| D3 | Tự soát guide 3.4 + nộp form CP3 | Hùng | D1, D2, U1, A1 | 10:00 | form CP3 | Nộp đúng hạn, khai thật phần chưa xong (web) | |
+
+### Checkpoint 4 · hạn 14:30 hôm nay (28/11)
+
+| Mã | Việc | Người | Chờ | Hạn | Deliverable | DoD | Trạng thái |
+|---|---|---|---|---|---|---|---|
+| U2 | Trang Tạo nhóm (wizard 7 bước) + Vào nhóm | Bảo | — (JSON mẫu) | 11:00 | `app/templates/create.html`, `join.html`, `app/static/` | Đúng TS-01, TS-02; chặn thiếu ngày đi | |
+| U3 | Trang Quẹt 2 lớp (tổng quan / vuốt lên chi tiết), kéo + nút, hoàn tác | Bảo | — (JSON mẫu) | 12:00 | `swipe.html`, `swipe.js` | Đúng TS-04 | |
+| U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API | |
+| U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console | |
+| U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | |
+| B3 | API nhóm, bộ thẻ, quẹt, tiến độ, chi tiết địa điểm + JSON mẫu | Minh | B1 | 11:30 (JSON mẫu 10:30) | `app/`, `docs/api-examples.md` | 409 biệt danh trùng, 422 thiếu ngày, quẹt lại ghi đè | |
+| B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Minh | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm | |
+| B5 | Test end-to-end qua HTTP | Minh | B4 | 13:30 | `tests/test_api.py` | In ok; `tests/test_core.py` vẫn ok | |
+| A4 | Lượt cải tiến: gom nhóm lỗi → một cải tiến → eval trọn bộ → chấm → `score` | Hải | A1 | 12:30 | `eval/run-3.csv` đã chấm | Chạy đủ 22 câu (+ câu mới chỉ thêm); ghi cấu hình đổi gì | |
+| A5 | `eval/report.md` + `eval/README.md` | Hải | A4 | 13:30 | 2 file | % từng lượt so với chuẩn; ≥ 3 lỗi (input · output · vì sao sai · đã sửa · còn lại) | |
+| A6 | Mô phỏng ≥ 50 phiên + `cost/cost-estimate.md` | Hải | A4 | 14:00 | `cost/simulate-N.csv`, `-summary.md`, `cost-estimate.md`, `traces/simulate-N.jsonl` | Chi phí / task thành công; 3 kịch bản; ≥ 2 model; kết luận so với impact | |
+| D4 | Kiểm thử CLI 5 câu lạ | Hùng | — | 11:00 | `validation/cli-test.md` | Mỗi câu: input · output · đúng / sai · vì sao | |
+| D5 | *(Bonus)* 2–3 người ngoài nhóm dùng thử, 5 nhịp | Hùng | có bản chạy | 13:30 | `validation/log.md` | Đủ cột mỗi người + 4 dòng tổng hợp | |
+| D6 | `spec.md` §8 §9 + slide 8 trang | Hùng | A5, A6 | 14:15 | `spec.md`, `slides/demo-slides.pdf` | Mỗi trang slide ≥ 1 số có nguồn, khớp repo | |
+| D7 | Kiểm thử luồng web + corner case PRD | Hùng | U5, B5 | 14:10 | `validation/web-test.md` | Không còn lỗi chặn luồng demo | |
+| D8 | Tự soát guide 4.4 + nộp form CP4 | Hùng | tất cả CP4 | 14:30 | form CP4 | Đủ 7 hạng mục; lượt 1 → cải tiến; chi phí / task; slide; video; phần chưa xong | |
+
 ## 0. Luật chung cho mọi việc
 
 - Không sửa chuẩn "đạt" (`spec.md` §7), không sửa / xoá câu thử đã có, không sửa `expected` cho khớp output. Câu thử chỉ được **thêm**.
@@ -56,7 +95,7 @@
 - Lõi chạy thật trong `codebase/`: `answer(text)` + 4 công cụ + bộ xếp lịch + bộ kiểm lịch; model gpt-4.1-mini qua proxy (`MODEL_PROVIDER=openai`).
 - Bộ câu thử 22 câu (thuong 6 · kho 12 · tu_choi 4).
 - **Lượt 1** `run-1@20261128-011133`: 13/22 (59%), 8 câu lỗi timeout proxy (đã chấm).
-- **Lượt 2** `run-2@20261128-015044`: chạy lại sau sửa timeout, 22/22 câu không lỗi, **chưa chấm**.
+- **Lượt 2** `run-2@20261128-015044`: chạy lại sau sửa timeout, 22/22 câu không lỗi — **20/22 (91%), đạt chuẩn**. Trượt: B03 (thời lượng dữ liệu), B19 (model không rút được Chùa Trấn Quốc).
 - Chưa có: web (`app/`), docker, evidence/summary, §6 §8 §9, report, cost, slide, video, reflection.
 
 ## 2. Hợp đồng để 4 người làm song song
@@ -73,7 +112,7 @@ Ba "mặt tiếp giáp" chốt trước, mỗi bên làm theo hợp đồng, kh�
 
 ```
 Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)                     Hùng (BA / test / docs)
-08:30 ─ U1 video CP3 (CLI) ─┐  B1 khung FastAPI+DB ─┐    A1 chấm lượt 2 + score ─┐    D1 evidence/summary ─┐
+08:30 ─ U1 video CP3 (CLI) ─┐  B1 khung FastAPI+DB ─┐    (A1 → Bảo, đã xong)     ┐    D1 evidence/summary ─┐
 09:45 ─ U2 Tạo nhóm/Vào nhóm  │  B2 docker compose     │    A2 simulate --try        │    D2 spec §1 §2 §6      │
 10:00 ════════════════ CP3 (Hùng nộp: D3) ════════════════════════════════════════════════════════════════
 10:00 ─ U3 trang Quẹt         │  B3 API nhóm/thẻ/quẹt  │    A3 build_deck + plan_group│    D4 kiểm thử CLI lạ    │
@@ -150,7 +189,7 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 
 ### Hải · AI
 
-**A1 · Chấm lượt 2** — Chờ: không — Trạng thái:
+**A1 · Chấm lượt 2** (người làm: **Bảo**) — Chờ: không — Trạng thái: xong · 20/22 (91%), `run-2@20261128-015044`
 - Làm: mở `eval/run-2.csv`, điền `pass` (1 / 0) theo `pass_criterion` + `eval/metric_spec.yaml`, ghi lý do câu trượt vào `ghi_chu` → `python run.py score eval/run-2.csv` → chép run ID + % vào `spec.md` §7 dòng "Kết quả" và bảng mục 5 `eval/README.md` (ghi rõ: lượt 1 có 8 câu lỗi timeout, lượt 2 là chạy lại).
 - DoD: không còn ô `pass` trống; `score` in % tổng và theo type.
 

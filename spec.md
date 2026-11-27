@@ -144,9 +144,9 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 - Bị đòi ngoài phạm vi (lớp 3): · Trường hợp đặc thù lĩnh vực (lớp 4):
 
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
-- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 16 câu (thuong 4 · kho 8 · tu_choi 4) · metric: `eval/metric_spec.yaml` (6 metric)
+- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 22 câu (thuong 6 · kho 12 · tu_choi 4) · metric: `eval/metric_spec.yaml` (6 metric)
 - **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 75% câu qua, và 0 vi phạm giờ mở cửa / ngày đóng / nghỉ trưa trên mọi câu có trả lịch (`dung_gio_mo_cua` 100%), và `khong_bia_du_lieu` 100%, và 100% câu `tu_choi` xử lý đúng (`hoi_lai_va_tu_choi_dung`). Câu đạt khi mọi metric áp dụng cho câu đó đều đạt. Ngưỡng từng metric ghi trong `eval/metric_spec.yaml`."
-- Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
+- Kết quả: lượt 1 13/22 (59%; 8 câu lỗi timeout proxy, tính trượt) · lượt 2 (chạy lại sau sửa timeout, cùng cấu hình) 20/22 (91%) — run ID: `run-1@20261128-011133` / `run-2@20261128-015044`, model gpt-4.1-mini → chi tiết `eval/report.md`, hồ sơ `eval/README.md`. Lượt 2 đạt chuẩn: ≥75%, 0 vi phạm giờ mở cửa, 0 bịa dữ liệu, 4/4 câu `tu_choi`.
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
 - Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
