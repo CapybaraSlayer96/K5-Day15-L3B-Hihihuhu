@@ -95,12 +95,17 @@ def _post(url, headers, body):
     req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
                                  headers={"content-type": "application/json", **headers})
     import time
-    for attempt in range(4):  # 429 / 5xx: chờ tăng dần rồi thử lại
+    for attempt in range(4):  # 429 / 5xx / treo kết nối: chờ tăng dần rồi thử lại
         try:
-            with urllib.request.urlopen(req, timeout=180) as f:
+            with urllib.request.urlopen(req, timeout=45) as f:
                 return json.load(f)
         except urllib.error.HTTPError as e:
             if e.code in (429, 500, 502, 503) and attempt < 3:
                 time.sleep(int(e.headers.get("retry-after") or 0) or 5 * 2 ** attempt)
                 continue
             raise RuntimeError("HTTP %s: %s" % (e.code, e.read().decode("utf-8", "replace")[:300])) from None
+        except (TimeoutError, urllib.error.URLError):
+            if attempt < 3:
+                time.sleep(3)
+                continue
+            raise
