@@ -79,6 +79,10 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | D5 | *(Bonus)* 2–3 người ngoài nhóm dùng thử, 5 nhịp | Hùng | có bản chạy | 13:30 | `validation/log.md` | Đủ cột mỗi người + 4 dòng tổng hợp | |
 | D6 | `spec.md` §8 §9 + slide 8 trang | Hùng | A5, A6 | 14:15 | `spec.md`, `slides/demo-slides.pdf` | Mỗi trang slide ≥ 1 số có nguồn, khớp repo | |
 | D7 | Kiểm thử luồng web + corner case PRD | Hùng | U5, B5 | 14:10 | `validation/web-test.md` | Không còn lỗi chặn luồng demo | |
+| X1 | README hoàn thiện: mục "Chạy web" (`docker compose up`), link video ở bảng "Bảy hạng mục" dòng 7, cập nhật bảng "Phần nào thật / giả" khi web xong | Hùng | U6, B2 | 14:20 | `README.md` | Người ngoài làm theo README chạy được CLI + web; không còn `____` | |
+| X2 | `docs/ai-usage.md`: mỗi người thêm dòng phần mình dùng AI (công cụ · AI làm gì · mình kiểm gì) | Cả nhóm | — | 14:20 | `docs/ai-usage.md` | Mỗi người ≥ 1 dòng; giải thích được phần có tên mình | |
+| X3 | `spec.md` §10: mỗi thay đổi sau CP2 thêm 1 dòng (giờ · đổi gì · vì sao trỏ câu thử / lỗi) | Người đổi | — | liên tục | `spec.md` §10 | Không có thay đổi nào sau CP2 thiếu dòng | |
+| X4 | `docs/ARCHITECTURE.md` đồng bộ code thật (công cụ, thuật toán, ma trận, app) | Minh | B4 | 14:20 | `docs/ARCHITECTURE.md` | Không mô tả thứ code không có | |
 | D8 | Tự soát guide 4.4 + nộp form CP4 | Hùng | tất cả CP4 | 14:30 | form CP4 | Đủ 7 hạng mục; lượt 1 → cải tiến; chi phí / task; slide; video; phần chưa xong | |
 
 ## 0. Luật chung cho mọi việc

@@ -84,14 +84,18 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 
 | Thành phần | Thật / Giả | Ghi chú |
 |---|---|---|
-| Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: ____ |
-|  |  |  |
+| Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: gpt-4.1-mini qua endpoint tương thích OpenAI (`MODEL_PROVIDER=openai`); đọc yêu cầu → cấu hình + ID địa điểm, viết lý do chọn |
+| Giờ mở cửa, ngày đóng, giá | **Thật** (dữ liệu công khai) | `data/hanoi_places.json`, đối chiếu trang chính thức (nguồn từng điểm ở `data/DATA_CARD.md`) |
+| Thời gian di chuyển | **Ước tính** | Ma trận OSRM tính sẵn, lấy max với tốc độ đô thị; không phải giao thông thời gian thực |
+| Xếp lịch, kiểm lịch | **Thật** (code) | `codebase/planner.py`, không qua model |
+| Web nhóm / quẹt thẻ | Đang build (CP4) | `app/` — xem `TASKS.md` |
+| Chế độ `MODEL_PROVIDER=fake` | Giả | Chỉ để chạy khung khi chưa có key; không tính lượt |
 
 ## Dùng AI vào việc gì
 
 2–3 dòng (bắt buộc): nhóm dùng công cụ AI nào để làm gì, người kiểm lại phần nào. Chi tiết: [docs/ai-usage.md](docs/ai-usage.md). Coding agent đọc [AGENTS.md](AGENTS.md).
 
-____
+Nhóm dùng Claude (Claude Code) để soạn tài liệu (spec, PRD, data card), viết khung code lõi, tra giờ mở cửa từ trang chính thức, chạy tay chatbot làm mức so sánh và chấm thử độc lập; ChatGPT / Claude để rà câu hỏi khảo sát. Người trong nhóm duyệt từng commit, đối chiếu lại nguồn giờ mở cửa, tự chấm cột `pass`. Không dùng AI để tạo câu trả lời khảo sát hay sửa kết quả các lượt đã chạy.
 
 ## File mẫu — điền ở bước nào
 

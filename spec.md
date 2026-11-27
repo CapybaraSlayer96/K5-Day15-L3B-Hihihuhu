@@ -170,15 +170,20 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 - Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào:
 
 ## §10. Phân công & changelog
-- Phân công có tên (theo chặng, chia cặp — guide "Cách chia việc"): __
-- Dùng AI vào việc gì (2–3 dòng; chi tiết `docs/ai-usage.md`):
+- Phân công có tên: Bảo — UI, lõi xếp lịch, spec, eval · Minh — BE (FastAPI, Postgres, docker) · Hải — dữ liệu, AI (bộ thẻ, prompt), đánh giá, chi phí · Hùng — BA, kiểm thử, tài liệu, nộp checkpoint. Chi tiết: `TASKS.md`.
+- Dùng AI vào việc gì: xem README mục "Dùng AI vào việc gì" và `docs/ai-usage.md`.
 - Nhật ký thay đổi — **mọi thay đổi sau CP2 19:30 Thứ Sáu 27/11 phải có dòng ở đây**:
 
 **CP2 → CP4** (vd thu hẹp lát cắt, hỏi thêm người dùng, lần cải tiến trước lượt 2)
 
 | Thời điểm | Đổi gì | Vì sao (trỏ về câu thử / lỗi / bằng chứng nào) |
 |---|---|---|
-|  |  |  |
+| 28/11 sáng | `spec.md` §7: sửa số "80%" (bản đẩy lên repo lúc 19:27) về "75%" | Khớp con số đã nộp trong form CP2 lúc 19:30; **không đổi chuẩn so với form** |
+| 28/11 00:30 | Dữ liệu: Hoàng thành mở mọi ngày, Bảo tàng Mỹ thuật đóng thứ Hai, xoá giờ Chùa Một Cột, thêm Bảo tàng Hồ Chí Minh | Đối chiếu trang chính thức; dữ liệu cũ mâu thuẫn B05, B08, B12; B07, B16 cần Bảo tàng Hồ Chí Minh (`data/DATA_CARD.md`) |
+| 28/11 00:40 | Thêm ma trận OSRM + lấy max với ước tính tốc độ đô thị | OSRM không tính kẹt xe, cho 1–8 phút giữa các điểm nội thành — quá lạc quan |
+| 28/11 01:00 | Agent: thứ / giờ / điểm xuất phát đọc bằng luật khi luật bắt được; gợi ý model chọn mục tour đêm | Thử 3 câu: model đọc "thứ Bảy" thành Chủ nhật (B01), chọn Văn Miếu ngày cho "buổi tối" (B03) |
+| 28/11 01:05 | Thêm 6 câu thử B17–B22 (chỉ thêm, không sửa câu cũ) | CP3 cần 20–30 câu; dựng từ trích khảo sát |
+| 28/11 01:45 | `ai.py` thử lại khi proxy treo kết nối | Lượt 1: 8/22 câu lỗi timeout → chạy lại thành lượt 2 cùng cấu hình |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
 
