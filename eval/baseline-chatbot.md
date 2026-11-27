@@ -46,7 +46,7 @@ Mục đích: nhìn output thật **trước** khi chốt metric — xem một c
 
 - Lỗi nặng nhất đúng như dự đoán: **sai giờ / ngày đóng** — 10/16 câu có ít nhất một thông tin giờ sai hoặc không có nguồn (B02, B03, B05, B07, B08, B10, B12, B13, B15, B16). Giữ `dung_gio_mo_cua`, `khong_bia_du_lieu` ở ngưỡng 100%.
 - Chatbot thường **từ chối tốt** → câu `tu_choi` khó phân biệt; điểm khác biệt nằm ở dữ liệu, không ở thái độ.
-- **Mâu thuẫn cần sửa trước 19:30:** B10 — `hoi_lai_va_tu_choi_dung` cho phép "giả định có nói rõ", còn `pass_criterion` của B10 ghi "không trả lịch dựa trên ngày tự đoán". Chọn một cách và sửa cho khớp.
+- **Đã sửa:** `hoi_lai_va_tu_choi_dung` từng cho phép "giả định có nói rõ" ở mọi câu thiếu thông tin, lệch với `pass_criterion` B10. Chốt: thiếu **ngày đi** → bắt buộc hỏi lại, không trả lịch; thiếu điểm xuất phát / khung giờ → hỏi lại hoặc giả định nói rõ.
 - **Giờ theo mùa** (Lăng mùa nóng / mùa lạnh) là nguồn lỗi riêng: dữ liệu và câu thử phải ghi rõ ngày đi thuộc mùa nào.
 - Mức "dùng được" ở đây chấm bằng người (một người chấm, người viết metric). Chưa có người thứ hai — xem `eval/grading-trial.md`.
 
