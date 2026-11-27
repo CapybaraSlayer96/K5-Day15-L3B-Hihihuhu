@@ -6,15 +6,15 @@
 
 - Tên nhóm: Hihihuhu
 - Lớp: L3B
-- Track: ____
+- Track: C
 - Link repo: https://github.com/CapybaraSlayer96/K5-Day15-L3B-Hihihuhu
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
 |---|---|---|---|---|
-| 1 | Đoàn Xuân Duy Bảo | 2A202603858 | Đội trưởng | ____ |
-| 2 | Nguyễn Đình Minh | 2A202603867 | Thành viên | ____ |
-| 3 | Nguyễn Đình Vũ Hải | 2A202603820 | Thành viên | ____ |
-| 4 | Vũ Tiến Hùng | 2A202603882 | Thành viên | ____ |
+| 1 | Đoàn Xuân Duy Bảo | 2A202603858 | Đội trưởng | Canvas, spec.md, tổng hợp, nộp checkpoint |
+| 2 | Nguyễn Đình Minh | 2A202603867 | Thành viên | codebase/: agent, công cụ, nối model |
+| 3 | Nguyễn Đình Vũ Hải | 2A202603820 | Thành viên | eval/: bộ câu thử, metric, dữ liệu dựng |
+| 4 | Vũ Tiến Hùng | 2A202603882 | Thành viên | evidence/: phỏng vấn, khảo sát; cost/ |
 
 **Quy tắc điền**
 - **Lớp:** `L3A` hoặc `L3B`. **Track:** một chữ `A` (EdTech), `B` (Y tế), `C` (Du lịch), `D` (Thương mại điện tử), `E` (Tài chính) hoặc `F` (Làn khác). **Link repo:** link GitHub công khai của nhóm.
