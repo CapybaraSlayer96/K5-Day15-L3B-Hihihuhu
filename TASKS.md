@@ -14,7 +14,7 @@
 | BA4 | Viết `spec.md` §0–§3 và §5 (4 lớp chỗ khó, ≥6 kịch bản, 2 tấn công) | `spec.md` | 19:00 | | xong (bản đầu): `spec.md` §0–§3, §5 |
 | BA5 | Cập nhật canvas (số bằng chứng đầu, dòng "Đã đổi gì so với CP1"); điền chuẩn "đạt" đã chốt vào `spec.md` §7; nộp CP2 | `canvas.md`, `spec.md` §7 | 19:30 | | |
 | BA6 | Chạy tay 10–20 yêu cầu lịch trình qua ChatGPT / Claude, ghi lỗi thấy được (dùng được / sửa được / không chấp nhận) | `eval/README.md` | 18:00 | | |
-| BA7 | Viết ≥3 metric từ lỗi ở BA6: định nghĩa kiểm chứng được · cách chấm · ngưỡng | `eval/metric_spec.yaml` | 18:30 | | |
+| BA7 | Viết ≥3 metric từ lỗi ở BA6: định nghĩa kiểm chứng được · cách chấm · ngưỡng | `eval/metric_spec.yaml` | 18:30 | | xong (bản đầu, 6 metric): `eval/metric_spec.yaml` — rà lại theo lỗi BA6 trước 19:30 |
 | BA8 | Viết ≥10 câu thử (có `kho`, `tu_choi`), ≥1/3 câu `source` là `nguoi_dung:` hoặc `data_that:` | `eval/benchmark.csv` | 19:00 | | |
 | BA9 | Chấm thử độc lập 5 output theo metric (người khác người làm BA7); lệch ≥2/5 → báo viết lại metric | — | 19:00 | | |
 
