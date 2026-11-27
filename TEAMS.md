@@ -11,10 +11,10 @@
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
 |---|---|---|---|---|
-| 1 | Đoàn Xuân Duy Bảo | 2A202603858 | Đội trưởng | Canvas, spec.md, tổng hợp, nộp checkpoint |
-| 2 | Nguyễn Đình Minh | 2A202603867 | Thành viên | codebase/: agent, công cụ, nối model |
-| 3 | Nguyễn Đình Vũ Hải | 2A202603820 | Thành viên | eval/: bộ câu thử, metric, dữ liệu dựng |
-| 4 | Vũ Tiến Hùng | 2A202603882 | Thành viên | evidence/: phỏng vấn, khảo sát; cost/ |
+| 1 | Đoàn Xuân Duy Bảo | 2A202603858 | Đội trưởng | UI: giao diện web (tạo nhóm, quẹt, lịch trình), video demo |
+| 2 | Nguyễn Đình Minh | 2A202603867 | Thành viên | BE: FastAPI, Postgres, docker compose, API nhóm và lịch trình |
+| 3 | Nguyễn Đình Vũ Hải | 2A202603820 | Thành viên | AI: bộ thẻ AI, prompt, đánh giá lượt 1 → 2, mô phỏng chi phí |
+| 4 | Vũ Tiến Hùng | 2A202603882 | Thành viên | BA / tester / tài liệu: bằng chứng, spec, kiểm thử, slide, nộp checkpoint |
 
 **Quy tắc điền**
 - **Lớp:** `L3A` hoặc `L3B`. **Track:** một chữ `A` (EdTech), `B` (Y tế), `C` (Du lịch), `D` (Thương mại điện tử), `E` (Tài chính) hoặc `F` (Làn khác). **Link repo:** link GitHub công khai của nhóm.
