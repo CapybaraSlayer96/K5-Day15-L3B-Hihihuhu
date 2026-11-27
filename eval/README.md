@@ -26,7 +26,7 @@ Dataset nào, xử lý gì: tóm 2–3 dòng từ `data/DATA_CARD.md`.
 | bao_ro_khi_khong_xep_duoc | nguoi | ≥ 80% câu kho |
 | hoi_lai_va_tu_choi_dung | nguoi | 100% câu tu_choi; ≥ 80% câu kho thiếu thông tin |
 
-- **Người thứ hai chấm thử:** __ (không phải người viết spec) chấm độc lập 5 output (B04, B08, B09, B10, B12) → khớp __/5 *(cần ≥4/5)* — phiếu: `eval/grading-trial.md`
+- **Người thứ hai chấm thử:** agent Claude Sonnet độc lập (không phải người viết spec, không xem bảng người chấm 1) chấm 5 output (B04, B08, B09, B10, B12) → khớp kết luận **5/5**, khớp ô metric 29/30 — phiếu: `eval/grading-trial.md`
 - LLM chấm: không dùng
 - **Chuẩn "đạt"** (chép nguyên từ `spec.md` §7, chốt trước 19:30 Thứ Sáu 27/11): "__"
 
