@@ -29,3 +29,22 @@
 - **Mở hàng ngày (kể cả Thứ 2):** Văn Miếu (`vanmieu.gov.vn`), Nhà tù Hỏa Lò (`hoalo.vn`), Bảo tàng Mỹ thuật VN (`vnfam.vn`), Bảo tàng Phụ nữ VN (`baotangphunu.org.vn`), Nhà hát Múa rối Thăng Long (`thanglongwaterpuppet.com`).
 - **Chỉ mở cuối tuần / tối định kỳ:** Phố đi bộ Hồ Gươm & Chợ Đêm Phố Cổ (`T6–CN`, `hanoi.gov.vn`), Tour Đêm Hỏa Lò (`T6–CN`, `hoalo.vn`), Tour Đêm Hoàng Thành (`T7–CN`, `hoangthanhthanglong.vn`), Tour Đêm Văn Miếu 3D Mapping (`T4, T7, CN`, `vanmieu.gov.vn`).
 
+
+## Thay đổi để khớp nguồn chính thức (28/11/2026)
+
+- `hn_10` Hoàng thành Thăng Long: mở mọi ngày 08:00–17:00 (trang chủ hoangthanhthanglong.vn), bỏ "đóng thứ Hai".
+- `hn_46` Bảo tàng Mỹ thuật Việt Nam: đóng thứ Hai (vnfam.vn/en/visiting).
+- `hn_13` Chùa Một Cột: xoá giờ mở cửa (không có nguồn chính thức), coi là "chưa có dữ liệu giờ".
+- Thêm `hn_76` Bảo tàng Hồ Chí Minh: 08:00–12:00, 14:00–16:30, đóng thứ Hai và thứ Sáu (baotanghochiminh.vn/gio-mo-cua.htm); toạ độ xấp xỉ.
+
+## Dataset 2 · Ma trận thời gian di chuyển (`data/travel_times.json`)
+
+| | |
+|---|---|
+| Dùng để làm gì | Nguồn cho công cụ `uoc_thoi_gian_di` |
+| Từ đâu | OSRM server công cộng FOSSGIS (`routing.openstreetmap.de`), profile ô tô (dùng cho cả xe máy) và đi bộ; script `scripts/build_travel_matrix.py` |
+| Xử lý | Chỉ điểm nội thành + 6 điểm xuất phát trung tâm quận; giây → phút. Khi dùng: lấy max(OSRM, đường chim bay × 1,3 ÷ tốc độ), tối thiểu 5 phút, vì OSRM không tính kẹt xe |
+| Số dòng | 117 điểm · 40.716 cặp có hướng |
+| Phiên bản / ngày lấy | 28/11/2026 |
+| Nhãn | ước tính (không phải thời gian thực) |
+| Giới hạn | Không có giờ cao điểm, chỗ gửi xe, đường một chiều theo giờ |

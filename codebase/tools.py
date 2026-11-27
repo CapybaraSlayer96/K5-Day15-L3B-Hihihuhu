@@ -1,18 +1,32 @@
-"""Công cụ của bài toán — NHÓM VIẾT. Điền ở guide bước 2.2 (thiết kế) và 3.2 (code).
-
-Mỗi công cụ là một hàm Python có @tool. Docstring ghi đúng 4 ý như sơ đồ ở spec.md §4:
-    tên · input · output · có tác động ra ngoài không (gửi tin, sửa dữ liệu, chấm điểm…)
-Khung tự ghi mỗi lần gọi công cụ vào trace (tên, input, output rút gọn, thời gian, lỗi).
-
-Số công cụ, kiểu công cụ do thiết kế của nhóm quyết định — có bài chỉ cần một công cụ tra cứu.
-Công cụ có tác động ra ngoài: KHÔNG tự làm. Trả về bản nháp chờ người duyệt (guide bước 2.2, "chỗ người duyệt").
-Dữ liệu công cụ đọc (bài mẫu, thông báo mẫu, lịch…): để trong data/ và mô tả ở data/DATA_CARD.md.
-"""
-from tracing import tool, TOOLS  # noqa: F401  (TOOLS: danh sách công cụ đã đăng ký, dùng khi viết vòng lặp agent)
+"""Bốn công cụ chỉ đọc của TripSwipe. Không công cụ nào tác động ra ngoài (không đặt vé, không gửi tin)."""
+from places import PLACES, WEEKDAYS, fmt, travel_minutes, windows
+from planner import check
+from tracing import tool, TOOLS  # noqa: F401
 
 
 @tool
-def search_example(query: str) -> list:
-    """(ví dụ — thay bằng công cụ của nhóm) Tra dữ liệu mẫu theo câu hỏi.
-    Input: câu hỏi (str). Output: danh sách đoạn {"code", "text"}. Không tác động ra ngoài."""
-    return [{"code": "VD-1", "text": "(ví dụ) đoạn dữ liệu giả — thay bằng dữ liệu thật của bài toán"}]
+def tra_dia_diem(ids: list) -> list:
+    """Tra thông tin địa điểm. Input: danh sách ID. Output: [{id, name, district, category, price_max_vnd, inner}] (bỏ ID lạ). Chỉ đọc."""
+    return [{"id": i, "name": PLACES[i]["name"], "district": PLACES[i]["district"], "category": PLACES[i]["category"],
+             "price_max_vnd": PLACES[i].get("price_max_vnd"), "inner": PLACES[i]["_inner"]} for i in ids if i in PLACES]
+
+
+@tool
+def tra_gio_mo_cua(pid: str, date) -> dict:
+    """Giờ mở cửa vào ngày đi. Input: ID, ngày. Output: {id, weekday, windows: ["HH:MM–HH:MM"] | [] (đóng) | None (chưa có dữ liệu)}. Chỉ đọc."""
+    w = windows(pid, date)
+    return {"id": pid, "weekday": WEEKDAYS[date.weekday()],
+            "windows": None if w is None else ["%s–%s" % (fmt(a), fmt(b)) for a, b in w]}
+
+
+@tool
+def uoc_thoi_gian_di(a_id: str, a_xy: tuple, b_id: str, b_xy: tuple, mode: str = "xe_may") -> dict:
+    """Ước thời gian đi A → B. Input: ID + toạ độ hai đầu, phương tiện. Output: {minutes, source} (luôn là ước tính). Chỉ đọc."""
+    m, src = travel_minutes(a_id, a_xy, b_id, b_xy, mode)
+    return {"minutes": m, "source": src}
+
+
+@tool
+def kiem_lich_trinh(items: list, cfg: dict) -> list:
+    """Kiểm lịch: giờ mở cửa, ngày đóng, nghỉ trưa, thời gian đi, chồng giờ, khung giờ. Input: lịch + cấu hình. Output: danh sách vi phạm. Chỉ đọc."""
+    return check(items, cfg)

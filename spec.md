@@ -51,69 +51,63 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
 
 ## §4. Thiết kế *(guide 2.2, 3.2)*
 - **Lát cắt MỘT CÂU** (1 người dùng · 1 việc · 1 quyết định AI · 1 kết quả):
-  Người phụ trách lên lịch cho nhóm bạn đi tự túc một ngày tại Hà Nội quẹt thẻ chọn khu vực và địa điểm yêu thích, nhập ngày đi, điểm xuất phát, phương tiện và khung giờ · AI đề xuất các địa điểm phù hợp sở thích từ dữ liệu đã có, code tối ưu thứ tự và kiểm ràng buộc · người dùng nhận lịch trình nháp theo giờ có nguồn để duyệt, hoặc lý do cụ thể vì sao chưa xếp được.
-- **Không làm (≥3 điều):** không lập lịch nhiều ngày/ngoài Hà Nội; không đặt vé, đặt bàn, giữ chỗ hoặc thanh toán; không tự gửi lịch ra ngoài; không dẫn đường hay dự báo giao thông thời gian thực; không cam kết tổng ngân sách khi thiếu giá; không dùng multi-agent. Bản đầu ưu tiên tập điểm nội thành đã đủ dữ kiện, cấu hình phạm vi riêng để schema có thể mở rộng sau.
-- **Sơ đồ** (thiết kế cần triển khai, chưa phải trạng thái code hiện tại):
+  Trưởng nhóm tạo nhóm cho bạn bè đi tự túc một ngày ở nội thành Hà Nội, trả lời cấu hình (ngày đi, khung giờ, điểm xuất phát, budget cả nhóm, phương tiện) rồi cả nhóm quẹt thẻ địa điểm · AI chọn 20 thẻ hợp sở thích từ danh sách code đã lọc, sau khi gộp phiếu thì code xếp thứ tự và giờ theo giờ mở cửa, thời gian đi, budget · trưởng nhóm nhận lịch từng khung giờ đã qua bộ kiểm, hoặc danh sách điểm không xếp được kèm lý do và cách nới.
+- **Không làm (≥3 điều):** lịch nhiều ngày / ngoài Hà Nội / ngoại thành; đặt vé, đặt bàn, giữ chỗ, thanh toán; tự gửi lịch ra ngoài; dẫn đường hay giao thông thời gian thực; dùng LLM làm nguồn giờ / giá / toạ độ; nhiều agent.
+- **Sơ đồ:**
 
   ```mermaid
   flowchart TD
-      A["Quẹt chọn điểm hoặc nhập văn bản; ngày, giờ, xuất phát, phương tiện"]
-      B["LLM hiểu sở thích và đề xuất ID từ danh mục"]
-      C{"Code kiểm đầu vào, phạm vi và ID"}
-      Q["Hỏi lại / từ chối phần ngoài phạm vi"]
-      D["tra_dia_diem: POI có ID và nguồn"]
-      E["tra_gio_mo_cua: giờ theo ngày và hoạt động"]
-      F["uoc_thoi_gian_di: ma trận theo phương tiện"]
-      G["Code chọn thứ tự và tính giờ đến/rời"]
-      H["kiem_lich_trinh: kiểm độc lập theo dữ liệu công cụ"]
-      I{"Không còn vi phạm hoặc dữ kiện bắt buộc chưa biết?"}
-      J["Sửa bằng code tối đa 2 lượt, không nới ràng buộc cứng"]
-      K["Báo không khả thi / thiếu dữ liệu / hết giới hạn; nêu cách điều chỉnh"]
-      L["Lịch đủ hoặc một phần đã kiểm; điểm bị bỏ và nguồn"]
-      M["Người phụ trách duyệt lịch nháp; sửa thì chạy và kiểm lại"]
+      A["Văn bản (eval/CLI) hoặc cấu hình nhóm + phiếu quẹt (web)"]
+      B["LLM: rút cấu hình + ID địa điểm / chọn 20 thẻ (chỉ ID trong danh mục)"]
+      C{"Code: thiếu ngày đi? ngoài phạm vi? đặt vé? đòi bỏ luật?"}
+      Q["Hỏi lại ngày đi / từ chối phần ngoài phạm vi"]
+      D["tra_dia_diem + tra_gio_mo_cua (theo thứ, mùa, nghỉ trưa)"]
+      E["uoc_thoi_gian_di (ma trận OSRM tính sẵn, max với ước tính đô thị)"]
+      G["Code xếp lịch: vét cạn có cắt nhánh, ưu tiên điểm ghim → nhiều điểm → ít đi"]
+      H{"kiem_lich_trinh: 0 vi phạm?"}
+      K["Báo lỗi, không trả lịch"]
+      R["LLM viết lý do chọn (câu có chữ số bị bỏ)"]
+      L["Code dựng output: lịch theo giờ + điểm bị bỏ + lý do + LICH_JSON"]
+      M["Trưởng nhóm duyệt / bỏ / ghim → tính và kiểm lại"]
       A --> B --> C
-      C -->|Thiếu hoặc ngoài phạm vi| Q
-      C -->|Hợp lệ| D --> E --> F --> G --> H --> I
-      I -->|Đạt| L --> M
-      I -->|Chưa đạt, còn lượt| J --> G
-      I -->|Không sửa được hoặc hết lượt| K
-      M -->|Sửa| A
+      C -->|Có| Q
+      C -->|Không| D --> E --> G --> H
+      H -->|Có vi phạm| K
+      H -->|Hợp lệ| R --> L --> M
+      M -->|Sửa| G
   ```
 
 - **Hình dạng:** [x] workflow cố định · [ ] một agent · [ ] nhiều agent.
-  Các bước tra dữ kiện → tính lịch → kiểm → sửa hữu hạn đã biết trước, cần dễ truy vết và kiểm chi phí. Một LLM là đủ để hiểu sở thích/chọn ID; không cần agent tự chọn công cụ hoặc nhiều agent phối hợp cho lát cắt này.
-- **AI dựa vào đâu** — hợp đồng công cụ dự kiến triển khai trong `codebase/tools.py`, mỗi hàm có `@tool` và docstring đủ input/output/tác động ngoài; hiện file vẫn là công cụ ví dụ:
+  Các bước tra dữ liệu → xếp → kiểm đã biết trước; một workflow rẻ hơn, dễ đo và dễ truy vết. Không cần agent tự chọn công cụ vì không có bước nào mà thứ tự phụ thuộc vào kết quả của model.
+- **AI dựa vào đâu** — bốn công cụ trong `codebase/tools.py`, đều chỉ đọc:
 
   | Công cụ | Input | Output | Tác động ra ngoài? |
   |---|---|---|---|
-  | `tra_dia_diem` | Thành phố/khu vực được hỗ trợ, sở thích, tên hoặc ID | POI có ID, tọa độ, hoạt động, thời lượng ước tính, nguồn và trường còn thiếu; tên mơ hồ trả ứng viên để chọn | Không, đọc dataset/snapshot cục bộ |
-  | `tra_gio_mo_cua` | ID địa điểm/hoạt động, ngày hoặc thứ, múi giờ | Các khoảng mở, ngày đóng, nghỉ trưa, suất, giờ nhận cuối nếu có; nguồn và trạng thái biết/thiếu/xung đột/cần ngày cụ thể | Không, đọc snapshot đã duyệt |
-  | `uoc_thoi_gian_di` | Tọa độ xuất phát/các điểm/kết thúc nếu có, phương tiện, phiên bản tuyến | Ma trận có hướng: phút, mét, nguồn/profile/thời điểm lấy; chặng thiếu trả null; phân biệt mock/cache thật/API | Chỉ đọc Routing API, gửi tọa độ và có thể tiêu quota/chi phí; không đặt chuyến hoặc gửi danh tính |
-  | `kiem_lich_trinh` | Yêu cầu, lịch/chặng/nghỉ đề xuất và phiên bản dữ liệu | Đạt/chưa đạt, vi phạm có mã, dữ kiện chưa biết và tổng thời gian; đối chiếu nguồn độc lập với model | Không, kiểm nội bộ; không chấm điểm/duyệt thay người dùng |
+  | `tra_dia_diem` | danh sách ID | tên, quận, loại, giá tối đa, có trong nội thành không; bỏ ID lạ | Không |
+  | `tra_gio_mo_cua` | ID, ngày đi | khung mở theo thứ (có mùa, nghỉ trưa); `[]` = đóng; `None` = chưa có dữ liệu | Không |
+  | `uoc_thoi_gian_di` | ID + toạ độ hai đầu, phương tiện | phút (ước tính) + nguồn (`osrm` / `duong_chim_bay`) | Không (ma trận tính sẵn, không gọi API lúc chạy) |
+  | `kiem_lich_trinh` | lịch (ID, giờ đến, giờ rời) + cấu hình | danh sách vi phạm: ngày đóng, ngoài giờ / nghỉ trưa, thiếu thời gian đi, chồng giờ, vượt khung | Không |
 
-- **Phân công AI và code:** LLM hiểu sở thích, đề xuất ID/ưu tiên và lý do, không tạo dữ kiện địa điểm/giờ/giá/tuyến. Code lấy dữ liệu, tính lịch theo cửa sổ giờ và kiểm độc lập. Tối đa 8 ứng viên dùng vét cạn tập con/thứ tự có cắt nhánh; trên 8 dùng chèn điểm và cải thiện cục bộ, không tuyên bố tối ưu toàn cục. Giới hạn 2 lượt gọi LLM và 2 lượt sửa lịch là ngân sách thiết kế *(tự ước tính)*. Thời lượng tham quan lấy từ dữ liệu biên tập hoặc người dùng chốt, không tự rút ngắn để ép đủ điểm.
+- **Phân công AI và code:** LLM chỉ (1) đọc yêu cầu → cấu hình + ID, hoặc chọn 20 thẻ từ danh sách đã lọc; (2) viết lý do chọn không chứa số. Code loại ID lạ, giữ cờ an toàn (đặt vé, bỏ luật, ngoài phạm vi) bằng luật cứng chồng lên model, xếp lịch, kiểm, và điền mọi giờ / giá / phút vào output.
 - **Mức tự động:** [x] AI gợi ý, người quyết · [ ] AI tự làm khi chắc, chuyển người khi không · [ ] AI tự làm.
-  Hệ thống tự tạo và kiểm lịch nháp trong ràng buộc đã đồng ý; người phụ trách duyệt trước khi dùng/chia sẻ. Lịch sai khiến cả nhóm mất thời gian thật, nên không tự đặt chỗ hay nới điều kiện để có lịch đẹp; sửa trước khi đi vẫn rẻ hơn sửa tại chỗ.
-- **Chỗ chặn rủi ro** (rủi ro lớn nhất: đến ngoài giờ mở cửa hoặc lịch không đủ thời gian di chuyển):
-  - Trước tính: kiểm ngày/thứ, ID, phạm vi, nguồn và tính đầy đủ; thiếu ngày/thứ hỏi lại, không trả lịch. Nếu chỉ có thứ mà cần mùa/lễ, hỏi ngày cụ thể. Thiếu xuất phát/khung giờ thì hỏi hoặc nêu mặc định rõ theo metric hiện có.
-  - Nguồn sự thật: dùng `data/hanoi_places.json`, bổ sung bản giờ chuẩn hóa đã duyệt; OSM hỗ trợ vị trí, Routing API cung cấp tuyến. Không xem nhãn `verified` của cả bản ghi là bằng chứng mọi trường; thiếu giờ/xung đột/không có tuyến thì tách khỏi lịch đã kiểm, không gán mở 24/7 hay 0 phút.
-  - Trước hiển thị: `kiem_lich_trinh` bắt buộc kiểm khoảng tham quan nằm trọn trong một khung mở, đúng ngày/hoạt động, không chồng giờ, có đủ chặng đầu và chặng về nếu yêu cầu, đủ điểm bắt buộc. Model và người dùng không được bỏ qua bước này.
-  - Sau kiểm: kết xuất JSON trong chuỗi `output` và bản tiếng Việt từ cùng dữ liệu đã kiểm, không để LLM viết lại số. Lịch một phần chỉ hợp lệ khi vẫn đủ điểm bắt buộc; liệt kê mọi điểm bị bỏ, lý do và cách điều chỉnh.
-  - Không có nghiệm: phân biệt không khả thi có căn cứ, thiếu dữ liệu và chưa tìm được trong giới hạn. Không nới ngày/giờ, bỏ điểm bắt buộc hoặc bịa thông tin để thay kết quả lỗi.
-- **Chỗ người duyệt** (việc AI không được tự làm): người dùng duyệt lịch nháp, điểm bị bỏ, giả định và điều kiện cần tự đặt/xác minh; xác nhận khi đổi ngày/giờ/phương tiện hoặc bỏ điểm bắt buộc. Thêm/bỏ/đổi thứ tự tạo phiên bản mới và phải kiểm lại. Người phụ trách dữ liệu duyệt giờ/giá/ngoại lệ mâu thuẫn; không tự gửi tin, đặt vé, đặt bàn hay thanh toán.
+  Hệ thống tự tạo lịch nháp đã kiểm; trưởng nhóm duyệt trước khi gửi nhóm. Lịch sai làm cả nhóm mất buổi đi, nên không tự nới ràng buộc hay đặt chỗ.
+- **Chỗ chặn rủi ro** (rủi ro lớn nhất: đến nơi đã đóng / ngoài giờ mở cửa):
+  - Trước xếp: thiếu ngày đi → hỏi lại, không trả lịch; ngoài phạm vi → từ chối; đòi bỏ giờ mở cửa / tự xưng admin → bỏ qua yêu cầu đó, vẫn kiểm.
+  - Trong xếp: chỉ đặt một điểm khi cả thời lượng nằm trọn trong một khung mở của đúng thứ ngày đi.
+  - Trước hiển thị: `kiem_lich_trinh` chạy trên mọi lịch; có vi phạm thì không trả lịch.
+  - Output: số do code điền; câu lý do của LLM có chữ số bị bỏ. Điểm chưa có dữ liệu giờ được gắn cảnh báo, không coi là đã kiểm.
+- **Chỗ người duyệt:** trưởng nhóm duyệt lịch, quyết bỏ / ghim điểm (tính và kiểm lại), tự đặt vé và tự gửi lịch. Hệ thống không có công cụ giao dịch hay gửi tin.
 - **Nguyên tắc thiết kế** (≥3, bắt buộc G10):
 
   | Nguyên tắc | Chỗ cụ thể trên sơ đồ / trong bản chạy thử |
   |---|---|
-  | G10 — thu hẹp phạm vi khi không chắc | Tại kiểm dữ liệu và nhánh lỗi: hỏi lại, giữ điểm thiếu căn cứ ngoài lịch đã kiểm, trả phần khả thi hoặc báo chưa thể xếp |
-  | Mọi dữ kiện phải truy được nguồn | Ba công cụ tra cứu trả nguồn/phiên bản; không dùng trí nhớ LLM làm giờ, giá hoặc thời gian di chuyển |
-  | Tính toán và ràng buộc bằng code | Solver và bộ kiểm độc lập; không chồng giờ, không nhẩm thời gian, kiểm lại sau mọi sửa |
-  | Người dùng giữ quyền quyết định | Nút duyệt lịch nháp và xác nhận đổi điều kiện; không có công cụ giao dịch/gửi tin |
-  | Phức tạp vừa đủ, giới hạn hữu hạn | Workflow cố định, không multi-agent, giới hạn LLM/sửa/tìm kiếm; ghi rõ khi chưa chứng minh tối ưu |
+  | G10 — thu hẹp phạm vi khi không chắc | Nhánh "Hỏi lại / từ chối": thiếu ngày đi thì hỏi, ngoài phạm vi thì chỉ nhận phần một ngày ở Hà Nội; điểm không xếp vừa được tách ra kèm lý do |
+  | G11 — giải thích vì sao | Mỗi điểm có lý do chọn; mỗi điểm bị bỏ có lý do (đóng thứ X / ngoài giờ mở / không đủ thời gian) và gợi ý nới |
+  | G2 — nói rõ làm tốt đến đâu | Thời gian đi gắn "ước tính"; điểm thiếu giờ gắn "chưa có dữ liệu giờ, kiểm lại trước khi đi" |
+  | G9 — dễ sửa | Trưởng nhóm bỏ / ghim điểm rồi tính lại; bản cũ hết hiệu lực |
 
-- **Phần nào còn giả / chưa triển khai:** hiện code vẫn là workflow ví dụ, `search_example` và model fake; bốn công cụ, solver, bộ kiểm và giao diện quẹt chưa được triển khai trong lần cập nhật tài liệu. CP2 dự kiến EN2 chạy luồng trên fixture giờ/ma trận mock có nhãn; token fake bằng 0, không tính là lượt AI thật. CP3 cần nối model thật lấy usage, dùng POI/giờ đã chuẩn hóa và tuyến từ API thật hoặc cache phản hồi thật có nguồn; kiểm lịch chạy bằng code. File JSON hiện có là dữ liệu đã biên tập, chưa đồng nghĩa mọi trường đã được xác minh.
-- **Điểm cần đối soát trước khi công bố kết quả:** B05/Hoàng thành thứ Hai, B08/Mỹ thuật thứ Hai, B12/giờ Một Cột đang khác hoặc thiếu chứng cứ so với dataset; Văn Miếu ngày và tour đêm là hoạt động riêng. Không sửa metric/expected hoặc dữ liệu để khớp output trong nhiệm vụ này; ghi rõ ảnh hưởng và chuyển người phụ trách đối soát. Giữ nguyên chuẩn đạt tại §7 do nhóm cập nhật trên `main`; bằng chứng chi tiết còn cần đồng bộ, không tự xác nhận đạt CP2.
-- **Tài liệu chi tiết:** [PRD](docs/PRD.md) quy định hành trình/yêu cầu/tiêu chí chấp nhận; [Architecture](docs/ARCHITECTURE.md) quy định schema, hợp đồng, thuật toán, lỗi, module và phân biệt mock/thật. Giữ hợp đồng BTC `answer(text) -> {"output": str}`, `call_model`, các decorator và toàn bộ file khung.
+- **Phần nào còn giả:** chạy với `MODEL_PROVIDER=fake` thì bước LLM dùng luật đọc văn bản và lý do lấy từ câu mô tả trong dữ liệu (token 0, không tính lượt). Thời gian đi là ước tính (OSRM công cộng không tính kẹt xe, nên lấy max với tốc độ đô thị ~20 km/h × 1,3). Giao diện web nhóm / quẹt đang build (ticket 05–08), chưa có trong bản chạy thử CP2.
+- **Tài liệu chi tiết:** [PRD](docs/PRD.md) · [Architecture](docs/ARCHITECTURE.md).
 
 ## §5. Chỗ khó — 4 lớp + ≥6 kịch bản + 2 tấn công *(guide 2.3)*
 

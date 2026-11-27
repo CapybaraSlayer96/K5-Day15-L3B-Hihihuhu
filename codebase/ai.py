@@ -49,8 +49,38 @@ def call_model(system: str, user: str) -> dict:
         last = (user.strip().splitlines() or [""])[-1]
         return {"text": "[câu trả lời giả — chưa nối model] " + last[:60], "model": "fake", "tokens_in": 0, "tokens_out": 0}
 
-    # NHÓM VIẾT: gọi model thật ở đây (theo MODEL_PROVIDER, MODEL_NAME, API_KEY) rồi trả đúng 4 khoá.
-    # Ví dụ chép được cho từng nhà cung cấp: docs/connect-model.md mục 2.
-    raise NotImplementedError(
-        "chưa viết phần gọi model thật cho MODEL_PROVIDER=%s trong codebase/ai.py — xem docs/connect-model.md"
-        % MODEL_PROVIDER)
+    if MODEL_PROVIDER == "gemini":
+        name = MODEL_NAME or "gemini-2.5-flash"
+        r = _post("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent" % name,
+                  {"x-goog-api-key": API_KEY},
+                  {"systemInstruction": {"parts": [{"text": system or " "}]},
+                   "contents": [{"role": "user", "parts": [{"text": user or " "}]}],
+                   "generationConfig": {"temperature": 0}})
+        u = r.get("usageMetadata", {})
+        text = "".join(p.get("text", "") for c in r.get("candidates", [])[:1] for p in c.get("content", {}).get("parts", []))
+        return {"text": text, "model": name, "tokens_in": u.get("promptTokenCount", 0),
+                "tokens_out": u.get("candidatesTokenCount", 0) + u.get("thoughtsTokenCount", 0)}
+    if MODEL_PROVIDER == "anthropic":
+        name = MODEL_NAME or "claude-haiku-5-5"
+        r = _post("https://api.anthropic.com/v1/messages", {"x-api-key": API_KEY, "anthropic-version": "2023-06-01"},
+                  {"model": name, "max_tokens": 1024, "temperature": 0, "system": system or " ",
+                   "messages": [{"role": "user", "content": user or " "}]})
+        u = r.get("usage", {})
+        text = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
+        return {"text": text, "model": r.get("model", name), "tokens_in": u.get("input_tokens", 0),
+                "tokens_out": u.get("output_tokens", 0)}
+    raise NotImplementedError("MODEL_PROVIDER=%s chưa hỗ trợ (dùng gemini | anthropic | fake)" % MODEL_PROVIDER)
+
+
+def _post(url, headers, body):
+    """POST JSON, trả JSON. Lỗi HTTP bay ra kèm nội dung để khung ghi vào cột error."""
+    import json
+    import urllib.error
+    import urllib.request
+    req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
+                                 headers={"content-type": "application/json", **headers})
+    try:
+        with urllib.request.urlopen(req, timeout=60) as f:
+            return json.load(f)
+    except urllib.error.HTTPError as e:
+        raise RuntimeError("HTTP %s: %s" % (e.code, e.read().decode("utf-8", "replace")[:300])) from None

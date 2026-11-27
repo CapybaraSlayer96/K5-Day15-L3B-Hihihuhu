@@ -1140,13 +1140,9 @@
     ],
     "ideal_season": "Tháng 10 - Tháng 4",
     "estimated_duration_mins": 120,
-    "opening_hours": "08:00 - 17:00 (Thứ 3 - Chủ Nhật)",
-    "closed_days": [
-      "Thứ 2"
-    ],
-    "closed_weekdays": [
-      0
-    ],
+    "opening_hours": "08:00 - 17:00 hàng ngày",
+    "closed_days": [],
+    "closed_weekdays": [],
     "price_range": "100.000 VNĐ (người lớn) / 50.000 VNĐ (sinh viên)",
     "price_min_vnd": 50000,
     "price_max_vnd": 100000,
@@ -1503,7 +1499,7 @@
     ],
     "ideal_season": "Quanh năm",
     "estimated_duration_mins": 40,
-    "opening_hours": "07:00 - 18:00 hàng ngày",
+    "opening_hours": "",
     "closed_days": [],
     "closed_weekdays": [],
     "price_range": "Miễn phí",
@@ -1575,7 +1571,7 @@
       "youtube_search": "https://www.youtube.com/results?search_query=review%20Ch%C3%B9a%20M%E1%BB%99t%20C%E1%BB%99t%20H%C3%A0%20N%E1%BB%99i"
     },
     "verification": {
-      "status": "verified_hanoi_curated",
+      "status": "no_official_hours",
       "source": "hanoi_core_curated",
       "official_source": "",
       "wikipedia_title": "Chùa Một Cột",
@@ -5514,9 +5510,13 @@
     ],
     "ideal_season": "Quanh năm",
     "estimated_duration_mins": 90,
-    "opening_hours": "08:30 - 17:00 hàng ngày (kể cả Thứ 2)",
-    "closed_days": [],
-    "closed_weekdays": [],
+    "opening_hours": "08:30 - 17:00 (Thứ 3 - Chủ Nhật)",
+    "closed_days": [
+      "Thứ 2"
+    ],
+    "closed_weekdays": [
+      0
+    ],
     "price_range": "40.000 VNĐ (người lớn) / 20.000 VNĐ (sinh viên)",
     "price_min_vnd": 20000,
     "price_max_vnd": 40000,
@@ -14204,5 +14204,84 @@
       "has_street_address": true
     },
     "search_text": "Sầu Phố | food_drink | Hoàn Kiếm (ho_guom_pho_co) | Giá: 35.000 - 75.000 VNĐ (budget) | Khung giờ: lunch, afternoon (11:30 - 14:00) | Đóng cửa: mở hàng ngày | Chế độ ăn: vegetarian_friendly | Gửi xe: street_or_nearby_lot | Thời tiết: cool_autumn_ideal, cold_winter_ok | Không gian: both | Vibe: local_authentic | Điểm nổi bật: local_specialty | Từ khóa: sầu phố, ăn, hoàn kiếm, bản địa, hà nội | Trải nghiệm Sầu Phố — địa chỉ bản địa được kiểm chứng đầy đủ giờ mở cửa & mức giá thực tế tại Hoàn Kiếm."
+  },
+  {
+    "id": "hn_76",
+    "name": "Bảo tàng Hồ Chí Minh",
+    "province": "Hà Nội",
+    "old_province": "Hà Nội",
+    "district": "Ba Đình",
+    "cluster": "lang_bac_ba_dinh",
+    "address": "19 Ngọc Hà, Đội Cấn, Ba Đình, Hà Nội",
+    "region": "Đồng bằng sông Hồng",
+    "category": "culture",
+    "card_hook": "Bảo tàng lớn nhất về cuộc đời Chủ tịch Hồ Chí Minh, cạnh Lăng Bác",
+    "swipe_tags": [
+      "Ba Đình",
+      "Bảo tàng",
+      "Đi buổi sáng"
+    ],
+    "description": "Bảo tàng trưng bày về cuộc đời và sự nghiệp Chủ tịch Hồ Chí Minh, nằm trong khu di tích Ba Đình.",
+    "rating": null,
+    "keywords": [
+      "bảo tàng hồ chí minh",
+      "bảo tàng bác"
+    ],
+    "image_url": "",
+    "why_visit": "Đi cùng Lăng Bác và Chùa Một Cột trong một buổi.",
+    "what_to_do": [],
+    "best_time_of_day": "08:30 - 11:00",
+    "time_slots": [
+      "morning"
+    ],
+    "ideal_season": "Quanh năm",
+    "estimated_duration_mins": 60,
+    "opening_hours": "08:00 - 12:00, 14:00 - 16:30 (đóng Thứ 2 và Thứ 6)",
+    "closed_days": [
+      "Thứ 2",
+      "Thứ 6"
+    ],
+    "closed_weekdays": [
+      0,
+      4
+    ],
+    "price_range": "Chưa có giá hiện hành từ nguồn chính thức",
+    "price_min_vnd": 0,
+    "price_max_vnd": 0,
+    "dietary": [],
+    "parking": {
+      "type": "on_site",
+      "note": "Có bãi gửi xe chuyên dụng tại khu vực cổng/tòa nhà."
+    },
+    "weather_suitability": {
+      "good_for": [
+        "rainy_ok",
+        "hot_summer_ok",
+        "cool_autumn_ideal",
+        "cold_winter_ok"
+      ],
+      "avoid": []
+    },
+    "tips": "",
+    "review_summary": "",
+    "about": "",
+    "lat": 21.0355,
+    "lng": 105.833,
+    "nearby_ids": [
+      "hn_04",
+      "hn_13"
+    ],
+    "google_maps_url": "",
+    "google_maps_pin_url": "",
+    "video_links": "",
+    "verification": {
+      "status": "verified_official_hours",
+      "source": "team_added",
+      "official_source": "https://baotanghochiminh.vn/gio-mo-cua.htm",
+      "wikipedia_title": "Bảo tàng Hồ Chí Minh",
+      "osm_url": "",
+      "has_street_address": true
+    },
+    "search_text": "bảo tàng hồ chí minh ba đình"
   }
 ]

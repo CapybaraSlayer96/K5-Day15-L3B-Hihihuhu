@@ -22,11 +22,11 @@
 
 | # | Việc | File | Hạn | Người nhận | Trạng thái |
 |---|---|---|---|---|---|
-| EN1 | Sơ đồ kiến trúc, bảng công cụ, mức tự động, chỗ chặn rủi ro, chỗ người duyệt | `spec.md` §4 | 18:30 | Bảo | xong |
-| EN2 | Công cụ trả dữ liệu giả (`tra_dia_diem`, `tra_gio_mo_cua`, `uoc_thoi_gian_di`, `kiem_lich_trinh`) + luồng chính chạy hết với AI giả | `codebase/tools.py`, `codebase/agent.py` | 19:15 | Bảo | đang làm |
-| EN3 | Lấy API key, nối model, gọi thử được 1 câu (`python run.py eval --try`) | `.env` (không commit), `codebase/ai.py` | trước khi rời lớp | Bảo | đang làm |
+| EN1 | Sơ đồ kiến trúc, bảng công cụ, mức tự động, chỗ chặn rủi ro, chỗ người duyệt | `spec.md` §4 | 18:30 | Bảo | xong: spec §4 đồng bộ code |
+| EN2 | Công cụ trả dữ liệu giả (`tra_dia_diem`, `tra_gio_mo_cua`, `uoc_thoi_gian_di`, `kiem_lich_trinh`) + luồng chính chạy hết với AI giả | `codebase/tools.py`, `codebase/agent.py` | 19:15 | Bảo | xong: 4 công cụ + luồng chính, 16 câu chạy hết với AI giả |
+| EN3 | Lấy API key, nối model, gọi thử được 1 câu (`python run.py eval --try`) | `.env` (không commit), `codebase/ai.py` | trước khi rời lớp | Bảo | code Gemini xong; chờ API key để chạy eval --try |
 | EN4 | Dựng dữ liệu Hà Nội ~20–30 địa điểm (giờ mở cửa, ngày đóng cửa, toạ độ) từ kết quả BA3 | `data/` | 18:45 | Hải | xong |
-| EN5 | Chạy `python run.py check` và `python run.py` sạch trước khi nộp | — | 19:15 | Bảo | chưa |
+| EN5 | Chạy `python run.py check` và `python run.py` sạch trước khi nộp | — | 19:15 | Bảo | xong: check + run sạch, tests/test_core.py ok |
 
 ## Phụ thuộc
 
