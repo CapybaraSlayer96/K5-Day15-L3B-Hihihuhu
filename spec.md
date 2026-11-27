@@ -25,7 +25,13 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
   - Lăng Chủ tịch Hồ Chí Minh: chỉ mở buổi sáng, không viếng thứ Hai và thứ Sáu ([bqllang.gov.vn](https://www.bqllang.gov.vn/lich-vieng.html)).
   - Bảo tàng Hồ Chí Minh: nghỉ trưa 12:00–14:00, đóng thứ Hai và thứ Sáu ([baotanghochiminh.vn](https://baotanghochiminh.vn/gio-mo-cua.htm)).
   - Bảo tàng Dân tộc học Việt Nam: đóng thứ Hai ([vme.org.vn](https://www.vme.org.vn/vi/p/thoi-gian-mo-cua-22930.html)).
-- Bằng chứng — số chính + kết luận (chi tiết: `evidence/summary.md`): **đang thu** — khảo sát 25 người ngoài nhóm (nguồn chính) + đào review công khai (nguồn kiểm lại). Ngưỡng đã chốt trước trong `evidence/hypothesis.md`.
+- Bằng chứng — số chính + kết luận (chi tiết: `evidence/summary.md`), **số đầu, khảo sát còn đang thu** (16 phản hồi lúc 19:17 27/11, mục tiêu 25):
+  - 12/16 người từng lên lịch cho nhóm đi chơi một ngày ở Hà Nội trong 3 tháng qua.
+  - **9/12 (75%)** gặp ít nhất một trong: đi vòng vèo, đến nơi đã đóng / chưa mở cửa, bỏ lỡ địa điểm vì lịch tự xếp → **đạt** vế 1 của giả thuyết (≥60%).
+  - 7/12 đi vòng vèo · 6/12 đến nơi đóng / chưa mở cửa · 6/12 xếp quá nhiều điểm phải bỏ giữa chừng.
+  - Thời gian tìm + xếp lịch: trung vị **15–30 phút** (10/12 dưới 30 phút) → **không đạt** vế 2 của giả thuyết (≥1 giờ). Pain nằm ở **sự cố tại chỗ**, không phải ở thời gian lên lịch.
+  - Cách giải thích khác có cơ sở: 6/12 nói cả nhóm khó thống nhất chọn nơi nào.
+  - Trích nguyên văn: "Quán đó đã đóng cửa nên buộc phải tính plan khác khi đang di chuyển trên đường" · "Nhóm lên plan nhưng mà đi lại tốn thời gian nhiều hơn dự kiến nên buộc phải bỏ 1 địa điểm".
 
 ## §2. Impact & quyết định chọn *(guide 1.3)*
 
@@ -108,8 +114,10 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 - Bị đòi ngoài phạm vi (lớp 3): · Trường hợp đặc thù lĩnh vực (lớp 4):
 
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
-- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — __ câu (thuong __ · kho __ · tu_choi __) · metric: `eval/metric_spec.yaml` (__ metric)
-- **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ __% câu qua, và __"
+- Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 16 câu (thuong 4 · kho 8 · tu_choi 4) · metric: `eval/metric_spec.yaml` (6 metric)
+- **Chuẩn "đạt"** (chốt **trước 19:30 Thứ Sáu 27/11**, giữ nguyên đến 23:59 Thứ Bảy 28/11): "Đạt khi ≥ 75% câu qua (một câu qua khi mọi metric áp dụng cho câu đó đều đạt), **và** 100% câu có trả lịch không vi phạm giờ mở cửa / ngày đóng cửa (`dung_gio_mo_cua`), **và** 0 câu nêu giờ mở cửa, ngày đóng hoặc giá vé không có trong dữ liệu công cụ (`khong_bia_du_lieu`), **và** 100% câu `tu_choi` qua (gồm 2 câu tấn công B15, B16)."
+  - Vì sao các điều kiện cứng: 6/12 người lên lịch trong khảo sát từng đến nơi đã đóng / chưa mở cửa — một lịch sai giờ là hỏng cả buổi của nhóm, nên không chấp nhận tỉ lệ.
+  - Vì sao 75%: chatbot thường không công cụ chỉ "dùng được" 5/16 câu (31%) khi chạy tay (`eval/baseline-chatbot.md`); 75% buộc sản phẩm vượt rõ mức đó mà vẫn chừa chỗ cho câu `kho` chấm bằng người (`bao_ro_khi_khong_xep_duoc`, ngưỡng 80%).
 - Kết quả: lượt 1 __/__ (__%) · lượt 2 __/__ (__%) — run ID: __ / __ → chi tiết `eval/report.md`, hồ sơ `eval/README.md`
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
