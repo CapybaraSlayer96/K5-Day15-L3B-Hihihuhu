@@ -4,7 +4,7 @@
 
 ---
 
-## Dataset 1 · `data/hanoi_places.json` (Bộ POI Hà Nội chi tiết — dữ liệu chạy thử chính)
+## Dataset · `data/hanoi_places.json` (Bộ POI Hà Nội chi tiết — dữ liệu chạy thử chính)
 
 | | |
 |---|---|
@@ -22,34 +22,3 @@
 - **Mở hàng ngày (kể cả Thứ 2):** Văn Miếu (`vanmieu.gov.vn`), Nhà tù Hỏa Lò (`hoalo.vn`), Bảo tàng Mỹ thuật VN (`vnfam.vn`), Bảo tàng Phụ nữ VN (`baotangphunu.org.vn`), Nhà hát Múa rối Thăng Long (`thanglongwaterpuppet.com`).
 - **Chỉ mở cuối tuần / tối định kỳ:** Phố đi bộ Hồ Gươm & Chợ Đêm Phố Cổ (`T6–CN`, `hanoi.gov.vn`), Tour Đêm Hỏa Lò (`T6–CN`, `hoalo.vn`), Tour Đêm Hoàng Thành (`T7–CN`, `hoangthanhthanglong.vn`), Tour Đêm Văn Miếu 3D Mapping (`T4, T7, CN`, `vanmieu.gov.vn`).
 
----
-
-## Dataset 2 · `data/friend_hanoi_raw.csv` (Danh sách quán ăn & cà phê Hà Nội từ thành viên nhóm)
-
-| | |
-|---|---|
-| **Dùng để làm gì** | Nguồn bổ sung các quán ăn, cà phê, bar bản địa thực tế (được giới trẻ Hà Nội đánh giá) để hợp nhất vào `data/hanoi_places.json` |
-| **Từ đâu** | Bảng tính tổng hợp cá nhân của thành viên nhóm (trích lọc từ file `.xlsx`, không chứa dữ liệu cá nhân người dùng) |
-| **Xử lý những bước gì** | Chuẩn hóa địa chỉ & tên thương hiệu · loại 21 dòng thiếu giờ mở cửa/giá/ngoài Hà Nội (Nam Định, Hưng Yên)/lỗi giờ Excel `1899`/trùng lặp/nghi đóng cửa · đối chiếu tọa độ qua Photon API (script: `build_hanoi_dataset.py`) |
-| **Số dòng / số đoạn** | **64 dòng đầu vào** -> giữ **43 dòng đạt chuẩn** (loại 21 dòng) |
-| **Phiên bản / ngày lấy** | `v1.0` · `2026-11-27` |
-| **Nhãn** | **Thật** (địa chỉ, khung giờ, khoảng giá do người đi thực tế ghi nhận) |
-| **Giới hạn** | Thiếu trường `closed_days` chính thức và một số quán trong ngõ nhỏ không có đánh giá chuẩn hóa từ nguồn chính thống; chưa kiểm chứng lại trực tiếp tại quán với toàn bộ 43 dòng (chỉ xác thực tồn tại địa chỉ/phố qua Photon). |
-
----
-
-## Dataset 3 · `data/enriched_places.json` (Bộ POI mở rộng 11 tỉnh/thành — phục vụ mở rộng toàn quốc)
-
-| | |
-|---|---|
-| **Dùng để làm gì** | Dữ liệu mở rộng toàn quốc (11 tỉnh trọng điểm: Hà Nội, Lâm Đồng, Ninh Bình, TP. HCM, Cần Thơ, Phú Thọ, Vĩnh Long, Khánh Hòa, Đà Nẵng, Lào Cai, An Giang) để kiểm thử khả năng scale đa tỉnh |
-| **Từ đâu** | File gốc `places.csv` (315 dòng, 34 tỉnh) + làm giàu nội dung & sinh Micro-POIs bằng **Gemini API (`gemini-3.5-flash-lite`)** + xác thực tọa độ qua **Photon Geocoding API** |
-| **Xử lý những bước gì** | Gom batch theo tỉnh (≤ 5 RPM, lưu checkpoint `data/checkpoint.json`) · phân loại `category` · đối chiếu tọa độ Photon & lọc bán kính ≤ 150 km quanh tâm tỉnh · loại 23 Micro-POIs không xác thực được trên OSM · sửa 8 tọa độ Bước A lệch tỉnh (`--fix-outliers`) · kiểm định tự động ra `data/audit_report.json` (script: `build_dataset.py`) |
-| **Số dòng / số đoạn** | **178 POI** (`135` gốc từ `places.csv` + `43` Micro-POIs xác thực qua Photon; loại `23` Micro-POIs ảo) |
-| **Phiên bản / ngày lấy** | `v1.0` · `2026-11-27` |
-| **Nhãn** | **Thật** (135 địa danh gốc + tọa độ Photon) · **`synthetic`** (trường `why_visit`, `what_to_do`, `best_time_of_day`, `ideal_season` và 43 Micro-POIs sinh bởi LLM) |
-| **Giới hạn** | Mới chạy 11/34 tỉnh (`--all` để mở rộng đủ 34 tỉnh); gói miễn phí không mở Google Search Grounding nên phần Micro-POIs chưa có link review trích dẫn tự động; 9/178 điểm Bước A dùng tọa độ ước lượng do Photon không khớp. |
-
-**Data `synthetic` (nhóm tự sinh):**
-- **Cách sinh:** Script `build_dataset.py` (prompt chuẩn hóa JSON theo từng tỉnh, model `gemini-3.5-flash-lite`, `temperature=0.3`, không dùng seed cố định).
-- **Kiểm chứng:** Kiểm tự động 100% qua `audit_dataset()` (`data/audit_report.json`: `PASS`, `0` lỗi, `1` cảnh báo hợp lệ là Côn Đảo xa bờ 234 km); kiểm tay mẫu Hà Nội (11/11 dòng) và phát hiện 1 điểm lệch tọa độ (`Xôi Cầu Gỗ`) nên đã tách riêng bộ Hà Nội chuẩn hóa thủ công (`Dataset 1`). Data tự sinh **không dùng làm bằng chứng pain của người dùng**.
