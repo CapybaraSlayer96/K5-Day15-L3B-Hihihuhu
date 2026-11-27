@@ -40,6 +40,8 @@ Khung chỉ dùng thư viện chuẩn của Python. Thêm thư viện thì ghi v
 
 ## Quy ước của nhóm
 
+- **Đặt tên file, folder, biến, branch, commit: đọc và làm theo [CONVENTIONS.md](CONVENTIONS.md).**
+
 - Ngôn ngữ trả lời người dùng: __
 - Phong cách code / đặt tên: __
 - Ai duyệt thay đổi do agent tạo trước khi commit: __

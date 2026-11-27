@@ -4,16 +4,17 @@
 > Giữ nguyên tên file `TEAMS.md` ở thư mục gốc repo, giữ nguyên các dòng `- Tên nhóm:` … và tiêu đề cột của bảng. Chỉ thay chỗ `____`.
 > Kiểm bằng `python run.py check`: phần "Kiểm TEAMS.md" không báo gì là đúng format.
 
-- Tên nhóm: ____
-- Lớp: ____
+- Tên nhóm: Hihihuhu
+- Lớp: L3B
 - Track: ____
-- Link repo: ____
+- Link repo: https://github.com/CapybaraSlayer96/K5-Day15-L3B-Hihihuhu
 
 | STT | Họ và tên | Mã học viên | Vai trò | Phần việc chính |
 |---|---|---|---|---|
-| 1 | ____ | ____ | Đội trưởng | ____ |
-| 2 | ____ | ____ | Thành viên | ____ |
-| 3 | ____ | ____ | Thành viên | ____ |
+| 1 | Đoàn Xuân Duy Bảo | 2A202603858 | Đội trưởng | ____ |
+| 2 | Nguyễn Đình Minh | 2A202603867 | Thành viên | ____ |
+| 3 | Nguyễn Đình Vũ Hải | 2A202603820 | Thành viên | ____ |
+| 4 | Vũ Tiến Hùng | 2A202603882 | Thành viên | ____ |
 
 **Quy tắc điền**
 - **Lớp:** `L3A` hoặc `L3B`. **Track:** một chữ `A` (EdTech), `B` (Y tế), `C` (Du lịch), `D` (Thương mại điện tử), `E` (Tài chính) hoặc `F` (Làn khác). **Link repo:** link GitHub công khai của nhóm.
