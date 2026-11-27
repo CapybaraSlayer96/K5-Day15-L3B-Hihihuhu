@@ -41,6 +41,13 @@ load_env()
 MODEL_PROVIDER = (os.environ.get("MODEL_PROVIDER") or "fake").strip().lower()
 MODEL_NAME = (os.environ.get("MODEL_NAME") or "").strip()
 API_KEY = (os.environ.get("API_KEY") or "").strip()
+BASE_URL = (os.environ.get("BASE_URL") or "").strip().rstrip("/")
+DEFAULT_BASE = {"gemini": "https://generativelanguage.googleapis.com/v1beta", "anthropic": "https://api.anthropic.com/v1",
+                "openai": "https://api.openai.com/v1"}
+_VERSION = {"gemini": "/v1beta", "anthropic": "/v1", "openai": "/v1"}
+BASE = BASE_URL or DEFAULT_BASE.get(MODEL_PROVIDER, "")
+if BASE_URL and not BASE.endswith(_VERSION.get(MODEL_PROVIDER, "")):  # BASE_URL chỉ có tên miền → thêm phiên bản API
+    BASE += _VERSION.get(MODEL_PROVIDER, "")
 
 
 @model_call
@@ -51,7 +58,7 @@ def call_model(system: str, user: str) -> dict:
 
     if MODEL_PROVIDER == "gemini":
         name = MODEL_NAME or "gemini-2.5-flash"
-        r = _post("https://generativelanguage.googleapis.com/v1beta/models/%s:generateContent" % name,
+        r = _post("%s/models/%s:generateContent" % (BASE, name),
                   {"x-goog-api-key": API_KEY},
                   {"systemInstruction": {"parts": [{"text": system or " "}]},
                    "contents": [{"role": "user", "parts": [{"text": user or " "}]}],
@@ -62,14 +69,22 @@ def call_model(system: str, user: str) -> dict:
                 "tokens_out": u.get("candidatesTokenCount", 0) + u.get("thoughtsTokenCount", 0)}
     if MODEL_PROVIDER == "anthropic":
         name = MODEL_NAME or "claude-haiku-5-5"
-        r = _post("https://api.anthropic.com/v1/messages", {"x-api-key": API_KEY, "anthropic-version": "2023-06-01"},
+        r = _post(BASE + "/messages",{"x-api-key": API_KEY, "anthropic-version": "2023-06-01"},
                   {"model": name, "max_tokens": 1024, "temperature": 0, "system": system or " ",
                    "messages": [{"role": "user", "content": user or " "}]})
         u = r.get("usage", {})
         text = "".join(b.get("text", "") for b in r.get("content", []) if b.get("type") == "text")
         return {"text": text, "model": r.get("model", name), "tokens_in": u.get("input_tokens", 0),
                 "tokens_out": u.get("output_tokens", 0)}
-    raise NotImplementedError("MODEL_PROVIDER=%s chưa hỗ trợ (dùng gemini | anthropic | fake)" % MODEL_PROVIDER)
+    if MODEL_PROVIDER == "openai":  # mọi endpoint tương thích OpenAI (proxy, OpenRouter, Ollama…) qua BASE_URL
+        name = MODEL_NAME or "gpt-4o-mini"
+        r = _post(BASE + "/chat/completions", {"authorization": "Bearer " + API_KEY},
+                  {"model": name, "temperature": 0,
+                   "messages": [{"role": "system", "content": system or " "}, {"role": "user", "content": user or " "}]})
+        u = r.get("usage", {})
+        return {"text": r["choices"][0]["message"].get("content") or "", "model": r.get("model", name),
+                "tokens_in": u.get("prompt_tokens", 0), "tokens_out": u.get("completion_tokens", 0)}
+    raise NotImplementedError("MODEL_PROVIDER=%s chưa hỗ trợ (dùng gemini | anthropic | openai | fake)" % MODEL_PROVIDER)
 
 
 def _post(url, headers, body):
@@ -79,8 +94,13 @@ def _post(url, headers, body):
     import urllib.request
     req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
                                  headers={"content-type": "application/json", **headers})
-    try:
-        with urllib.request.urlopen(req, timeout=60) as f:
-            return json.load(f)
-    except urllib.error.HTTPError as e:
-        raise RuntimeError("HTTP %s: %s" % (e.code, e.read().decode("utf-8", "replace")[:300])) from None
+    import time
+    for attempt in range(4):  # 429 / 5xx: chờ tăng dần rồi thử lại
+        try:
+            with urllib.request.urlopen(req, timeout=180) as f:
+                return json.load(f)
+        except urllib.error.HTTPError as e:
+            if e.code in (429, 500, 502, 503) and attempt < 3:
+                time.sleep(int(e.headers.get("retry-after") or 0) or 5 * 2 ** attempt)
+                continue
+            raise RuntimeError("HTTP %s: %s" % (e.code, e.read().decode("utf-8", "replace")[:300])) from None
