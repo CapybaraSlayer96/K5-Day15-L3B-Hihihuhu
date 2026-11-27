@@ -25,24 +25,30 @@ Data BTC cấp đã dùng: không (track C không có data BTC).
   - Lăng Chủ tịch Hồ Chí Minh: chỉ mở buổi sáng, không viếng thứ Hai và thứ Sáu ([bqllang.gov.vn](https://www.bqllang.gov.vn/lich-vieng.html)).
   - Bảo tàng Hồ Chí Minh: nghỉ trưa 12:00–14:00, đóng thứ Hai và thứ Sáu ([baotanghochiminh.vn](https://baotanghochiminh.vn/gio-mo-cua.htm)).
   - Bảo tàng Dân tộc học Việt Nam: đóng thứ Hai ([vme.org.vn](https://www.vme.org.vn/vi/p/thoi-gian-mo-cua-22930.html)).
-- Bằng chứng — số chính + kết luận (chi tiết: `evidence/summary.md`): **đang thu** — khảo sát 25 người ngoài nhóm (nguồn chính) + đào review công khai (nguồn kiểm lại). Ngưỡng đã chốt trước trong `evidence/hypothesis.md`.
+- Bằng chứng — số chính + kết luận (chi tiết: `evidence/summary.md`, đếm lại: `python evidence/survey/count.py`): khảo sát online 38 phiếu hợp lệ, **31 người từng lên lịch cho nhóm** trong 3 tháng qua (mẫu số).
+  - **23/31 (74%)** gặp đi vòng / đến nơi đã đóng hoặc chưa mở / bỏ lỡ địa điểm vì lịch tự xếp → giả thuyết vế 1 (≥ 60%) **đúng**.
+  - **18/31 (58%)** đến nơi đã đóng / chưa mở cửa; 14/31 (45%) đi vòng; 14/31 (45%) phải bỏ điểm giữa chừng; 14/31 (45%) cả nhóm khó thống nhất.
+  - Thời gian lên lịch trung vị 15–30 phút (8/31 ≥ 1 giờ) → giả thuyết vế 2 (≥ 1 giờ) **sai**: pain là lịch **hỏng tại chỗ**, không phải thời gian ngồi lên lịch.
+  - Trích: "Quán đó đã đóng cửa nên buộc phải tính plan khác khi đang di chuyển trên đường" (phiếu S15) · "đi lại tốn thời gian nhiều hơn dự kiến nên buộc phải bỏ 1 địa điểm" (phiếu S10).
 
 ## §2. Impact & quyết định chọn *(guide 1.3)*
 
-Ô `__` điền sau khảo sát. Ô ghi *(tự ước tính)* là đoán của nhóm, chưa có nguồn.
+Số có nguồn lấy từ khảo sát (`evidence/summary.md`, mẫu số 31 người lên lịch). Ô ghi *(tự ước tính)* là đoán của nhóm, chưa có nguồn.
 
 | Hướng | Bao nhiêu người gặp | Bao nhiêu lần / tháng | Mỗi lần tốn gì | Impact / tháng | Làm kịp không | Chọn? |
 |---|---|---|---|---|---|---|
-| A. Chọn + sắp lịch một ngày cho nhóm bạn, đúng giờ mở cửa, ít đi vòng | __ (khảo sát: % từng lên lịch cho nhóm) | __ (khảo sát: số lần đi chơi nhóm / tháng) | __ phút tìm + xếp (khảo sát) · thời gian đi vòng, điểm bị lỡ | __ | Kịp: giờ mở cửa công khai, ràng buộc kiểm được bằng code | **Chọn** |
-| B. Chia và theo dõi chi phí chung của nhóm | __ | __ | tính tay, tranh cãi *(tự ước tính)* | __ | Kịp, nhưng đã có nhiều app chia tiền | Loại |
-| C. Gợi ý quán ăn hợp khẩu vị cả nhóm | __ | __ | thời gian chọn quán *(tự ước tính)* | __ | Khó đo "đúng": khẩu vị chủ quan, khó chấm bằng code | Loại |
+| A. Chọn + sắp lịch một ngày cho nhóm bạn, đúng giờ mở cửa, ít đi vòng | 23/31 (74%) người lên lịch gặp sự cố do lịch tự xếp | 0,61 lần lên lịch / người / tháng (khảo sát: 56,5 lần / 31 người / 3 tháng) | ~22 phút lên lịch (trung vị 15–30 phút) + ~30 phút mất khi gặp sự cố *(tự ước tính)* | ~20 phút / người lên lịch (công thức dưới) | Kịp: giờ mở cửa công khai, ràng buộc kiểm được bằng code | **Chọn** |
+| B. Chia và theo dõi chi phí chung của nhóm | không hỏi trong khảo sát | — | tính tay, tranh cãi *(tự ước tính)* | không đo được | Kịp, nhưng đã có nhiều app chia tiền | Loại |
+| C. Gợi ý quán ăn hợp khẩu vị cả nhóm | 14/31 (45%) cả nhóm khó thống nhất chọn nơi (gồm cả quán) | như A | thời gian chọn quán *(tự ước tính)* | không tách được khỏi A | Khó đo "đúng": khẩu vị chủ quan, khó chấm bằng code | Loại (gộp vào A qua bước quẹt chọn chung) |
 
-- **Impact / tháng** của hướng chọn = __ người lên lịch × __ lần / tháng × __ phút tiết kiệm mỗi lần = __ phút — thừa số 2–3 lấy từ khảo sát 25 người; thừa số 1 (quy mô người dùng): __ (chưa có nguồn).
+- **Impact / tháng** của hướng chọn, tính trên 1.000 người lên lịch *(quy mô tự ước tính, chưa có nguồn)*:
+  1.000 người × 0,61 lần / tháng × (0,74 × 30 phút sự cố tránh được *(tự ước tính)* + 0,5 × 22 phút lên lịch tiết kiệm *(tự ước tính)*) ≈ 1.000 × 0,61 × 33 ≈ **20.000 phút ≈ 340 giờ / tháng** cho người lên lịch; mỗi sự cố ảnh hưởng cả nhóm 3–6 người nên thời gian cả nhóm mất lớn hơn.
+  Nguồn: 0,61 lần / tháng và 74% từ khảo sát (`evidence/survey/count.py`); 22 phút = giữa khoảng trung vị 15–30 phút; 30 phút / sự cố và tỉ lệ tiết kiệm 50% là *(tự ước tính)*.
 - Hướng ĐÃ LOẠI + vì sao:
   - B (chia chi phí): đã có lời giải phổ biến; phần cần quyết định nhỏ.
   - C (quán theo khẩu vị): "đúng" phụ thuộc sở thích, khó viết câu thử chấm được; giữ làm phần phụ của A (quán là một loại địa điểm).
   - Nhiều ngày / nhiều thành phố: quá rộng cho ~10 giờ làm; thu về một ngày, một thành phố.
-- Số lần / tháng của từng kiểu người dùng (persona §8): chờ khảo sát — đi chơi cuối tuần thường xuyên · đi dịp lễ · người từ tỉnh khác lên Hà Nội.
+- Số lần / tháng của từng kiểu người dùng (persona §8, từ khảo sát, 3 tháng → tháng): dùng ít — 17/31 lên lịch 1 lần / 3 tháng (0,33 / tháng) · vừa — 11/31 lên lịch 2–3 lần (0,83 / tháng) · nhiều — 3/31 lên lịch ≥ 4 lần (≥ 1,33 / tháng).
 
 ## §3. Giải pháp tương tự *(guide 2.1)*
 - **Google Maps** (danh sách đã lưu, chỉ đường nhiều điểm): đáng học — giờ mở cửa, thời gian đi có sẵn trên từng điểm · đáng né — người dùng tự quyết thứ tự, không cảnh báo khi tới lúc điểm đã đóng · mình khác: tự sắp thứ tự theo giờ mở + khung giờ của nhóm, báo rõ điểm không xếp vừa.
@@ -140,8 +146,12 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 (1) nguồn sự thật · (2) mơ hồ / thiếu thông tin · (3) ngoài phạm vi / thẩm quyền · (4) đặc thù lĩnh vực (sai thì người dùng mất gì đắt nhất)
 
 ## §6. Bốn đường đi của trải nghiệm
-- Mọi thứ suôn sẻ: · Không chắc (lớp 2): · Không có căn cứ (lớp 1): · Người dùng sửa:
-- Bị đòi ngoài phạm vi (lớp 3): · Trường hợp đặc thù lĩnh vực (lớp 4):
+- **Mọi thứ suôn sẻ:** nhóm chọn điểm (quẹt hoặc gõ) → lịch theo giờ, mỗi điểm có giờ đến / rời, phút đi "ước tính", lý do chọn → trưởng nhóm duyệt và sao chép gửi nhóm (B01, B22).
+- **Không chắc (lớp 2):** thiếu ngày đi → chỉ hỏi "Nhóm đi thứ mấy?", không trả lịch (B10) · thiếu điểm xuất phát / khung giờ → xếp với giả định nói rõ ở dòng đầu, người dùng sửa được (B11, B13).
+- **Không có căn cứ (lớp 1):** điểm không có dữ liệu giờ → vẫn hiện trong lịch kèm "chưa có dữ liệu giờ mở cửa, kiểm lại trước khi đi", không tự đặt giờ (B12) · điểm không có giá → "chưa có giá", không cộng vào tổng.
+- **Người dùng sửa:** trưởng nhóm bỏ / ghim điểm → hệ thống tính và kiểm lại toàn bộ, bản cũ hết hiệu lực (TS-07).
+- **Bị đòi ngoài phạm vi (lớp 3):** đặt vé / bàn / thanh toán → nói chỉ xếp lịch, vẫn trả lịch (B13) · nhiều ngày / ngoài Hà Nội → từ chối, đề nghị một ngày ở Hà Nội (B14) · đòi bỏ giờ mở cửa / tự xưng admin → không làm theo, bộ kiểm vẫn chạy (B15, B16).
+- **Trường hợp đặc thù lĩnh vực (lớp 4):** điểm đóng vào thứ của ngày đi, chỉ mở buổi sáng, nghỉ trưa, chỉ mở cuối tuần / buổi tối → không xếp vào lịch, đưa vào "Không xếp được" kèm lý do cụ thể và gợi ý đổi ngày / nới giờ / bỏ điểm (B05–B08, B17, B20).
 
 ## §7. Đánh giá & chuẩn "đạt" *(guide 2.4, 4.1)*
 - Data card: `data/DATA_CARD.md` · bộ câu thử: `eval/benchmark.csv` — 22 câu (thuong 6 · kho 12 · tu_choi 4) · metric: `eval/metric_spec.yaml` (6 metric)

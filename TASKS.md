@@ -56,8 +56,8 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | B2 | Docker compose (`db`, `app`, cổng 8000) | Minh | — | 10:00 (kéo sang CP4) | `Dockerfile`, `docker-compose.yml` | `docker compose up` → mở được localhost:8000 | |
 | A2 | Thử mô phỏng chi phí 10 phiên | Hải | — | 09:50 | `cost/simulate-try.csv` (không commit) | token > 0 | |
 | A3 | `build_deck` + `plan_group` theo hợp đồng mục 2 | Hải | — | 10:30 (kéo sang CP4) | `codebase/` + assert trong `tests/test_core.py` | Bộ thẻ không có điểm đóng vào ngày đi; lịch luôn 0 vi phạm | |
-| D1 | `evidence/summary.md` + kết quả khảo sát đã bỏ cột nhận diện | Hùng | — | 09:30 | `evidence/summary.md`, `evidence/survey/` | ≥ 20 phản hồi đúng vai; x/N, %; ≥ 5 trích nguyên văn; kết luận giả thuyết | |
-| D2 | `spec.md` §1 (số khảo sát), §2 (impact có nguồn), §6 (bốn đường đi) | Hùng | — | 09:45 | `spec.md` | §0–§7 không còn ô trống | |
+| D1 | `evidence/summary.md` + kết quả khảo sát đã bỏ cột nhận diện | Hùng → Bảo làm | — | 09:30 | `evidence/summary.md`, `evidence/survey/` | ≥ 20 phản hồi đúng vai; x/N, %; ≥ 5 trích nguyên văn; kết luận giả thuyết | xong · 31 người, 23/31 (74%) |
+| D2 | `spec.md` §1 (số khảo sát), §2 (impact có nguồn), §6 (bốn đường đi) | Hùng → Bảo làm | — | 09:45 | `spec.md` | §0–§7 không còn ô trống | xong |
 | D3 | Tự soát guide 3.4 + nộp form CP3 | Hùng | D1, D2, U1, A1 | 10:00 | form CP3 | Nộp đúng hạn, khai thật phần chưa xong (web) | |
 
 ### Checkpoint 4 · hạn 14:30 hôm nay (28/11)

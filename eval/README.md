@@ -5,7 +5,7 @@
 
 ## 1. Dataset → xử lý
 
-Dataset nào, xử lý gì: tóm 2–3 dòng từ `data/DATA_CARD.md`.
+Dữ liệu công cụ: `data/hanoi_places.json` (119 địa điểm Hà Nội, giờ mở cửa đối chiếu trang chính thức, sửa 3 dòng lệch + thêm Bảo tàng Hồ Chí Minh) và `data/travel_times.json` (ma trận OSRM 117 điểm, dùng max với ước tính tốc độ đô thị). Giờ chuẩn hoá theo thứ / mùa / nghỉ trưa trong `codebase/places.py`. Chi tiết: `data/DATA_CARD.md`.
 
 ## 2. Bộ câu thử dựng ra sao
 
