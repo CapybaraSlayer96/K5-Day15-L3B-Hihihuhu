@@ -24,6 +24,11 @@ cfg = {"city_id": "ha_noi", "scope": "noi_thanh", "date": sat, "start_time": "08
 c, j = call("GET", "/health"); rec("H", "health", c == 200 and j.get("places", 0) > 0, f"{c} {j}")
 c, j = call("GET", "/api/config/options"); rec("TS-01", "config options", c == 200, f"{c} keys={list(j)[:6] if isinstance(j,dict) else j}")
 
+# Đọc ngay sau ghi: GET gửi liền sau POST (không chờ) phải thấy nhóm vừa tạo (lỗi cũ: COMMIT chạy sau phản hồi → 404)
+codes = [call("POST", "/api/groups", json={**cfg, "nickname": f"Race{i}"})[1]["group"]["code"] for i in range(10)]
+seen = [call("GET", f"/api/groups/{c}")[0] for c in codes]
+rec("RACE", "GET ngay sau POST /api/groups thấy nhóm (10/10 → 200)", all(x == 200 for x in seen), f"{seen}")
+
 # TS-01 tạo nhóm
 c, j = call("POST", "/api/groups", json={**cfg, "nickname": "Truong nhom thu"})
 ok = c == 201 and len(j["group"]["code"]) == 6
