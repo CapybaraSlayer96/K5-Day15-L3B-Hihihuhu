@@ -1,0 +1,231 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>TripSwipe — Lịch trình một ngày ở Hà Nội cho nhóm bạn (Hihihuhu · Track C)</title>
+<style>
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body { font-family: "Segoe UI", "Be Vietnam Pro", Arial, sans-serif; color: #1c1b19; background: #fff; }
+  .slide { width: 1280px; height: 720px; padding: 52px 72px 44px; page-break-after: always; break-after: page; position: relative; overflow: hidden; background: #fbf8f2; }
+  .slide:last-child { page-break-after: auto; break-after: auto; }
+  .kicker { font-size: 17px; letter-spacing: .06em; text-transform: uppercase; color: #8a4b12; font-weight: 600; margin-bottom: 10px; }
+  h1 { font-size: 40px; line-height: 1.2; margin: 0 0 22px; font-weight: 700; max-width: 1080px; }
+  p, li { font-size: 24px; line-height: 1.45; margin: 0 0 10px; }
+  ul { margin: 0; padding-left: 26px; }
+  .big { font-size: 76px; font-weight: 700; line-height: 1; color: #8a4b12; }
+  .big small { font-size: 26px; font-weight: 500; color: #3d3a35; margin-left: 10px; }
+  .row { display: flex; gap: 40px; align-items: flex-start; }
+  .col { flex: 1; }
+  .quote { border-left: 4px solid #8a4b12; padding: 4px 0 4px 20px; font-size: 24px; font-style: italic; color: #2b2925; margin: 18px 0 8px; }
+  .cite { font-size: 17px; color: #6b665e; margin-bottom: 12px; }
+  table { border-collapse: collapse; width: 100%; font-size: 21px; }
+  th, td { text-align: left; padding: 9px 12px; border-bottom: 1px solid #d9d2c4; vertical-align: top; }
+  th { background: #efe8da; font-weight: 600; font-size: 19px; }
+  .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .note { font-size: 19px; color: #5a554d; }
+  .box { background: #fff; border: 1px solid #d9d2c4; border-radius: 10px; padding: 16px 22px; }
+  .box h3 { margin: 0 0 8px; font-size: 21px; color: #8a4b12; }
+  .box p { font-size: 20px; margin-bottom: 6px; }
+  .ok { color: #2f6b3a; font-weight: 600; }
+  .bad { color: #a63a2a; font-weight: 600; }
+  .src { position: absolute; left: 72px; right: 72px; bottom: 22px; font-size: 15px; color: #7a746a; border-top: 1px solid #ddd5c6; padding-top: 8px; }
+  .pg { position: absolute; right: 72px; top: 24px; font-size: 15px; color: #8c867b; }
+  code { font-family: Consolas, "Cascadia Mono", monospace; font-size: .86em; background: #efe8da; padding: 1px 6px; border-radius: 4px; }
+  .mono { font-family: Consolas, "Cascadia Mono", monospace; font-size: 17px; white-space: pre-wrap; background: #fff; border: 1px solid #d9d2c4; border-radius: 8px; padding: 12px 16px; line-height: 1.4; }
+</style>
+</head>
+<body>
+
+<!-- 1. Người dùng & pain -->
+<section class="slide">
+  <div class="pg">1 / 8 · Hihihuhu · Track C</div>
+  <div class="kicker">Người dùng &amp; nỗi đau</div>
+  <h1>Người lên lịch cho nhóm bạn đi chơi một ngày ở Hà Nội hay phát hiện sự cố khi đã đến nơi</h1>
+  <div class="row">
+    <div class="col">
+      <div class="big">23/31<small>(74%)</small></div>
+      <p>người từng lên lịch cho nhóm trong 3 tháng qua gặp ít nhất một sự cố: đi vòng, đến nơi đã đóng cửa, bỏ lỡ điểm muốn đi.</p>
+      <div class="big" style="margin-top:18px">18/31<small>(58%)</small></div>
+      <p>đến nơi đã đóng / chưa mở cửa hoặc gặp điểm đóng đúng hôm đó.</p>
+    </div>
+    <div class="col">
+      <div class="quote">"Nhóm mình định đi ăn rồi tham quan một bảo tàng nhưng đến nơi thì bảo tàng đã ngừng đón khách. Cả nhóm phải thay đổi kế hoạch buổi chiều."</div>
+      <div class="cite">phiếu khảo sát S23</div>
+      <div class="quote">"Quán đó đã đóng cửa nên buộc phải tính plan khác khi đang di chuyển trên đường"</div>
+      <div class="cite">phiếu khảo sát S15</div>
+      <p class="note"><span class="bad">Không đạt:</span> giả thuyết "mất ≥1 giờ để lên lịch" — trung vị chỉ 15–30 phút (chỉ 8/31 mất ≥1 giờ). Nỗi đau nằm ở sự cố tại chỗ, không ở thời gian lên lịch.</p>
+    </div>
+  </div>
+  <div class="src">Nguồn: <code>evidence/summary.md</code> — khảo sát online, 31 người đúng vai (38 phiếu hợp lệ), 27–28/11/2026, đã bỏ cột nhận diện.</div>
+</section>
+
+<!-- 2. Vì sao chọn bài này -->
+<section class="slide">
+  <div class="pg">2 / 8</div>
+  <div class="kicker">Vì sao chọn bài này</div>
+  <h1>Hướng A giải đúng nỗi đau lớn nhất; hai hướng khác bị loại</h1>
+  <table>
+    <tr><th>Hướng</th><th>Bao nhiêu người gặp</th><th>Quyết định</th></tr>
+    <tr><td><b>A.</b> Chọn + sắp lịch một ngày đúng giờ mở cửa, ít đi vòng</td><td>23/31 (74%)</td><td class="ok">Chọn</td></tr>
+    <tr><td><b>B.</b> Chia và theo dõi chi phí chung</td><td>không hỏi trong khảo sát</td><td>Loại — đã có nhiều app chia tiền</td></tr>
+    <tr><td><b>C.</b> Gợi ý quán ăn hợp khẩu vị cả nhóm</td><td>14/31 (45%) khó thống nhất chọn nơi</td><td>Loại — "đúng" khó chấm; giữ làm phần phụ của A</td></tr>
+  </table>
+  <div class="box" style="margin-top:24px">
+    <h3>Impact ước tính</h3>
+    <p>≈ <b>20.000 phút ≈ 340 giờ / tháng</b> cho 1.000 người lên lịch (0,61 lần lên lịch / người / tháng × 33 phút tiết kiệm mỗi lần).</p>
+    <p class="note">Quy mô 1.000 người và 30 phút / sự cố, tiết kiệm 50% thời gian lên lịch là tự ước tính của nhóm; 0,61 lần / tháng và 74% lấy từ khảo sát.</p>
+  </div>
+  <div class="src">Nguồn: <code>spec.md</code> §2 · <code>evidence/survey/count.py</code></div>
+</section>
+
+<!-- 3. Giải pháp -->
+<section class="slide">
+  <div class="pg">3 / 8</div>
+  <div class="kicker">Giải pháp</div>
+  <h1>Quẹt chọn địa điểm → AI chọn và sắp xếp → code kiểm giờ mở cửa trước khi trả lịch</h1>
+  <div class="row">
+    <div class="col">
+      <div class="box">
+        <h3>Lát cắt một câu</h3>
+        <p>Người lên lịch cho nhóm bạn đi một ngày ở Hà Nội quẹt thẻ chọn địa điểm, nhập điểm xuất phát và khung giờ → AI chọn và sắp xếp theo giờ mở cửa, thời gian di chuyển, sở thích → nhận lịch theo khung giờ, hoặc thông báo rõ ràng buộc nào không đáp ứng được.</p>
+      </div>
+      <div class="box" style="margin-top:16px">
+        <h3>Dữ liệu</h3>
+        <p><b>119</b> địa điểm Hà Nội, giờ mở cửa đối chiếu nguồn chính thức (<code>data/hanoi_places.json</code>).</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="box">
+        <h3>AI tự làm đến đâu</h3>
+        <ul style="font-size:21px">
+          <li>AI đọc yêu cầu, chọn ứng viên, viết lý do (chỉ dùng công cụ đọc).</li>
+          <li><b>Giờ, thời gian di chuyển, kiểm vi phạm tính bằng code</b>, không để model nhẩm.</li>
+          <li>Có vi phạm thì <b>không trả lịch</b>; điểm chưa có giờ gắn cảnh báo.</li>
+          <li>Trưởng nhóm duyệt, bỏ / ghim điểm; <b>không</b> đặt vé, thanh toán, gửi tin.</li>
+        </ul>
+      </div>
+      <p class="note" style="margin-top:12px">Lý do: lịch sai thì sửa rẻ trước khi đi, nhưng sai giờ mở cửa thì cả nhóm mất buổi đi.</p>
+    </div>
+  </div>
+  <div class="src">Nguồn: <code>canvas.md</code> dòng 5–6 · <code>spec.md</code> §4 · <code>docs/PRD.md</code></div>
+</section>
+
+<!-- 4. Demo -->
+<section class="slide">
+  <div class="pg">4 / 8</div>
+  <div class="kicker">Demo — hai câu từ bộ câu thử (lượt 4, model gemini-3.5-flash-lite)</div>
+  <h1>Một câu thường, một câu khó: cả hai đạt</h1>
+  <div class="row">
+    <div class="col">
+      <div class="box">
+        <h3>B01 · thường <span class="ok">· đạt</span></h3>
+        <p style="font-size:19px">"Nhóm 4 người đi thứ Bảy, xuất phát Hồ Gươm, 8:00–17:00. Muốn đi Văn Miếu, Hoàng thành, Hỏa Lò, Bảo tàng Phụ nữ."</p>
+        <div class="mono">08:05–09:35 Bảo tàng Phụ nữ
+09:40–11:10 Hỏa Lò
+11:15–12:45 Văn Miếu
+12:50–14:50 Hoàng thành</div>
+        <p class="note">4/4 điểm, trong giờ mở, kết thúc trước 17:00. 2 lần gọi model, 6 lần công cụ, 2.887 token vào / 216 ra.</p>
+      </div>
+    </div>
+    <div class="col">
+      <div class="box">
+        <h3>B05 · khó <span class="ok">· đạt</span></h3>
+        <p style="font-size:19px">"Thứ Hai tuần sau, 8:00–15:00, từ Hồ Gươm. Muốn viếng Lăng Bác, đi Văn Miếu và Hoàng thành."</p>
+        <div class="mono">08:06–10:06 Hoàng thành
+10:11–11:41 Văn Miếu
+Không xếp được: Lăng Chủ tịch Hồ Chí Minh —
+đóng cửa Thứ Hai.
+Gợi ý: đổi ngày, nới khung giờ, hoặc bỏ bớt điểm.</div>
+        <p class="note">Không đưa nhóm đến Lăng ngày nghỉ viếng; nói rõ lý do và cách nới. 2.790 token vào / 141 ra.</p>
+      </div>
+    </div>
+  </div>
+  <p class="note" style="margin-top:14px">Mạng hỏng hoặc API lỗi quá 30 giây: chiếu video dự phòng.</p>
+  <div class="src">Nguồn: <code>eval/run-4.csv</code> (run ID <code>run-4@20261128-085230</code>, câu B01, B05) · <code>eval/benchmark.csv</code></div>
+</section>
+
+<!-- 5. Đánh giá -->
+<section class="slide">
+  <div class="pg">5 / 8</div>
+  <div class="kicker">Đánh giá thế nào</div>
+  <h1>22 câu thử, 6 metric chốt trước 19:30 thứ Sáu; chuẩn "đạt" ≥ 75% và 0 vi phạm giờ mở cửa</h1>
+  <table>
+    <tr><th>Lượt</th><th>Run ID</th><th>Model</th><th class="num">Đạt / tổng</th><th>So với chuẩn</th></tr>
+    <tr><td>1</td><td><code>run-1@20261128-011133</code></td><td>gpt-4.1-mini</td><td class="num">13/22 (59%)</td><td class="bad">Chưa — 8 câu timeout proxy, tính trượt</td></tr>
+    <tr><td>2</td><td><code>run-2@20261128-015044</code></td><td>gpt-4.1-mini</td><td class="num">20/22 (91%)</td><td class="ok">Đạt</td></tr>
+    <tr><td>3</td><td><code>run-3@20261128-084622</code></td><td>gemini-3.5-flash-lite</td><td class="num">20/22 (91%)</td><td class="bad">Chưa — vi phạm giờ ở B19</td></tr>
+    <tr><td>4</td><td><code>run-4@20261128-085230</code></td><td>gemini-3.5-flash-lite</td><td class="num">21/22 (95%)</td><td class="ok">Đạt</td></tr>
+  </table>
+  <div class="row" style="margin-top:20px">
+    <div class="col box">
+      <h3>Lỗi nguy hiểm nhất, đã sửa</h3>
+      <p>B19 lượt 3: Chùa Trấn Quốc xếp 12:55–13:55 vào giờ đóng cửa trưa vì <code>parse_hours()</code> không bắt "đóng cửa trưa". Sửa + thêm test → lượt 4 hết vi phạm.</p>
+    </div>
+    <div class="col box">
+      <h3>Còn lại</h3>
+      <p>B03 trượt cả 4 lượt: thời lượng tham quan cố định 90 phút khiến 2 bảo tàng không vừa 14:00–17:00. Hệ thống báo rõ "không đủ thời gian", không đưa nhóm đến nơi đóng cửa.</p>
+    </div>
+  </div>
+  <div class="src">Nguồn: <code>eval/report.md</code> · <code>eval/README.md</code> mục 5 · <code>spec.md</code> §7 · bộ câu thử: 6 thường · 12 khó · 4 từ chối</div>
+</section>
+
+<!-- 6. Chi phí -->
+<section class="slide">
+  <div class="pg">6 / 8</div>
+  <div class="kicker">Chi phí khi dùng thật</div>
+  <h1>Chi phí AI khoảng 38 ₫ mỗi lịch thành công với model nhẹ</h1>
+  <table>
+    <tr><th>Model</th><th class="num">Chi phí / task thành công</th><th class="num">/ tháng — thấp (500)</th><th class="num">cơ sở (1.000)</th><th class="num">cao (3.000)</th></tr>
+    <tr><td>gemini-3.5-flash-lite</td><td class="num">$0.0015 (≈ 38 ₫)</td><td class="num">$0,54</td><td class="num">$1,09</td><td class="num">$3,26</td></tr>
+    <tr><td>gpt-4.1</td><td class="num">$0.0108 (≈ 274 ₫)</td><td class="num">$3,98</td><td class="num">$7,96</td><td class="num">$23,87</td></tr>
+  </table>
+  <div class="box" style="margin-top:22px">
+    <h3>So với impact</h3>
+    <p>~20 phút / người lên lịch / tháng ↔ chi phí AI ≈ <b>28 ₫</b> (model nhẹ) đến <b>≈ 202 ₫</b> (<code>gpt-4.1</code>) / người / tháng → <b>đáng làm</b>.</p>
+    <p class="note">50 phiên mô phỏng, 0 lỗi, tính trên tỉ lệ đạt 21/22 (95%), không coi như 100%. Ba quy mô người dùng là tự ước tính, chưa có người dùng thật. Chưa tính hạ tầng (VPS / Postgres khoảng $10–$20 / tháng, tự ước tính) — lớn hơn chi phí API ở quy mô này.</p>
+  </div>
+  <div class="src">Nguồn: <code>cost/cost-estimate.md</code> · run ID <code>simulate-1@20261128-085836</code> · giá model xem 28/11/2026</div>
+</section>
+
+<!-- 7. Kết luận -->
+<section class="slide">
+  <div class="pg">7 / 8</div>
+  <div class="kicker">Kết luận</div>
+  <h1>Iterate: nỗi đau có thật và bản chạy thử đạt chuẩn, nhưng chưa đủ bằng chứng người dùng thật</h1>
+  <div class="row">
+    <div class="col box">
+      <h3>Vì sao không dừng</h3>
+      <p>Nỗi đau có thật: <b>23/31 (74%)</b> gặp sự cố, 18/31 (58%) đến nơi đã đóng cửa (trang 1).</p>
+      <p>Lõi xếp lịch đạt chuẩn: <b>21/22 (95%)</b>, 0 vi phạm giờ mở cửa (trang 5).</p>
+      <p>Chi phí gần như không đáng kể: <b>≈ 38 ₫</b> / lịch thành công (trang 6).</p>
+    </div>
+    <div class="col box">
+      <h3>Vì sao chưa "go"</h3>
+      <p>Giả thuyết còn một vế không đạt: lên lịch chỉ mất 15–30 phút, chưa phải ≥ 1 giờ.</p>
+      <p>Mới đo bằng bộ câu thử của nhóm, chưa có người ngoài nhóm dùng thử bản chạy.</p>
+      <p>Tỉ lệ đạt cao nhờ bộ câu thử 22 câu; còn 1 câu trượt (B03) và dữ liệu giờ vài điểm còn "chưa xác minh".</p>
+    </div>
+  </div>
+  <p style="margin-top:20px"><b>Việc cần làm trước khi "go":</b> cho 2–3 người đúng vai dùng thử, kiểm lại giờ mở cửa các điểm còn "chưa xác minh", đo chi phí bằng người dùng thật.</p>
+  <div class="src">Dẫn số từ trang 1, 5, 6 · quyết định go / iterate / stop do nhóm xác nhận trước buổi demo</div>
+</section>
+
+<!-- 8. Nếu có thêm 1 tuần -->
+<section class="slide">
+  <div class="pg">8 / 8</div>
+  <div class="kicker">Nếu có thêm một tuần</div>
+  <h1>Ba việc, trỏ về lỗi còn lại trong đánh giá</h1>
+  <table>
+    <tr><th>#</th><th>Việc</th><th>Trỏ về lỗi nào</th></tr>
+    <tr><td>1</td><td>Thêm trường <code>min_duration_mins</code> để bộ xếp lịch co giãn thời lượng tham quan trong ngưỡng hợp lý khi khung giờ sát</td><td>B03 trượt cả 4 lượt (Hỏa Lò + Bảo tàng Phụ nữ không vừa 14:00–17:00)</td></tr>
+    <tr><td>2</td><td>Unit test tự động cho mọi chuỗi <code>opening_hours</code> trong <code>data/hanoi_places.json</code> khi nạp dữ liệu, để không còn chuỗi giờ bị parse thiếu</td><td>B19 lượt 3: "đóng cửa trưa" bị bỏ sót, xếp vào giờ nghỉ trưa</td></tr>
+    <tr><td>3</td><td>Truyền buổi đi (sáng / trưa / chiều / tối) vào bước viết lý do để câu giới thiệu khớp khung giờ thật</td><td>B19 lượt 4: lý do "ngắm hoàng hôn" cho điểm xếp 13:30</td></tr>
+  </table>
+  <p class="note" style="margin-top:18px">Đề xuất thêm, chưa làm: cho người ngoài nhóm dùng thử và ghi phản hồi; kiểm lại giờ mở cửa mùa lạnh / ngày lễ cho từng điểm.</p>
+  <div class="src">Nguồn: <code>eval/report.md</code> mục 4 · <code>data/DATA_CARD.md</code> (giới hạn dữ liệu)</div>
+</section>
+
+</body>
+</html>
