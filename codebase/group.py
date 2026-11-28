@@ -28,8 +28,9 @@ from planner import _fit, check, reason, stay  # noqa: E402
 DECK_LIMIT = 20
 MAX_SEARCH_CANDIDATES = 12
 GROUP_NODE_LIMIT = 40_000
-LUNCH_WINDOW = (11 * 60 + 30, 13 * 60 + 30)
-DINNER_WINDOW = (18 * 60, 20 * 60 + 30)
+BREAKFAST_WINDOW = (6 * 60, 10 * 60)
+LUNCH_WINDOW = (11 * 60, 14 * 60)
+DINNER_WINDOW = (17 * 60 + 30, 20 * 60 + 30)
 FALLBACK_REASON = "Địa điểm nổi bật, phù hợp lịch trình một ngày ở Hà Nội."
 
 DECK_SYSTEM = """Bạn chọn và xếp hạng tối đa 20 địa điểm từ DANH SÁCH ỨNG VIÊN cho nhóm bạn đi chơi một ngày ở nội thành Hà Nội.
@@ -164,9 +165,11 @@ def _overlaps(a, b, win):
     return a < win[1] and b > win[0]
 
 
-def _meal_tag(pid, arrive, leave, need_lunch, need_dinner):
+def _meal_tag(pid, arrive, leave, need_breakfast, need_lunch, need_dinner):
     if PLACES[pid].get("category") != "food_drink":
         return None
+    if need_breakfast and _overlaps(arrive, leave, BREAKFAST_WINDOW):
+        return "breakfast"
     if need_lunch and _overlaps(arrive, leave, LUNCH_WINDOW):
         return "lunch"
     if need_dinner and _overlaps(arrive, leave, DINNER_WINDOW):
@@ -175,23 +178,32 @@ def _meal_tag(pid, arrive, leave, need_lunch, need_dinner):
 
 
 def _select_pool(open_ids, scores, pinned_set, need_meal):
-    """Giới hạn tập đưa vào vét cạn để luôn < 2 giây, ưu tiên ghim + điểm cao + có suất ăn."""
+    """Giới hạn tập đưa vào vét cạn để luôn < 2 giây, ưu tiên ghim + điểm cao + xen kẽ ăn uống."""
     def sort_key(pid):
         return (pid not in pinned_set, -float(scores.get(pid, 0.0)), -(PLACES[pid].get("rating") or 0.0), pid)
 
     ranked = sorted(open_ids, key=sort_key)
-    if len(ranked) <= MAX_SEARCH_CANDIDATES:
-        return ranked
-    pool = ranked[:MAX_SEARCH_CANDIDATES]
-    if need_meal and not any(PLACES[pid].get("category") == "food_drink" for pid in pool):
-        food = [pid for pid in ranked[MAX_SEARCH_CANDIDATES:] if PLACES[pid].get("category") == "food_drink"]
-        if food:
-            # Thay ứng viên cuối không bị ghim bằng quán ăn điểm cao nhất để có lựa chọn bữa ăn.
-            for idx in range(len(pool) - 1, -1, -1):
-                if pool[idx] not in pinned_set:
-                    pool[idx] = food[0]
-                    break
-    return pool
+    if len(ranked) > MAX_SEARCH_CANDIDATES:
+        pool = ranked[:MAX_SEARCH_CANDIDATES]
+        if need_meal and not any(PLACES[pid].get("category") == "food_drink" for pid in pool):
+            food = [pid for pid in ranked[MAX_SEARCH_CANDIDATES:] if PLACES[pid].get("category") == "food_drink"]
+            if food:
+                for idx in range(len(pool) - 1, -1, -1):
+                    if pool[idx] not in pinned_set:
+                        pool[idx] = food[0]
+                        break
+    else:
+        pool = ranked
+    # Xen kẽ điểm tham quan và quán ăn trong thứ tự duyệt để DFS sớm tìm được lịch đủ 3 bữa.
+    sight = [pid for pid in pool if PLACES[pid].get("category") != "food_drink"]
+    food = [pid for pid in pool if PLACES[pid].get("category") == "food_drink"]
+    interleaved = []
+    for i in range(max(len(sight), len(food))):
+        if i < len(food):
+            interleaved.append(food[i])
+        if i < len(sight):
+            interleaved.append(sight[i])
+    return interleaved
 
 
 def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
@@ -235,9 +247,10 @@ def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
                 continue
         schedulable.append(pid)
 
+    need_breakfast = cfg["start_min"] <= 9 * 60 + 30 and cfg["end_min"] >= 8 * 60
     need_lunch = cfg["start_min"] <= 12 * 60 and cfg["end_min"] >= 13 * 60
-    need_dinner = cfg["start_min"] <= 18 * 60 + 30 and cfg["end_min"] >= 20 * 60
-    pool = _select_pool(schedulable, scores, pinned_set, need_lunch or need_dinner)
+    need_dinner = cfg["start_min"] <= 18 * 60 + 30 and cfg["end_min"] >= 19 * 60 + 30
+    pool = _select_pool(schedulable, scores, pinned_set, need_breakfast or need_lunch or need_dinner)
 
     # Chuẩn bị trước khung mở và thời lượng cho từng ứng viên trong pool để DFS nhanh hơn.
     info = {}
@@ -261,19 +274,24 @@ def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
     best = None  # (rank_key, items_list)
     nodes = [0]
 
-    def dfs(items, used, t, here, here_xy, moving, spent, pin_cnt, score_sum, meals):
+    def dfs(items, used, t, here, here_xy, moving, spent, pin_cnt, score_sum, meals, snack_cnt):
         nonlocal best
         nodes[0] += 1
         if items:
-            rank_key = (pin_cnt, round(score_sum + 0.35 * len(meals), 4), len(items), -moving)
+            rank_key = (pin_cnt, round(score_sum + 0.8 * len(meals), 4), len(items), -moving)
             if best is None or rank_key > best[0]:
                 best = (rank_key, list(items))
         if nodes[0] > GROUP_NODE_LIMIT:
             return
+        prev_food = bool(items and items[-1]["category"] == "food_drink")
         for pid in pool:
             if pid in used:
                 continue
             meta = info[pid]
+            is_food = meta["category"] == "food_drink"
+            # Không xếp 2 quán ăn liền kề nhau (trừ điểm trưởng nhóm ghim).
+            if is_food and prev_food and not meta["pinned"]:
+                continue
             add_price = meta["price"] or 0
             if budget is not None and spent + add_price > budget:
                 continue
@@ -282,8 +300,14 @@ def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
             if start is None or start + meta["dur"] > cfg["end_min"]:
                 continue
             leave = start + meta["dur"]
-            mtag = _meal_tag(pid, start, leave, need_lunch, need_dinner)
+            mtag = _meal_tag(pid, start, leave, need_breakfast, need_lunch, need_dinner)
+            if is_food and not meta["pinned"]:
+                if mtag is not None and mtag in meals:
+                    continue  # mỗi bữa (sáng/trưa/tối) chỉ xếp tối đa 1 quán
+                if mtag is None and snack_cnt >= 1:
+                    continue  # tối đa 1 quán ăn nhẹ / cà phê ngoài 3 bữa chính
             new_meals = meals | ({mtag} if mtag else set())
+            new_snack = snack_cnt + (1 if (is_food and mtag is None) else 0)
             item = {
                 "id": pid,
                 "name": meta["name"],
@@ -301,11 +325,11 @@ def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
             items.append(item)
             used.add(pid)
             dfs(items, used, leave, pid, meta["xy"], moving + mins, spent + add_price,
-                pin_cnt + (1 if meta["pinned"] else 0), score_sum + meta["score"], new_meals)
+                pin_cnt + (1 if meta["pinned"] else 0), score_sum + meta["score"], new_meals, new_snack)
             used.remove(pid)
             items.pop()
 
-    dfs([], set(), cfg["start_min"], cfg["start_id"], cfg["start_xy"], 0, 0, 0, 0.0, set())
+    dfs([], set(), cfg["start_min"], cfg["start_id"], cfg["start_xy"], 0, 0, 0, 0.0, set(), 0)
 
     items = best[1] if best else []
     placed = {it["id"] for it in items}
