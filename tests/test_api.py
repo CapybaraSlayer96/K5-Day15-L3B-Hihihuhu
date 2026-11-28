@@ -243,6 +243,49 @@ class ApiTests(unittest.TestCase):
         r = self.client.patch("/api/itineraries/" + draft["id"], json={"member_id": leader, "action": "approve"})
         self.assertEqual(r.status_code, 409)
 
+    def test_votes_reorder_and_replace(self):
+        code, leader = self.group()
+        base = f"/api/groups/{code}"
+        friend = self.client.post(base + "/members", json={"nickname": "Bảo"}).json()["member_id"]
+        ids = [p["id"] for p in self.client.get(base + "/deck").json()["cards"]]
+        for pid in ids[:6]:
+            self.client.post(base + "/swipes", json={"member_id": leader, "place_id": pid, "liked": True})
+        self.client.post(base + "/swipes", json={"member_id": friend, "place_id": ids[0], "liked": False})
+        votes = {c["place_id"]: c for c in self.client.get(base + "/votes").json()["cards"]}
+        self.assertEqual(votes[ids[0]]["liked_by"], ["Minh"])
+        self.assertEqual(votes[ids[0]]["skipped_by"], ["Bảo"])
+        self.assertEqual(votes[ids[10]]["liked_by"], [])
+
+        plan = self.client.post(base + "/itinerary", json={"member_id": leader}).json()
+        order = [i["id"] for i in plan["items"]]
+        self.assertGreater(len(order), 1)
+        url = "/api/itineraries/"
+        bad = self.client.patch(url + plan["id"], json={"member_id": leader, "action": "reorder", "order": order[:-1]})
+        self.assertEqual(bad.status_code, 422)
+        moved = self.client.patch(url + plan["id"], json={"member_id": leader, "action": "reorder",
+                                                          "order": order[1:] + order[:1]})
+        if moved.status_code == 200:
+            self.assertEqual([i["id"] for i in moved.json()["items"]], order[1:] + order[:1])
+            plan = moved.json()
+        else:
+            self.assertEqual(moved.status_code, 422)
+            self.assertIn("lịch giữ nguyên", moved.json()["detail"])
+        self.assertEqual(self.client.patch(url + plan["id"], json={"member_id": friend, "action": "reorder",
+                                                                   "order": order}).status_code, 403)
+        current = [i["id"] for i in plan["items"]]
+        spare = next(p for p in ids if p not in current)
+        swap = self.client.patch(url + plan["id"], json={"member_id": leader, "action": "replace",
+                                                        "place_id": current[-1], "new_place_id": spare})
+        if swap.status_code == 200:
+            after = swap.json()
+            self.assertEqual(after["items"][-1]["id"], spare)
+            self.assertIn(current[-1], [d["id"] for d in after["dropped"]])
+            self.assertEqual(after["violations"], [])
+        else:
+            self.assertEqual(swap.status_code, 422)
+        self.assertEqual(self.client.patch(url + plan["id"], json={"member_id": leader, "action": "replace",
+                                                                   "place_id": current[0]}).status_code, 422)
+
 
 if __name__ == "__main__":
     if not os.environ.get("TEST_DATABASE_URL"):

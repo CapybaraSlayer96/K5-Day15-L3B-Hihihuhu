@@ -115,6 +115,7 @@
     btn.undo.disabled = !history.length;
     renderHistory();
     for (const k of ["like", "skip", "detail"]) btn[k].disabled = !current;
+    $("btn-skip-rest").hidden = open.length < 2 || !$("skip-rest").hidden;
     if (!current) {
       const msg = deck.total ? "Bạn đã quẹt hết bộ thẻ." : "Bộ thẻ chưa có địa điểm nào hợp lệ với cấu hình nhóm.";
       stage.replaceChildren(h("div.empty", {}, h("h2", {}, msg),
@@ -235,6 +236,47 @@
     detail.classList.remove("open");
     detail.hidden = true;
   }
+
+  // Không muốn quẹt nữa: mọi thẻ chưa quẹt ghi là bỏ qua (giống bấm Bỏ qua từng thẻ), rồi sang phòng chờ.
+  function askSkipRest() {
+    const n = deck.cards.filter((c) => !c.swiped).length;
+    $("skip-rest-text").textContent = `Bỏ qua ${n} thẻ chưa quẹt? Các thẻ này tính là bạn không chọn, giống bấm Bỏ qua.`;
+    $("skip-rest").hidden = false;
+    $("btn-skip-rest").hidden = true;
+    $("skip-rest-yes").focus();
+  }
+  function cancelSkipRest() {
+    $("skip-rest").hidden = true;
+    render();
+    $("btn-skip-rest").focus();
+  }
+  async function skipRest() {
+    if (busy) return;
+    busy = true;
+    error("");
+    const yes = $("skip-rest-yes");
+    yes.disabled = true;
+    const left = deck.cards.filter((c) => !c.swiped);
+    try {
+      for (const [i, c] of left.entries()) {
+        yes.textContent = `Đang ghi ${i + 1}/${left.length}…`;
+        await api("POST", `/api/groups/${code}/swipes`, { member_id: me.member_id, place_id: c.id, liked: false });
+        history.push({ id: c.id, liked: false });
+      }
+      saveHistory();
+      location.href = "/g/" + code + "/lobby";
+    } catch (e) {
+      saveHistory();
+      if (!onAuthError(e)) error(e.message);
+      yes.disabled = false;
+      yes.textContent = "Bỏ qua và sang phòng chờ";
+      busy = false;
+      await load();
+    }
+  }
+  $("btn-skip-rest").addEventListener("click", askSkipRest);
+  $("skip-rest-no").addEventListener("click", cancelSkipRest);
+  $("skip-rest-yes").addEventListener("click", skipRest);
 
   btn.like.addEventListener("click", () => vote(true));
   btn.skip.addEventListener("click", () => vote(false));

@@ -200,4 +200,4 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 
 | Thời điểm | Đổi gì | Vì sao |
 |---|---|---|
-|  |  |  |
+| 28/11 15:30 | Giao diện web: bỏ link tài liệu API ở trang chủ; wizard chặn ngày ngoài một năm tới, giờ kết thúc trước giờ bắt đầu và khoá nút Tiếp tục khi bước chưa hợp lệ (server cũng chặn ngày quá một năm); nút bỏ qua các thẻ còn lại; phòng chờ có băng chuyền thẻ kèm tên người thích / bỏ qua (`GET /api/groups/{code}/votes`); lịch trình kéo thả / nút lên xuống đổi thứ tự và đổi địa điểm bằng danh sách radio (`PATCH` thêm `reorder`, `replace`, tính lại giờ bằng code, từ chối nếu lỡ giờ mở cửa hoặc vượt ngân sách); pop-up khi duyệt; chế độ sáng / tối | Góp ý dùng thử web sau CP4. Không đổi lõi xếp lịch, chuẩn "đạt", câu thử hay số đã chạy |

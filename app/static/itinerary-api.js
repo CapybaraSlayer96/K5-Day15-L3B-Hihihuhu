@@ -42,10 +42,10 @@ const Itin = (() => {
     }
   }
 
-  async function patch(code, itin, member_id, action, place_id) {
+  async function patch(code, itin, member_id, action, place_id, extra = {}) {
     if (!itin.mock) {
       try {
-        return sync(code, await api("PATCH", `/api/itineraries/${itin.id}`, { member_id, action, place_id }));
+        return sync(code, await api("PATCH", `/api/itineraries/${itin.id}`, { member_id, action, place_id, ...extra }));
       } catch (e) {
         if (!notBuilt(e)) throw e;
       }

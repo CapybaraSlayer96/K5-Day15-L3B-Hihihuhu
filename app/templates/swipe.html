@@ -25,6 +25,14 @@
       <button type="button" class="btn" id="btn-detail" disabled aria-keyshortcuts="ArrowUp">Chi tiết</button>
       <button type="button" class="btn" id="btn-undo" disabled aria-keyshortcuts="Control+Z">Hoàn tác</button>
     </div>
+    <button type="button" class="btn" id="btn-skip-rest" hidden>Bỏ qua phần còn lại</button>
+    <div class="skip-rest" id="skip-rest" hidden>
+      <p id="skip-rest-text"></p>
+      <div class="row">
+        <button type="button" class="btn primary" id="skip-rest-yes">Bỏ qua và sang phòng chờ</button>
+        <button type="button" class="btn" id="skip-rest-no">Quẹt tiếp</button>
+      </div>
+    </div>
     <p class="muted small">Kéo thẻ sang phải để thích, sang trái để bỏ qua, kéo lên để xem chi tiết. Phím ← → ↑ cũng dùng được.</p>
     <ul class="warnings" id="deck-warn"></ul>
     <p class="form-error" id="swipe-error" role="alert" hidden></p>

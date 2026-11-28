@@ -1,6 +1,6 @@
 // Phòng chờ (TS-05): polling tiến độ 3 giây, ghim điểm, nút Xếp lịch chỉ cho trưởng nhóm.
 (() => {
-  const { api, h, vnd, getMember, header } = TS;
+  const { api, h, vnd, getMember, header, CATEGORY } = TS;
   const code = document.body.dataset.code;
   const me = getMember(code);
   header(code);
@@ -41,7 +41,56 @@
 
   function hue(s) { let x = 0; for (const c of s) x = (x * 31 + c.codePointAt(0)) % 360; return x; }
 
+  let reelSeen = "";
+  function person(name, tone) {
+    return h("span.pill." + tone, {}, h("span.dot", { "aria-hidden": "true" }), name);
+  }
+  async function loadReel() {
+    let data;
+    try { data = await api("GET", `/api/groups/${code}/votes`); } catch { return; }
+    const sig = JSON.stringify(data.cards);
+    if (sig === reelSeen) return;
+    reelSeen = sig;
+    const cards = [...data.cards].sort((a, b) =>
+      (b.liked_by.length - a.liked_by.length) || (a.skipped_by.length - b.skipped_by.length));
+    const voted = cards.filter((c) => c.liked_by.length + c.skipped_by.length).length;
+    $("reel-note").textContent = cards.length
+      ? `${voted}/${cards.length} thẻ đã có phiếu · xếp theo số người thích`
+      : "Bộ thẻ chưa được tạo.";
+    $("reel").replaceChildren(...cards.map((c) => {
+      const frame = h("div.card-img", {});
+      if (c.image_url) {
+        const img = h("img", { src: c.image_url, alt: "", loading: "lazy", referrerpolicy: "no-referrer" });
+        img.addEventListener("error", () => { img.remove(); frame.classList.add("broken"); });
+        frame.append(img);
+      } else frame.classList.add("broken");
+      const none = !c.liked_by.length && !c.skipped_by.length;
+      return h("li.reel-card", {},
+        frame,
+        h("div.reel-body", {},
+          h("div", {}, h("h3", {}, c.name),
+            h("p.muted.small", {}, [CATEGORY[c.category] || c.category, c.district].filter(Boolean).join(" · "))),
+          h("p.reel-tally", {}, `${c.liked_by.length} thích · ${c.skipped_by.length} bỏ qua`),
+          none ? h("p.reel-empty", {}, "Chưa ai quẹt thẻ này.") : null,
+          c.liked_by.length ? h("div.who", { "aria-label": "Thích" }, c.liked_by.map((n) => person(n, "pos"))) : null,
+          c.skipped_by.length ? h("div.who", { "aria-label": "Bỏ qua" }, c.skipped_by.map((n) => person(n, "neg"))) : null));
+    }));
+  }
+  const reel = $("reel");
+  const step = (dir) => {
+    const card = reel.querySelector(".reel-card");
+    const w = card ? card.getBoundingClientRect().width + 14 : 280;
+    reel.scrollBy({ left: dir * w, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  };
+  $("reel-prev").addEventListener("click", () => step(-1));
+  $("reel-next").addEventListener("click", () => step(1));
+  reel.addEventListener("keydown", (ev) => {
+    if (ev["key"] === "ArrowRight") { ev.preventDefault(); step(1); }
+    if (ev["key"] === "ArrowLeft") { ev.preventDefault(); step(-1); }
+  });
+
   async function poll() {
+    loadReel();
     try {
       const p = await api("GET", `/api/groups/${code}/progress`);
       renderMembers(p);
