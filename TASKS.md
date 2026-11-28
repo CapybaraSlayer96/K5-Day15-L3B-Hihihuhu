@@ -58,26 +58,26 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | A3 | `build_deck` + `plan_group` theo hợp đồng mục 2 | Hải | — | 10:30 (kéo sang CP4) | `codebase/` + assert trong `tests/test_core.py` | Bộ thẻ không có điểm đóng vào ngày đi; lịch luôn 0 vi phạm | xong · `codebase/group.py`, `tests/test_core.py` ok |
 | D1 | `evidence/summary.md` + kết quả khảo sát đã bỏ cột nhận diện | Hùng → Bảo làm | — | 09:30 | `evidence/summary.md`, `evidence/survey/` | ≥ 20 phản hồi đúng vai; x/N, %; ≥ 5 trích nguyên văn; kết luận giả thuyết | xong · 31 người, 23/31 (74%) |
 | D2 | `spec.md` §1 (số khảo sát), §2 (impact có nguồn), §6 (bốn đường đi) | Hùng → Bảo làm | — | 09:45 | `spec.md` | §0–§7 không còn ô trống | xong |
-| D3 | Tự soát guide 3.4 + nộp form CP3 | Hùng | D1, D2, U1, A1 | 10:00 | form CP3 | Nộp đúng hạn, khai thật phần chưa xong (web) || xong · form CP3 đã nộp (Bảo nộp) |
+| D3 | Tự soát guide 3.4 + nộp form CP3 | Hùng | D1, D2, U1, A1 | 10:00 | form CP3 | Nộp đúng hạn, khai thật phần chưa xong (web) | xong · form CP3 đã nộp (Bảo nộp) |
 
 ### Checkpoint 4 · hạn 14:30 hôm nay (28/11)
 
 | Mã | Việc | Người | Chờ | Hạn | Deliverable | DoD | Trạng thái |
 |---|---|---|---|---|---|---|---|
-| U2 | Trang Tạo nhóm (wizard 7 bước) + Vào nhóm | Bảo | — (JSON mẫu) | 11:00 | `app/templates/create.html`, `join.html`, `app/static/` | Đúng TS-01, TS-02; chặn thiếu ngày đi || xong · `create.html`, `join.html` (PR #2, #3) |
-| U3 | Trang Quẹt 2 lớp (tổng quan / vuốt lên chi tiết), kéo + nút, hoàn tác | Bảo | — (JSON mẫu) | 12:00 | `swipe.html`, `swipe.js` | Đúng TS-04 || xong · `swipe.html`, `swipe.js` (PR #2, #3) |
-| U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API || xong · `lobby.html`, `itinerary.html`; lịch trình đang chạy dữ liệu mẫu, chờ B4 (PR #2, #3) |
-| U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console || chờ B4 · hợp đồng API cho Minh đã ghi ở `docs/api-examples.md` mục 9b |
+| U2 | Trang Tạo nhóm (wizard 7 bước) + Vào nhóm | Bảo | — (JSON mẫu) | 11:00 | `app/templates/create.html`, `join.html`, `app/static/` | Đúng TS-01, TS-02; chặn thiếu ngày đi | xong · `create.html`, `join.html` (PR #2, #3) |
+| U3 | Trang Quẹt 2 lớp (tổng quan / vuốt lên chi tiết), kéo + nút, hoàn tác | Bảo | — (JSON mẫu) | 12:00 | `swipe.html`, `swipe.js` | Đúng TS-04 | xong · `swipe.html`, `swipe.js` (PR #2, #3) |
+| U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API | xong · `lobby.html`, `itinerary.html`; lịch trình đang chạy dữ liệu mẫu, chờ B4 (PR #2, #3) |
+| U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console | chờ B4 · hợp đồng API cho Minh đã ghi ở `docs/api-examples.md` mục 9b |
 | U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | |
 | B3 | API nhóm, bộ thẻ, quẹt, tiến độ, chi tiết địa điểm + JSON mẫu | Minh | B1 | 11:30 (JSON mẫu 10:30) | `app/`, `docs/api-examples.md` | 409 biệt danh trùng, 422 thiếu ngày, quẹt lại ghi đè | xong · `docs/api-examples.md`, 8 integration test qua; deck tạm có nhãn, chờ A3 |
-| B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Minh | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm || chưa bắt đầu · GẤP, chặn U5, U6, B5 · hợp đồng ở `docs/api-examples.md` mục 9b |
+| B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Minh | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm | chưa bắt đầu · GẤP, chặn U5, U6, B5 · hợp đồng ở `docs/api-examples.md` mục 9b |
 | B5 | Test end-to-end qua HTTP | Minh | B4 | 13:30 | `tests/test_api.py` | In ok; `tests/test_core.py` vẫn ok | |
 | A4 | Lượt cải tiến: gom nhóm lỗi → một cải tiến → eval trọn bộ → chấm → `score` | Hải | A1 | 12:30 | `eval/run-3.csv` đã chấm | Chạy đủ 22 câu (+ câu mới chỉ thêm); ghi cấu hình đổi gì | xong · `run-3` (20/22, lộ bug parse trưa) → `run-4` (21/22 = 95%, `gemini-3.5-flash-lite`) |
 | A5 | `eval/report.md` + `eval/README.md` | Hải | A4 | 13:30 | 2 file | % từng lượt so với chuẩn; ≥ 3 lỗi (input · output · vì sao sai · đã sửa · còn lại) | xong · `eval/report.md`, `eval/README.md` khớp `score` |
 | A6 | Mô phỏng ≥ 50 phiên + `cost/cost-estimate.md` | Hải | A4 | 14:00 | `cost/simulate-N.csv`, `-summary.md`, `cost-estimate.md`, `traces/simulate-N.jsonl` | Chi phí / task thành công; 3 kịch bản; ≥ 2 model; kết luận so với impact | xong · `simulate-1@20261128-085836` (50 phiên, 0 lỗi), `cost/cost-estimate.md` |
 | D4 | Kiểm thử CLI 5 câu lạ | Hùng | — | 11:00 | `validation/cli-test.md` | Mỗi câu: input · output · đúng / sai · vì sao | |
 | D5 | *(Bonus)* 2–3 người ngoài nhóm dùng thử, 5 nhịp | Hùng | có bản chạy | 13:30 | `validation/log.md` | Đủ cột mỗi người + 4 dòng tổng hợp | |
-| D6 | `spec.md` §8 §9 + slide 8 trang | Hùng | A5, A6 | 14:15 | `spec.md`, `slides/demo-slides.pdf` | Mỗi trang slide ≥ 1 số có nguồn, khớp repo || xong · `spec.md` §8 §9 (PR #10); slide PDF chưa có |
+| D6 | `spec.md` §8 §9 + slide 8 trang | Hùng | A5, A6 | 14:15 | `spec.md`, `slides/demo-slides.pdf` | Mỗi trang slide ≥ 1 số có nguồn, khớp repo | xong · `spec.md` §8 §9 (PR #10); slide 8 trang ở nhánh `docs/d6-slides` (`demo-slides.pdf`), chờ merge |
 | D7 | Kiểm thử luồng web + corner case PRD | Hùng | U5, B5 | 14:10 | `validation/web-test.md` | Không còn lỗi chặn luồng demo | |
 | X1 | README hoàn thiện: mục "Chạy web" (`docker compose up`), link video ở bảng "Bảy hạng mục" dòng 7, cập nhật bảng "Phần nào thật / giả" khi web xong | Hùng | U6, B2 | 14:20 | `README.md` | Người ngoài làm theo README chạy được CLI + web; không còn `____` | |
 | X2 | `docs/ai-usage.md`: mỗi người thêm dòng phần mình dùng AI (công cụ · AI làm gì · mình kiểm gì) | Cả nhóm | — | 14:20 | `docs/ai-usage.md` | Mỗi người ≥ 1 dòng; giải thích được phần có tên mình | |
