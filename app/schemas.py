@@ -77,3 +77,18 @@ class RoutePoint(Payload):
 class RouteRequest(Payload):
     mode: Literal["xe_may", "o_to", "di_bo"] = "xe_may"
     points: list[RoutePoint] = Field(min_length=2, max_length=25)
+
+
+class ItineraryRequest(DeckRequest):
+    pinned: list[str] = Field(default_factory=list, max_length=20)
+
+
+class ItineraryPatch(DeckRequest):
+    action: Literal["approve", "drop", "pin"]
+    place_id: str | None = Field(default=None, min_length=1, max_length=100)
+
+    @model_validator(mode="after")
+    def place_needed(self):
+        if self.action != "approve" and not self.place_id:
+            raise ValueError("Cần place_id khi bỏ hoặc ghim điểm.")
+        return self
