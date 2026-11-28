@@ -25,9 +25,9 @@
   .top b { color: var(--text); font-weight: 600; }
   .top .pg { margin-left: auto; font-family: var(--mono); color: var(--faint); font-size: 14px; }
   .kicker { font-size: 16px; font-weight: 600; color: var(--muted); margin-bottom: 12px; }
-  h1 { font-size: 46px; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin: 0 0 26px; max-width: 1060px; text-wrap: balance; }
+  h1 { font-size: 46px; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin: 0 0 26px; max-width: 1060px; }
   h3 { font-size: 22px; font-weight: 600; margin: 0 0 10px; letter-spacing: -0.01em; }
-  p { font-size: 20px; line-height: 1.5; margin: 0; color: var(--muted); }
+  p { font-size: 20px; line-height: 1.5; margin: 0; color: var(--muted); text-wrap: pretty; }
   p b { color: var(--text); font-weight: 600; }
   .card { background: var(--surface); border-radius: 20px; padding: 26px 28px; }
   .grid { display: grid; gap: 16px; }
@@ -63,7 +63,7 @@
   .hero .logo { display: flex; align-items: center; gap: 22px; margin-bottom: 40px; }
   .hero .logo svg { width: 88px; height: 88px; }
   .hero .logo span { font-size: 56px; font-weight: 700; letter-spacing: -0.03em; }
-  .hero h1 { font-size: 64px; max-width: 980px; margin-bottom: 24px; }
+  .hero h1 { font-size: 56px; max-width: none; margin-bottom: 24px; }
   .hero h1 em { font-style: normal; color: var(--accent); }
   .hero p { font-size: 24px; max-width: 820px; }
   .deck { position: absolute; right: -60px; top: 110px; width: 420px; height: 500px; }
@@ -99,8 +99,8 @@
     </div>
   </div>
   <div class="logo"><svg><use href="#mark"/></svg><span>TripSwipe</span></div>
-  <h1>Cả nhóm quẹt thẻ, lịch đi chơi <em>tự xếp đúng giờ mở cửa</em></h1>
-  <p>Lịch trình một ngày ở Hà Nội cho nhóm 3–6 bạn: chọn chung, đi không vòng, không gặp cửa đóng.</p>
+  <h1>Cả nhóm quẹt thẻ, lịch đi chơi<br><em>tự xếp đúng giờ mở cửa</em></h1>
+  <p>Lịch trình một ngày ở Hà Nội cho nhóm 3–6 bạn:<br>chọn chung, đi không vòng, không gặp cửa đóng.</p>
   <div class="foot">Nhóm Hihihuhu · AI20K Hackathon · 28/11/2026</div>
 </section>
 
@@ -108,72 +108,72 @@
 <section class="slide">
   <div class="top"><svg><use href="#mark"/></svg><b>TripSwipe</b><span class="pg">02 / 06</span></div>
   <div class="kicker">Nỗi đau</div>
-  <h1>Ba phần tư người lên lịch cho nhóm từng làm hỏng buổi đi</h1>
+  <h1>Ba phần tư người lên lịch cho nhóm<br>từng làm hỏng buổi đi</h1>
   <div class="grid g2" style="grid-template-columns: 1fr 1.2fr">
     <div class="card" style="display:flex;flex-direction:column;gap:28px">
-      <div><div class="num">74%</div><p style="margin-top:10px"><b>23/31</b> người gặp sự cố: đi vòng, cửa đóng, bỏ lỡ điểm muốn đi</p></div>
+      <div><div class="num">74%</div><p style="margin-top:10px"><b>23/31</b> người gặp sự cố: đi vòng, cửa đóng, bỏ lỡ điểm muốn đi</p></div>
       <div><div class="num">58%</div><p style="margin-top:10px"><b>18/31</b> đến nơi thì đã đóng hoặc chưa mở cửa</p></div>
     </div>
     <div class="card" style="display:flex;flex-direction:column;gap:26px;justify-content:center">
       <div>
-        <p class="quote">"Đến nơi thì bảo tàng đã ngừng đón khách. Cả nhóm phải thay đổi kế hoạch buổi chiều."</p>
-        <div class="cite">Người trả lời khảo sát, phiếu S23</div>
+        <p class="quote">"Đến nơi thì bảo tàng đã ngừng đón khách. Cả nhóm phải thay đổi kế hoạch buổi chiều."</p>
+        <div class="cite">Người trả lời khảo sát, phiếu S23</div>
       </div>
       <div>
-        <p class="quote">"Mỗi người gửi một link quán trên TikTok vào group chat rồi tự ghép lại. Lúc đi mới phát hiện hai quán nằm ngược hẳn hướng nhau."</p>
-        <div class="cite">Người trả lời khảo sát, phiếu S29 (rút gọn)</div>
+        <p class="quote">"Mỗi người gửi một link quán trên TikTok vào group chat rồi tự ghép lại. Lúc đi mới phát hiện hai quán nằm ngược hẳn hướng nhau."</p>
+        <div class="cite">Người trả lời khảo sát, phiếu S29 (rút gọn)</div>
       </div>
     </div>
   </div>
-  <div class="foot">Khảo sát online 27–28/11/2026, 31 người từng lên lịch cho nhóm đi chơi một ngày ở Hà Nội trong 3 tháng qua.</div>
+  <div class="foot">Khảo sát online 27–28/11/2026, 31 người từng lên lịch cho nhóm đi chơi một ngày ở Hà Nội trong 3 tháng qua.</div>
 </section>
 
 <!-- 3. USP -->
 <section class="slide">
   <div class="top"><svg><use href="#mark"/></svg><b>TripSwipe</b><span class="pg">03 / 06</span></div>
   <div class="kicker">Điểm khác biệt</div>
-  <h1>Không chỉ gợi ý chỗ đi, mà ra một lịch cả nhóm đồng ý và đi được</h1>
+  <h1>Không chỉ gợi ý chỗ đi, mà ra một lịch<br>cả nhóm đồng ý và đi được</h1>
   <div class="grid g3">
     <div class="card">
       <h3>Cả nhóm cùng chọn</h3>
-      <p>Mỗi bạn quẹt thẻ trên điện thoại. Không còn ném link TikTok vào group chat rồi một người tự ghép.</p>
-      <div class="vs">Group chat: một người gánh, kết quả theo ý người đó</div>
+      <p>Mỗi bạn quẹt thẻ trên điện thoại. Không còn ném link TikTok vào group chat rồi một người tự ghép.</p>
+      <div class="vs">Group chat: một người gánh, kết quả theo ý người đó</div>
     </div>
     <div class="card">
-      <h3>Đúng giờ mở cửa</h3>
-      <p>Giờ mở cửa và thời gian đi được kiểm trước khi trả lịch. Không đưa nhóm tới nơi đang đóng.</p>
-      <div class="num" style="font-size:44px;margin-top:18px">0<small>vi phạm giờ · 21/22 câu thử đạt</small></div>
+      <h3>Đúng giờ mở cửa</h3>
+      <p>Giờ mở cửa và thời gian đi được kiểm trước khi trả lịch. Không đưa nhóm tới nơi đang đóng.</p>
+      <div class="num" style="font-size:44px;margin-top:18px">0<small>vi phạm giờ · 21/22 câu thử đạt</small></div>
       <div class="vs">ChatGPT: lịch nghe hợp lý nhưng có thể sai giờ</div>
     </div>
     <div class="card">
       <h3>Nói thật khi không vừa</h3>
-      <p>Điểm nào không xếp được thì ghi lý do và cách nới: đổi ngày, thêm giờ, bỏ bớt điểm.</p>
-      <div class="vs">Google Maps: người dùng tự xếp thứ tự, không cảnh báo</div>
+      <p>Điểm nào không xếp được thì ghi lý do và cách nới: đổi ngày, thêm giờ, bỏ bớt điểm.</p>
+      <div class="vs">Google Maps: người dùng tự xếp thứ tự, không cảnh báo</div>
     </div>
   </div>
-  <div class="foot">Kết quả trên bộ 22 câu thử của nhóm, lượt chạy ngày 28/11/2026. Chưa thử với người dùng ngoài nhóm.</div>
+  <div class="foot">Kết quả trên bộ 22 câu thử của nhóm, lượt chạy ngày 28/11/2026. Chưa thử với người dùng ngoài nhóm.</div>
 </section>
 
 <!-- 4. Business model -->
 <section class="slide">
   <div class="top"><svg><use href="#mark"/></svg><b>TripSwipe</b><span class="pg">04 / 06</span></div>
   <div class="kicker">Mô hình kinh doanh dự kiến</div>
-  <h1>Miễn phí cho cả nhóm; thu tiền từ trưởng nhóm hay đi và từ địa điểm</h1>
+  <h1>Miễn phí cho cả nhóm, thu tiền<br>từ trưởng nhóm hay đi và từ địa điểm</h1>
   <div class="grid g3" style="flex:0">
     <div class="card">
       <div class="price">MIỄN PHÍ</div>
       <h3>Thành viên</h3>
-      <p>Vào bằng mã nhóm, quẹt thẻ, xem lịch. Không cần tài khoản, để mời bạn không vướng gì.</p>
+      <p>Vào bằng mã nhóm, quẹt thẻ, xem lịch. Không cần tài khoản, để mời bạn không vướng gì.</p>
     </div>
     <div class="card">
       <div class="price">FREEMIUM</div>
       <h3>Trưởng nhóm</h3>
-      <p>Vài chuyến miễn phí mỗi tháng. Gói trả phí cho người hay tổ chức: chuyến nhiều ngày, nhóm đông, xuất lịch.</p>
+      <p>Vài chuyến miễn phí mỗi tháng. Gói trả phí cho người hay tổ chức: chuyến nhiều ngày, nhóm đông, xuất lịch.</p>
     </div>
     <div class="card">
       <div class="price">HOA HỒNG</div>
-      <h3>Địa điểm, đặt chỗ</h3>
-      <p>Đặt bàn, mua vé ngay từ lịch đã duyệt. Nhóm đã có giờ đến cụ thể nên dễ chốt hơn.</p>
+      <h3>Địa điểm, đặt chỗ</h3>
+      <p>Đặt bàn, mua vé ngay từ lịch đã duyệt. Nhóm đã có giờ đến cụ thể nên dễ chốt hơn.</p>
     </div>
   </div>
   <div class="row">
@@ -183,34 +183,34 @@
     </div>
     <div class="card">
       <div class="num" style="font-size:44px">$10–20</div>
-      <p style="margin-top:8px">Máy chủ và database mỗi tháng <span style="color:var(--faint)">(ước tính)</span>, lớn hơn chi phí AI</p>
+      <p style="margin-top:8px">Máy chủ và database mỗi tháng <span style="color:var(--faint)">(ước tính)</span>, lớn hơn chi phí AI</p>
     </div>
     <div class="card">
       <h3 style="font-size:19px">Việc phải kiểm</h3>
-      <p>Mức giá và tỉ lệ trả tiền: chưa hỏi người dùng. Bước tiếp theo là khảo sát mức sẵn sàng trả.</p>
+      <p>Mức giá và tỉ lệ trả tiền: chưa hỏi người dùng. Bước tiếp theo là khảo sát mức sẵn sàng trả.</p>
     </div>
   </div>
-  <div class="foot">Chi phí AI từ 50 phiên mô phỏng, giá model tra ngày 28/11/2026. Ba nguồn thu là đề xuất, chưa kiểm với thị trường.</div>
+  <div class="foot">Chi phí AI từ 50 phiên mô phỏng, giá model tra ngày 28/11/2026. Ba nguồn thu là đề xuất, chưa kiểm với thị trường.</div>
 </section>
 
 <!-- 5. Tech solution -->
 <section class="slide">
   <div class="top"><svg><use href="#mark"/></svg><b>TripSwipe</b><span class="pg">05 / 06</span></div>
   <div class="kicker">Giải pháp</div>
-  <h1>AI lo phần chọn, phần kiểm giờ do máy tính đếm chính xác</h1>
+  <h1>AI lo phần chọn,<br>phần kiểm giờ do máy tính đếm chính xác</h1>
   <div class="flow">
-    <div class="step code"><div class="n">1</div><h3>Tạo nhóm</h3><p>Ngày đi, khung giờ, điểm xuất phát, ngân sách.</p><div class="who">Trưởng nhóm</div></div>
-    <div class="step"><div class="n">2</div><h3>AI chọn 20 thẻ</h3><p>Hợp sở thích, lọc sẵn các điểm đóng cửa hôm đó.</p><div class="who">AI</div></div>
+    <div class="step code"><div class="n">1</div><h3>Tạo nhóm</h3><p>Ngày đi, khung giờ, điểm xuất phát, ngân sách.</p><div class="who">Trưởng nhóm</div></div>
+    <div class="step"><div class="n">2</div><h3>AI chọn 20 thẻ</h3><p>Hợp sở thích, lọc sẵn các điểm đóng cửa hôm đó.</p><div class="who">AI</div></div>
     <div class="step code"><div class="n">3</div><h3>Cả nhóm quẹt</h3><p>Thích hoặc bỏ qua; phòng chờ hiện ai chọn gì.</p><div class="who">Cả nhóm</div></div>
-    <div class="step code"><div class="n">4</div><h3>Xếp lịch và kiểm</h3><p>Thứ tự, giờ đến, thời gian đi, ngân sách.</p><div class="who">Quy tắc cố định</div></div>
-    <div class="step code"><div class="n">5</div><h3>Duyệt</h3><p>Kéo đổi thứ tự, đổi điểm, rồi duyệt cho cả nhóm.</p><div class="who">Trưởng nhóm</div></div>
+    <div class="step code"><div class="n">4</div><h3>Xếp lịch và kiểm</h3><p>Thứ tự, giờ đến, thời gian đi, ngân sách.</p><div class="who">Quy tắc cố định</div></div>
+    <div class="step code"><div class="n">5</div><h3>Duyệt</h3><p>Kéo đổi thứ tự, đổi điểm, rồi duyệt cho cả nhóm.</p><div class="who">Trưởng nhóm</div></div>
   </div>
   <div class="row" style="margin-top:20px">
-    <div class="card"><div class="num" style="font-size:44px">119</div><p style="margin-top:8px">địa điểm Hà Nội, giờ mở cửa đối chiếu nguồn chính thức</p></div>
-    <div class="card"><div class="num" style="font-size:44px">95%</div><p style="margin-top:8px">câu thử đạt chuẩn (21/22), không lịch nào sai giờ mở cửa</p></div>
-    <div class="card"><h3 style="font-size:19px">Con người giữ quyền chốt</h3><p>AI không tự đặt vé, trả tiền hay nhắn tin thay ai. Lịch chỉ đi khi trưởng nhóm duyệt.</p></div>
+    <div class="card"><div class="num" style="font-size:44px">119</div><p style="margin-top:8px">địa điểm Hà Nội, giờ mở cửa đối chiếu nguồn chính thức</p></div>
+    <div class="card"><div class="num" style="font-size:44px">95%</div><p style="margin-top:8px">câu thử đạt chuẩn (21/22), không lịch nào sai giờ mở cửa</p></div>
+    <div class="card"><h3 style="font-size:19px">Con người giữ quyền chốt</h3><p>AI không tự đặt vé, trả tiền hay nhắn tin thay ai. Lịch chỉ đi khi trưởng nhóm duyệt.</p></div>
   </div>
-  <div class="foot">Chạy trên web điện thoại, không cần cài app.</div>
+  <div class="foot">Chạy trên web điện thoại, không cần cài app.</div>
 </section>
 
 <!-- 6. Outro -->
