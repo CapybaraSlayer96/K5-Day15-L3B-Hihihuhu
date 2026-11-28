@@ -159,15 +159,16 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 - Kết quả: lượt 1 13/22 (59%; 8 câu lỗi timeout proxy, tính trượt) · lượt 2 20/22 (91%, `gpt-4.1-mini`) · lượt 3 20/22 (91%, `gemini-3.5-flash-lite`; lộ lỗi parse `"đóng cửa trưa"` ở B19) · lượt 4 **21/22 (95%, `gemini-3.5-flash-lite`)** — run ID: `run-1@20261128-011133` / `run-2@20261128-015044` / `run-3@20261128-084622` / `run-4@20261128-085230` → chi tiết `eval/report.md`, hồ sơ `eval/README.md`. Lượt 4 đạt chuẩn: ≥75%, 0 vi phạm giờ mở cửa/nghỉ trưa, 0 bịa dữ liệu, 4/4 câu `tu_choi`.
 
 ## §8. Chi phí khi dùng thật *(guide 4.2)*
-- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-__.csv` (__ phiên)
-- Chi phí / task thành công: __ (model __) · __ (model __)
-- Chi phí / tháng ở quy mô thật: thấp __ · cơ sở __ · cao __ → chi tiết `cost/cost-estimate.md`
-- So với impact / người / tháng (§2): đáng làm không, vì sao:
+*(Số chép nguyên từ `cost/cost-estimate.md`, không tự tính lại.)*
+- Persona + giá: `cost/personas.yaml` · lượt mô phỏng: `cost/simulate-1.csv` (run ID `simulate-1@20261128-085836`, **50 phiên**, 0/50 lỗi, seed 42); tỉ lệ đạt dùng để tính **21/22 (95%)** của `run-4`.
+- Chi phí / task thành công: **\$0.0015 (≈ 38 ₫)** (model `gemini-3.5-flash-lite`) · **\$0.0108 (≈ 274 ₫)** (model `gpt-4.1`). Hai model còn lại và chi phí / phiên: xem `cost/cost-estimate.md`.
+- Chi phí / tháng ở quy mô thật (model `gemini-3.5-flash-lite`): thấp **\$0,54** (500 người lên lịch) · cơ sở **\$1,09** (1.000) · cao **\$3,26** (3.000); với `gpt-4.1`, cơ sở **\$7,96**. Ba quy mô người dùng là *(tự ước tính)*. → chi tiết `cost/cost-estimate.md`.
+- So với impact / người / tháng (§2): impact ~20 phút / người lên lịch / tháng; chi phí AI ≈ 28 ₫ (model nhẹ) đến ≈ 202 ₫ (`gpt-4.1`) / người / tháng → **đáng làm** theo `cost/cost-estimate.md`. Không kể hạ tầng (VPS / Postgres khoảng \$10–\$20 / tháng *(tự ước tính)*, lớn hơn chi phí API ở quy mô này) và mới chạy mô phỏng, chưa có người dùng thật.
 
 ## §9. Rủi ro & an toàn
-- Dữ liệu: đã ẩn danh gì, không thu gì, không đưa gì vào model gói miễn phí:
-- AI **không được** làm gì kể cả khi người dùng yêu cầu:
-- Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào:
+- Dữ liệu: khảo sát đã **bỏ cột thời gian và mọi cột nhận diện** (`evidence/survey/results.csv`, phiếu đánh mã S01…), trích dẫn bỏ tên. Ứng dụng chỉ lưu **biệt danh** trong nhóm, không email / mật khẩu (`docs/PRD.md` TS-02). Dữ liệu địa điểm là thông tin công khai có nguồn (`data/DATA_CARD.md`). Đầu vào benchmark dùng mốc xuất phát công cộng; không gửi địa chỉ riêng cho model. API key chỉ trong `.env` (không commit). Lưu ý: khung có ghi input vào trace nên **trace không tự ẩn danh**, cần kiểm trước khi công bố (`docs/ARCHITECTURE.md`).
+- AI **không được** làm gì kể cả khi người dùng yêu cầu: đặt vé, đặt bàn, thanh toán, gửi tin (hệ thống không có công cụ giao dịch); xếp điểm vào ngày đóng hoặc ngoài giờ mở cửa, kể cả khi bị đòi "bỏ qua giờ mở cửa" hay tự xưng admin (B15, B16); tự đặt giờ mở / giá vé khi công cụ không có dữ liệu; lịch nhiều ngày hoặc ngoài nội thành Hà Nội.
+- Ai có thể bị hại nếu AI sai, và nhóm chặn thế nào: cả nhóm 3–6 người đến nơi đã đóng cửa hoặc đi vòng, mất buổi đi. Chặn: giờ, thời gian di chuyển tính bằng code, không để model nhẩm; `kiem_lich_trinh` chạy trên mọi lịch, có vi phạm thì không trả lịch; điểm thiếu dữ liệu giờ gắn cảnh báo "chưa xác minh"; trưởng nhóm duyệt lịch trước khi gửi. **Còn lại (chưa chặn hết):** giờ mở cửa có thể đổi theo mùa / lễ Tết / sự kiện, dữ liệu chỉ ghi lịch thường ngày (xem giới hạn trong `data/DATA_CARD.md`); Lăng Bác có đợt đóng tu bổ hằng năm; dữ liệu giờ của một số điểm đang ghi "chưa xác minh".
 
 ## §10. Phân công & changelog
 - Phân công có tên: Bảo — UI, lõi xếp lịch, spec, eval · Minh — BE (FastAPI, Postgres, docker) · Hải — dữ liệu, AI (bộ thẻ, prompt), đánh giá, chi phí · Hùng — BA, kiểm thử, tài liệu, nộp checkpoint. Chi tiết: `TASKS.md`.
@@ -183,6 +184,7 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 | 28/11 00:40 | Thêm ma trận OSRM + lấy max với ước tính tốc độ đô thị | OSRM không tính kẹt xe, cho 1–8 phút giữa các điểm nội thành — quá lạc quan |
 | 28/11 01:00 | Agent: thứ / giờ / điểm xuất phát đọc bằng luật khi luật bắt được; gợi ý model chọn mục tour đêm | Thử 3 câu: model đọc "thứ Bảy" thành Chủ nhật (B01), chọn Văn Miếu ngày cho "buổi tối" (B03) |
 | 28/11 01:05 | Thêm 6 câu thử B17–B22 (chỉ thêm, không sửa câu cũ) | CP3 cần 20–30 câu; dựng từ trích khảo sát |
+| 28/11 | `spec.md` §8, §9: điền chi phí (chép từ `cost/cost-estimate.md`) và rủi ro & an toàn | Hoàn thiện spec cho CP4 (D6); không đổi chuẩn "đạt", câu thử hay số đã chạy |
 | 28/11 01:45 | `ai.py` thử lại khi proxy treo kết nối | Lượt 1: 8/22 câu lỗi timeout → chạy lại thành lượt 2 cùng cấu hình |
 | 28/11 sáng | Thời gian đi dùng đường thật OSRM thay cho max(OSRM, đường chim bay): xe máy = quãng đường profile xe đạp ÷ 18 km/h, ô tô = thời gian OSRM × 2, đi bộ = OSRM; thêm `POST /api/route` trả hình đường thật cho bản đồ | Đường chim bay không theo đường phố; profile ô tô OSRM đi vòng xa (Văn Miếu → Trấn Quốc 6,9 km so với 3,0 km theo đường nhỏ). Hệ số 18 km/h và × 2 là *(tự ước tính)*. Các lượt eval sau dùng mô hình mới |
 | 28/11 03:02 | B1–B3: thêm FastAPI/Postgres 7 bảng, Docker Compose, API cấu hình/nhóm/địa điểm/bộ thẻ/quẹt/hoàn tác/tiến độ và hợp đồng JSON cho UI; 8 integration test qua Postgres thật | Mở đường nối UI U2–U5; giữ lõi CLI và file khung, metric, kết quả eval. Bộ thẻ tạm theo rating có nhãn rõ, chờ A3; B4 chưa triển khai |
