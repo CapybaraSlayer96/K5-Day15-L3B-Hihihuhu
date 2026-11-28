@@ -130,14 +130,31 @@ def km(a, b):
     return 2 * 6371 * math.asin(math.sqrt(h))
 
 
+# Quy OSRM ra phút theo phương tiện — mọi hệ số là (tự ước tính), chỉnh ở đây:
+PROFILE = {"xe_may": "bike", "o_to": "car", "di_bo": "foot"}  # xe máy đi được đường nhỏ như xe đạp, nhanh hơn
+XE_MAY_KMH = 18          # tốc độ trung bình xe máy nội thành, gồm dừng đèn
+O_TO_TRAFFIC = 2.0       # OSRM ô tô tính đường thông thoáng; nội thành kẹt xe ~gấp đôi
+MIN_MINUTES = {"xe_may": 5, "o_to": 5, "di_bo": 2}  # xe: lấy / gửi xe
+
+
+def travel_leg(a_id, a_xy, b_id, b_xy, mode="xe_may"):
+    """Chặng A → B: (phút, mét, nguồn). Nguồn "osrm" = ma trận đường thật; "duong_chim_bay" = dự phòng."""
+    row = MATRIX_DATA.get("%s|%s|%s" % (a_id, b_id, PROFILE.get(mode, "bike")))
+    if row:
+        osrm_min, meters = row
+        minutes = {"xe_may": meters / 1000 / XE_MAY_KMH * 60, "o_to": osrm_min * O_TO_TRAFFIC}.get(mode, osrm_min)
+        src = "osrm"
+    else:
+        meters = km(a_xy, b_xy) * 1.3 * 1000
+        minutes = meters / 1000 / SPEED_KMH.get(mode, 20) * 60
+        src = "duong_chim_bay"
+    return max(MIN_MINUTES.get(mode, 5), int(math.ceil(minutes))), int(round(meters)), src
+
+
 def travel_minutes(a_id, a_xy, b_id, b_xy, mode="xe_may"):
-    """Phút đi từ A đến B (ước tính) và nguồn. Lấy max(OSRM, đường chim bay × 1,3 ÷ tốc độ), tối thiểu 5 phút."""
-    est = km(a_xy, b_xy) * 1.3 / SPEED_KMH.get(mode, 20) * 60
-    osrm = MATRIX_DATA.get("%s|%s|%s" % (a_id, b_id, mode))
-    # ponytail: OSRM công cộng không tính kẹt xe nội thành nên quá lạc quan; lấy max với ước tính tốc độ đô thị
-    if osrm is not None and osrm >= est:
-        return max(5, int(round(osrm))), "osrm"
-    return max(5, int(math.ceil(est))), "duong_chim_bay"
+    """Phút đi A → B (ước tính) và nguồn."""
+    m, _, src = travel_leg(a_id, a_xy, b_id, b_xy, mode)
+    return m, src
 
 
 def fmt(minutes):
