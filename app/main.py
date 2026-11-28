@@ -149,6 +149,23 @@ def create_app(database=None, deck_builder=None):
     def home(request: Request):
         return templates.TemplateResponse(request=request, name="index.html", context={})
 
+    @app.get("/create", include_in_schema=False)
+    def create_page(request: Request):
+        return templates.TemplateResponse(request=request, name="create.html", context={})
+
+    @app.get("/join", include_in_schema=False)
+    def join_page(request: Request, code: str = ""):
+        code = code.strip().upper()
+        return templates.TemplateResponse(request=request, name="join.html",
+                                          context={"join_code": code if re.fullmatch(r"[A-Z0-9]{6}", code) else ""})
+
+    @app.get("/g/{code}/{page}", include_in_schema=False)
+    def group_page(request: Request, code: str, page: str):
+        code = code.upper()
+        if page not in ("swipe", "lobby", "itinerary") or not re.fullmatch(r"[A-Z0-9]{6}", code):
+            raise HTTPException(404, "Không tìm thấy trang.")
+        return templates.TemplateResponse(request=request, name=page + ".html", context={"code": code, "page": page})
+
     @app.get("/health", tags=["Hệ thống"])
     def health(conn=Depends(connection)):
         counts = conn.execute("SELECT (SELECT count(*) FROM places) AS places, "

@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}Lịch trình{% endblock %}
+{% block head %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">{% endblock %}
+{% block main_class %}itin-page{% endblock %}
+{% block body %}
+<div class="title-row">
+  <div>
+    <h1>Lịch trình</h1>
+    <p class="muted" id="trip-line"></p>
+  </div>
+  <div class="row" id="actions">
+    <button type="button" class="btn" id="copy" disabled>Sao chép</button>
+    <button type="button" class="btn primary" id="approve" hidden>Duyệt lịch</button>
+  </div>
+</div>
+<p class="banner" id="mock-banner" hidden>Dữ liệu mẫu: API xếp lịch (B4) chưa có, giờ và phút đi dưới đây là JSON mẫu, không phải lịch thật của nhóm.</p>
+<p class="form-error" id="itin-error" role="alert" hidden></p>
+<div class="itin-grid">
+  <div class="itin-main">
+    <div class="version-row">
+      <label for="version" class="small muted">Phiên bản</label>
+      <select id="version"></select>
+      <span id="status"></span>
+    </div>
+    <section>
+      <h2 class="sec">Dòng thời gian</h2>
+      <ol class="timeline" id="timeline"><li class="muted">Đang tải…</li></ol>
+      <p class="muted small">Thời gian đi là ước tính, chưa tính kẹt xe.</p>
+    </section>
+    <section>
+      <h2 class="sec">Điểm bị bỏ</h2>
+      <ul class="dropped" id="dropped"></ul>
+    </section>
+  </div>
+  <section class="map-wrap" aria-label="Bản đồ lộ trình">
+    <div id="map"></div>
+    <p class="muted small">Đường nối theo thứ tự ghé, không phải đường đi thực tế. Nền © OpenStreetMap contributors.</p>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="/static/itinerary-api.js"></script>
+<script src="/static/itinerary.js"></script>
+{% endblock %}
