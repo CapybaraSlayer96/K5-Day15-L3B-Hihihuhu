@@ -1,9 +1,12 @@
 {% extends "layout.html" %}
 {% block title %}Trang chủ{% endblock %}
-{% block main_class %}narrow{% endblock %}
+{% block main_class %}home{% endblock %}
 {% block body %}
+<div>
 <h1>Cả nhóm quẹt, máy xếp lịch một ngày ở Hà Nội</h1>
 <p class="lead">Mỗi người quẹt thích hoặc bỏ qua từng địa điểm. TripSwipe gộp ý số đông và xếp lịch đúng giờ mở cửa.</p>
+<p class="foot muted small"><a href="/docs">Tài liệu API</a></p>
+</div>
 <div class="home-grid">
   <section class="panel">
     <h2>Trưởng nhóm</h2>
@@ -20,5 +23,4 @@
     </form>
   </section>
 </div>
-<p class="foot muted small"><a href="/docs">Tài liệu API</a></p>
 {% endblock %}

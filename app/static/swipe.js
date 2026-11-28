@@ -140,6 +140,7 @@
       deck = await api("GET", `/api/groups/${code}/deck?member_id=${encodeURIComponent(me.member_id)}`);
     } catch (e) {
       if (onAuthError(e)) return;
+      $("stage-msg").classList.remove("skel", "skel-card");
       $("stage-msg").textContent = e.message;
       return;
     }

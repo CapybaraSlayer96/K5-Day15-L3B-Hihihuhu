@@ -8,7 +8,7 @@ Một nhóm bạn quẹt chung một xấp thẻ, và xấp thẻ đó thành m�
 
 - Viết đúng **TripSwipe**: một từ, hai chữ hoa T và S. Không viết "Trip Swipe", "TRIPSWIPE", "Tripswipe".
 - File: `app/static/brand/mark.svg` (biểu tượng), `wordmark.svg` (biểu tượng + chữ), `favicon.svg` (biểu tượng trên nền tối, bo góc).
-- Kích thước tối thiểu của biểu tượng: 16px (favicon). Trên thanh trên cùng dùng 28px kèm chữ "TripSwipe" bằng Inter 600.
+- Kích thước tối thiểu của biểu tượng: 16px (favicon). Trên thanh trên cùng dùng 28px kèm chữ "TripSwipe" bằng Be Vietnam Pro 600.
 - Khoảng trống quanh logo ≥ ¼ chiều cao biểu tượng. Không đổi màu lá ngọc, không xoay, không thêm bóng hay viền.
 - Chỉ dùng trên nền tối (`--ground`, `--surface`). Lá sau `#3a3835` sẽ chìm trên nền sáng; app chưa có chế độ sáng (xem bên dưới).
 
@@ -20,10 +20,10 @@ Một nhóm bạn quẹt chung một xấp thẻ, và xấp thẻ đó thành m�
 | `--surface` | `#181716` | Panel, thẻ | — |
 | `--raised` | `#2a2927` | Hover, khối nổi | — |
 | `--rule` | `#23211f` | Vạch chia trong danh sách | trang trí |
-| `--text` | `#ffffff` | Chữ chính, nút chính | 19.4:1 |
-| `--muted` | `#b4b4b4` | Chữ phụ | 9.4:1 |
-| `--faint` | `#949494` | Ghi chú nhỏ | 6.4:1 |
-| `--accent` | `#5fd3a6` | Ngọc Hồ Gươm: dữ liệu lộ trình (số điểm, đường đi, thanh tiến độ), logo | 10.5:1; chữ đen trên ngọc 11.4:1 |
+| `--text` | `#f4f2ee` | Chữ chính, nút chính (trắng giấy ấm) | 17.4:1 |
+| `--muted` | `#b4b0a9` | Chữ phụ | 9.0:1 |
+| `--faint` | `#8f8b85` | Ghi chú nhỏ, "ước tính" | 5.7:1 |
+| `--accent` | `#5fd3a6` | Ngọc Hồ Gươm: dữ liệu lộ trình (số điểm, đường đi, thanh tiến độ), logo | 10.5:1; chữ `--ground` trên ngọc 11.1:1 |
 | `--positive` | `#5fd3a6` | Mở cửa, xong | như trên |
 | `--negative` | `#e5566f` | Đóng cửa, vượt ngân sách, lỗi | 5.4:1 |
 | `--warning` | `#e5a93b` | Chưa có dữ liệu giờ, dữ liệu mẫu | 9.3:1 |
@@ -34,16 +34,21 @@ Giữ màu ngọc đã có: nó là mặt hồ Hoàn Kiếm, điểm xuất phá
 
 ## Chữ
 
-Một họ chữ: **Inter** (Google Fonts, 400/500/600), số dạng bảng (`tabular-nums`) để giờ và phút thẳng cột.
+Hai họ chữ, cả hai có subset `vietnamese` (Google Fonts):
+
+- **Be Vietnam Pro** 400/500/600/700 (`--font`): giao diện, tiêu đề (tracking −0.02em).
+- **JetBrains Mono** 400/500/600 (`--mono`): mã nhóm, giờ `08:15–09:45`, phút, km, tiền trong lịch trình và bảng tổng quan; luôn kèm `tabular-nums`.
+
+Không dùng Inter, Roboto, Arial, serif, hay font thiếu dấu tiếng Việt. Không dùng `#000000`; nền tối nhất là `--ground`.
 
 | Token | Cỡ | Dùng cho |
 |---|---|---|
-| `--fs-display` | 40px | Mã nhóm trên bảng tổng quan |
+| `--fs-display` | clamp(28px, 4vw, 40px) | Mã nhóm trên bảng tổng quan |
 | `--fs-title` | 24px | Tiêu đề trang (h1) |
 | `--fs-sub` | 18px | h2, dòng chuyến đi |
-| `--fs-section` | 16px | Tiêu đề mục, giờ ghé |
-| `--fs-body` | 14px | Nội dung |
-| `--fs-small` | 12px | Nhãn, ghi chú "ước tính" |
+| `--fs-section` | 17px | Tiêu đề mục, giờ ghé |
+| `--fs-body` | 15px | Nội dung |
+| `--fs-small` | 13px | Nhãn, ghi chú "ước tính" |
 
 ## Khoảng cách, bo góc
 
@@ -53,7 +58,7 @@ Một họ chữ: **Inter** (Google Fonts, 400/500/600), số dạng bảng (`ta
 
 ## Biểu tượng
 
-SVG tự vẽ, nét 2px đầu tròn, khối bo góc đồng bộ với logo. Không dùng emoji hay ký tự Unicode thay icon. Marker bản đồ là vòng tròn ngọc có số thứ tự; điểm xuất phát là vòng trắng chữ "XP".
+SVG tự vẽ, nét 2px đầu tròn, khối bo góc đồng bộ với logo. Không dùng emoji hay ký tự Unicode thay icon. Marker bản đồ là vòng tròn ngọc có số mono, viền `--ground`; nền OSM làm tối bằng CSS filter trên lớp tile; điểm xuất phát là vòng trắng chữ "XP".
 
 ## Giọng văn
 

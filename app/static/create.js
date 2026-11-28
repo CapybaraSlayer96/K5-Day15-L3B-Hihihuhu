@@ -192,7 +192,8 @@
       ["Ngân sách cả nhóm", vnd(c.budget_total)], ["Mỗi người hiện tại", vnd(group.budget_per_person)],
       ["Phương tiện", mode ? mode.name : c.mode],
     ];
-    for (const [k, v] of facts) $("done-facts").append(h("dt", {}, k), h("dd", {}, v));
+    const numeric = new Set(["Ngày đi", "Khung giờ", "Ngân sách cả nhóm", "Mỗi người hiện tại"]);
+    for (const [k, v] of facts) $("done-facts").append(h("dt", {}, k), h("dd", { class: numeric.has(k) ? "mono" : null }, v));
     $("go-swipe").href = "/g/" + group.code + "/swipe";
     $("go-swipe").focus();
   }
