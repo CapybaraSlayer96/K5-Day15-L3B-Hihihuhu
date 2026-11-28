@@ -7,9 +7,9 @@
 <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&subset=vietnamese&display=swap" rel="stylesheet">
 <style>
   :root {
-    --ground: #0e0d0c; --surface: #181716; --raised: #2a2927; --rule: #23211f;
-    --text: #f4f2ee; --muted: #b4b0a9; --faint: #8f8b85;
-    --accent: #5fd3a6; --negative: #e5566f; --warning: #e5a93b;
+    --ground: #f4f1eb; --surface: #fffdf9; --raised: #e9e4db; --rule: #e2dcd2;
+    --text: #1b1916; --muted: #555049; --faint: #6b665e;
+    --accent: #177a56; --negative: #b8324d; --warning: #8a5a00; --on-accent: #fffdf9;
     --font: "Be Vietnam Pro", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
   }
   @page { size: 1280px 720px; margin: 0; }
@@ -35,7 +35,7 @@
   .num { font-family: var(--mono); font-weight: 600; color: var(--accent); font-size: 64px; line-height: 1; letter-spacing: -0.03em; }
   .num small { font-family: var(--font); font-weight: 500; letter-spacing: 0; font-size: 20px; color: var(--muted); margin-left: 8px; }
   .tag { display: inline-block; font-size: 14px; font-weight: 600; padding: 4px 12px; border-radius: 999px;
-         background: #2b2414; color: var(--warning); margin-top: 14px; }
+         background: #f6ead2; color: var(--warning); margin-top: 14px; }
   .quote { font-size: 22px; line-height: 1.5; color: var(--text); border-left: 3px solid var(--accent); padding-left: 20px; margin: 0; }
   .cite { font-size: 15px; color: var(--faint); margin-top: 10px; padding-left: 23px; }
   .foot { margin-top: auto; padding-top: 18px; font-size: 14px; color: var(--faint); }
@@ -50,7 +50,7 @@
   .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
   .step { background: var(--surface); border-radius: 20px; padding: 22px 20px; position: relative; }
   .step .n { font-family: var(--mono); font-weight: 600; width: 34px; height: 34px; border-radius: 50%; background: var(--accent);
-             color: var(--ground); display: grid; place-items: center; font-size: 15px; margin-bottom: 16px; }
+             color: var(--on-accent); display: grid; place-items: center; font-size: 15px; margin-bottom: 16px; }
   .step.code .n { background: var(--text); }
   .step h3 { font-size: 19px; } .step p { font-size: 16px; }
   .who { font-family: var(--mono); font-size: 13px; color: var(--faint); margin-top: 12px; }
@@ -69,7 +69,7 @@
   .deck { position: absolute; right: -60px; top: 110px; width: 420px; height: 500px; }
   .deck div { position: absolute; width: 300px; height: 400px; border-radius: 24px; }
   .deck .back { background: var(--raised); transform: rotate(-10deg); left: 40px; top: 30px; }
-  .deck .front { background: var(--surface); border: 1px solid var(--rule); left: 110px; top: 0; padding: 28px; }
+  .deck .front { background: var(--surface); box-shadow: 0 18px 40px rgba(60,48,30,.18); left: 110px; top: 0; padding: 28px; }
   .deck .front svg { width: 100%; height: 100%; }
   .ask { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; max-width: 1120px; }
 </style>
@@ -91,10 +91,10 @@
     <div class="back"></div>
     <div class="front">
       <svg viewBox="0 0 240 340" fill="none">
-        <path d="M40 290 C 110 290, 60 200, 130 190 S 170 90, 200 60" stroke="#5fd3a6" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12"/>
-        <circle cx="40" cy="290" r="14" fill="#f4f2ee"/><text x="40" y="295" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#0e0d0c">XP</text>
-        <circle cx="130" cy="190" r="14" fill="#5fd3a6"/><text x="130" y="195" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="600" fill="#0e0d0c">1</text>
-        <circle cx="200" cy="60" r="14" fill="#5fd3a6"/><text x="200" y="65" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="600" fill="#0e0d0c">2</text>
+        <path d="M40 290 C 110 290, 60 200, 130 190 S 170 90, 200 60" stroke="#177a56" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12"/>
+        <circle cx="40" cy="290" r="14" fill="#1b1916"/><text x="40" y="295" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#fffdf9">XP</text>
+        <circle cx="130" cy="190" r="14" fill="#177a56"/><text x="130" y="195" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="600" fill="#fffdf9">1</text>
+        <circle cx="200" cy="60" r="14" fill="#177a56"/><text x="200" y="65" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="600" fill="#fffdf9">2</text>
       </svg>
     </div>
   </div>
