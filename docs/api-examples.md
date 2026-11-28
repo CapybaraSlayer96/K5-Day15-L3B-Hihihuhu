@@ -190,7 +190,7 @@ Hoàn tác: `DELETE /api/groups/{code}/swipes` với body `{member_id, place_id}
 
 UI có thể polling mỗi 3 giây. Chưa tạo deck thì `deck_ready: false`, tổng thẻ 0 và `all_finished: false`; bộ thẻ rỗng cũng không coi mọi người đã hoàn thành. Chưa gộp điểm/vote thành lịch vì thuộc B4.
 
-## 9b. Hợp đồng B4 — lịch trình nhóm (CHƯA LÀM, giao diện đã code theo đúng hợp đồng này)
+## 9b. B4 — lịch trình nhóm
 
 Giao diện (`app/static/itinerary-api.js`, `itinerary.js`, `dashboard.js`) gọi 3 endpoint dưới. Khi endpoint trả 404 với `detail` đúng là `"Not Found"` (route chưa có) hoặc 405, giao diện tự dùng dữ liệu mẫu; mọi 404 khác phải có `detail` tiếng Việt để giao diện hiện lỗi thật.
 
@@ -238,5 +238,5 @@ Trả bản `approved` nếu có, không thì bản `draft` mới nhất (cùng 
 - Bảy bảng: `places`, `travel_times`, `groups`, `members`, `deck_cards`, `swipes`, `itineraries`. Nạp lại nguồn bằng upsert lúc startup, không nhân đôi POI/tuyến hay xóa nhóm/phiếu.
 - Giao dịch khóa dòng nhóm khi vào nhóm/tạo deck/quẹt để chống đua đồng thời; ràng buộc DB bảo vệ biệt danh, một trưởng nhóm và duy nhất một phiếu/thành viên/điểm.
 - `/health` kiểm được DB và trả số POI/tuyến. Không lộ DSN trong lỗi 503.
-- Chỉ B1–B3 đã triển khai; trang tạo nhóm/quẹt, API itinerary và AI chọn thẻ A3 còn chờ phần việc tương ứng. CLI/eval hiện có giữ nguyên.
+- B1–B4 đã triển khai: nhóm, bộ thẻ, quẹt, tiến độ và lịch trình nhóm. CLI/eval hiện có giữ nguyên.
 - Nguồn kỹ thuật đã tham khảo: [FastAPI lifespan](https://fastapi.tiangolo.com/advanced/events/), [Psycopg transaction](https://www.psycopg.org/psycopg3/docs/basic/transactions.html), [Compose startup và healthcheck](https://docs.docker.com/compose/how-tos/startup-order/).

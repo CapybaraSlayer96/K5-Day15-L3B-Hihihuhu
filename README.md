@@ -58,12 +58,12 @@ Cần Docker Desktop đang chạy, Docker Compose v2. Từ thư mục repo:
 docker compose up --build -d
 ```
 
-Mở [localhost:9000](http://localhost:9000) và [tài liệu API](http://localhost:9000/docs). Đây là backend cấu hình/tạo và vào nhóm/bộ thẻ/quẹt/tiến độ; giao diện quẹt và API xếp lịch nhóm B4 đang chờ triển khai. JSON mẫu và hợp đồng nối UI: [docs/api-examples.md](docs/api-examples.md).
+Mở [localhost:9000](http://localhost:9000) và [tài liệu API](http://localhost:9000/docs). Web đi trọn luồng: tạo nhóm → vào nhóm bằng mã → quẹt thẻ → phòng chờ → xếp lịch nhóm → bỏ / ghim / duyệt → bảng tổng quan có bản đồ. API mẫu: [docs/api-examples.md](docs/api-examples.md).
 
 - Compose chờ Postgres khỏe, tạo bảy bảng và upsert dữ liệu lúc khởi động. Dữ liệu nhóm/phiếu lưu trong volume `postgres-data`, giữ qua `docker compose restart` và `docker compose down`.
 - Web chỉ mở trên `127.0.0.1:9000`; Postgres mặc định không mở cổng ra máy host. Kiểm tra: `docker compose ps`, `docker compose logs app`, hoặc `GET /health`.
 - Bộ thẻ hiện là phương án **tạm theo rating trong dữ liệu** sau lọc ngày/giờ/giá; response có `source: provisional_rating`. Chưa gọi AI chọn thẻ; có adapter chờ hàm `build_deck` của Hải. Không cần API key để thử B1–B3.
-- Image chỉ chép thư mục app/codebase/data, không chép `.env`, khảo sát hoặc trace. Compose dùng mật khẩu DB mẫu chỉ cho demo nội bộ và `MODEL_PROVIDER=fake`; không đọc key vào image. Có thể đổi cổng qua `TRIPSWIPE_PORT` và mật khẩu qua `TRIPSWIPE_DB_PASSWORD` (dùng ký tự an toàn trong URL: chữ/số/gạch dưới/gạch ngang).
+- Image chỉ chép thư mục app/codebase/data, không chép `.env`, khảo sát hoặc trace. Compose dùng mật khẩu DB mẫu chỉ cho demo nội bộ. Nếu repo có file env của model (chép từ `.env.example`), container đọc lúc chạy để AI chọn bộ thẻ; không có thì bộ thẻ tạm theo rating, có nhãn. Key không được chép vào image. Có thể đổi cổng qua `TRIPSWIPE_PORT` và mật khẩu qua `TRIPSWIPE_DB_PASSWORD` (dùng ký tự an toàn trong URL: chữ/số/gạch dưới/gạch ngang).
 - Dừng: `docker compose down`. Tránh thêm `-v` nếu muốn giữ dữ liệu nhóm.
 
 Nếu chạy Python trực tiếp với Postgres riêng:
@@ -129,10 +129,11 @@ Nhóm dùng stack khác (Node, Streamlit, notebook…): sửa hàm `run_app()` t
 |---|---|---|
 | Lời gọi AI ở quyết định trung tâm | **Thật** (bắt buộc từ CP3) | Model: gpt-4.1-mini qua endpoint tương thích OpenAI (`MODEL_PROVIDER=openai`); đọc yêu cầu → cấu hình + ID địa điểm, viết lý do chọn |
 | Giờ mở cửa, ngày đóng, giá | **Thật** (dữ liệu công khai) | `data/hanoi_places.json`, đối chiếu trang chính thức (nguồn từng điểm ở `data/DATA_CARD.md`) |
-| Thời gian di chuyển | **Ước tính** | Ma trận OSRM tính sẵn, lấy max với tốc độ đô thị; không phải giao thông thời gian thực |
+| Thời gian di chuyển | **Ước tính** | Ma trận OSRM tính sẵn theo phương tiện (xe máy theo quãng đường ÷ 18 km/h, ô tô × 2 vì kẹt xe, đi bộ giữ nguyên — hệ số tự ước tính); không phải giao thông thời gian thực |
 | Xếp lịch, kiểm lịch | **Thật** (code) | `codebase/planner.py`, không qua model |
-| Backend nhóm / phiếu quẹt | **Thật** (B1–B3) | FastAPI + Postgres + Docker; bộ thẻ tạm có nhãn, API mẫu trong `docs/api-examples.md` |
-| Giao diện nhóm / quẹt thẻ và API lịch nhóm | Đang build (CP4) | U2–U5, A3, B4 — xem `TASKS.md` |
+| Backend nhóm / phiếu quẹt / lịch nhóm | **Thật** (B1–B4) | FastAPI + Postgres + Docker; gộp phiếu (trung bình ≥ 0,5) rồi xếp lịch bằng code, API mẫu trong `docs/api-examples.md` |
+| AI chọn bộ thẻ trên web | **Thật** khi có model | `codebase/group.py::build_deck`; model lỗi thì báo lỗi, không lặng lẽ dùng bộ thẻ tạm |
+| Giao diện web | **Thật** | Tạo / vào nhóm, quẹt, phòng chờ, lịch trình, bảng tổng quan; đường trên bản đồ lấy từ OSRM công khai, lỗi mạng thì nối thẳng có ghi chú |
 | Chế độ `MODEL_PROVIDER=fake` | Giả | Chỉ để chạy khung khi chưa có key; không tính lượt |
 
 ## Dùng AI vào việc gì
@@ -171,5 +172,5 @@ Nhóm dùng Claude (Claude Code) để soạn tài liệu (spec, PRD, data card)
 | 4 | Bản chạy thử làm trọn lát cắt | `codebase/` · lệnh ở mục "Lệnh" |
 | 5 | Định nghĩa "tốt" + bộ câu thử | `data/DATA_CARD.md` · `eval/` |
 | 6 | Mô phỏng chi phí khi dùng thật | `cost/` |
-| 7 | Slide + demo + video dự phòng | slide trong repo (PDF, PPTX, HTML…) hoặc link slide ở form CP4 · video CP3 (CLI, AI thật): https://drive.google.com/file/d/1RzTKvLulMP5FgSRcz-a8JrkJU5J7FmGj/view?usp=sharing · video demo web: (CP4) |
+| 7 | Slide + demo + video dự phòng | slide trong repo (PDF, PPTX, HTML…) hoặc link slide ở form CP4 · video CP3 (CLI, AI thật): https://drive.google.com/file/d/1RzTKvLulMP5FgSRcz-a8JrkJU5J7FmGj/view?usp=sharing · video demo web (CP4): https://drive.google.com/file/d/1r-TX3-MzRoY-uGY-nh_W2mmXqI13XLGd/view?usp=sharing |
 | + | *Bonus:* người dùng thử | `validation/log.md` |

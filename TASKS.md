@@ -67,22 +67,22 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | U2 | Trang Tạo nhóm (wizard 7 bước) + Vào nhóm | Bảo | — (JSON mẫu) | 11:00 | `app/templates/create.html`, `join.html`, `app/static/` | Đúng TS-01, TS-02; chặn thiếu ngày đi | xong · `create.html`, `join.html` (PR #2, #3) |
 | U3 | Trang Quẹt 2 lớp (tổng quan / vuốt lên chi tiết), kéo + nút, hoàn tác | Bảo | — (JSON mẫu) | 12:00 | `swipe.html`, `swipe.js` | Đúng TS-04 | xong · `swipe.html`, `swipe.js` (PR #2, #3) |
 | U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API | xong · `lobby.html`, `itinerary.html`; lịch trình đang chạy dữ liệu mẫu, chờ B4 (PR #2, #3) |
-| U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console | chờ B4 · hợp đồng API cho Minh đã ghi ở `docs/api-examples.md` mục 9b |
-| U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | |
+| U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console | xong · `itinerary-api.js` gộp lịch từ server, duyệt không tạo bản thừa; 2 trình duyệt (trưởng nhóm + thành viên) đi trọn quẹt → xếp → bỏ → ghim → duyệt → bảng tổng quan, không request lỗi |
+| U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | xong · https://drive.google.com/file/d/1r-TX3-MzRoY-uGY-nh_W2mmXqI13XLGd/view?usp=sharing |
 | B3 | API nhóm, bộ thẻ, quẹt, tiến độ, chi tiết địa điểm + JSON mẫu | Minh | B1 | 11:30 (JSON mẫu 10:30) | `app/`, `docs/api-examples.md` | 409 biệt danh trùng, 422 thiếu ngày, quẹt lại ghi đè | xong · `docs/api-examples.md`, 8 integration test qua; deck tạm có nhãn, chờ A3 |
-| B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Minh | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm | chưa bắt đầu · GẤP, chặn U5, U6, B5 · hợp đồng ở `docs/api-examples.md` mục 9b |
-| B5 | Test end-to-end qua HTTP | Minh | B4 | 13:30 | `tests/test_api.py` | In ok; `tests/test_core.py` vẫn ok | |
+| B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Bảo | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm | xong · `app/main.py` (POST/GET itinerary, PATCH duyệt / bỏ / ghim), chạy thật qua cổng 9000 |
+| B5 | Test end-to-end qua HTTP | Bảo | B4 | 13:30 | `tests/test_api.py` | In ok; `tests/test_core.py` vẫn ok | xong · `tests/test_api.py` 10/10 ok trên Postgres thật; `tests/test_core.py` ok |
 | A4 | Lượt cải tiến: gom nhóm lỗi → một cải tiến → eval trọn bộ → chấm → `score` | Hải | A1 | 12:30 | `eval/run-3.csv` đã chấm | Chạy đủ 22 câu (+ câu mới chỉ thêm); ghi cấu hình đổi gì | xong · `run-3` (20/22, lộ bug parse trưa) → `run-4` (21/22 = 95%, `gemini-3.5-flash-lite`) |
 | A5 | `eval/report.md` + `eval/README.md` | Hải | A4 | 13:30 | 2 file | % từng lượt so với chuẩn; ≥ 3 lỗi (input · output · vì sao sai · đã sửa · còn lại) | xong · `eval/report.md`, `eval/README.md` khớp `score` |
 | A6 | Mô phỏng ≥ 50 phiên + `cost/cost-estimate.md` | Hải | A4 | 14:00 | `cost/simulate-N.csv`, `-summary.md`, `cost-estimate.md`, `traces/simulate-N.jsonl` | Chi phí / task thành công; 3 kịch bản; ≥ 2 model; kết luận so với impact | xong · `simulate-1@20261128-085836` (50 phiên, 0 lỗi), `cost/cost-estimate.md` |
 | D4 | Kiểm thử CLI 5 câu lạ | Hùng | — | 11:00 | `validation/cli-test.md` | Mỗi câu: input · output · đúng / sai · vì sao | |
 | D5 | *(Bonus)* 2–3 người ngoài nhóm dùng thử, 5 nhịp | Hùng | có bản chạy | 13:30 | `validation/log.md` | Đủ cột mỗi người + 4 dòng tổng hợp | |
-| D6 | `spec.md` §8 §9 + slide 8 trang | Hùng | A5, A6 | 14:15 | `spec.md`, `slides/demo-slides.pdf` | Mỗi trang slide ≥ 1 số có nguồn, khớp repo | xong · `spec.md` §8 §9 (PR #10); slide 8 trang ở nhánh `docs/d6-slides` (`demo-slides.pdf`), chờ merge |
-| D7 | Kiểm thử luồng web + corner case PRD | Hùng | U5, B5 | 14:10 | `validation/web-test.md` | Không còn lỗi chặn luồng demo | |
-| X1 | README hoàn thiện: mục "Chạy web" (`docker compose up`), link video ở bảng "Bảy hạng mục" dòng 7, cập nhật bảng "Phần nào thật / giả" khi web xong | Hùng | U6, B2 | 14:20 | `README.md` | Người ngoài làm theo README chạy được CLI + web; không còn `____` | |
-| X2 | `docs/ai-usage.md`: mỗi người thêm dòng phần mình dùng AI (công cụ · AI làm gì · mình kiểm gì) | Cả nhóm | — | 14:20 | `docs/ai-usage.md` | Mỗi người ≥ 1 dòng; giải thích được phần có tên mình | |
+| D6 | `spec.md` §8 §9 + slide 8 trang | Hùng | A5, A6 | 14:15 | `spec.md`, `slides/demo-slides.pdf` | Mỗi trang slide ≥ 1 số có nguồn, khớp repo | xong · slide merge (PR #12); bản sửa trang 2, 7 ở nhánh `docs/d6-slides` chờ PR mới |
+| D7 | Kiểm thử luồng web + corner case PRD | Hùng | U5, B5 | 14:10 | `validation/web-test.md` | Không còn lỗi chặn luồng demo | mở khoá · Bảo đã thử 2 trình duyệt trọn luồng không lỗi; còn ghi `validation/web-test.md` + corner case PRD |
+| X1 | README hoàn thiện: mục "Chạy web" (`docker compose up`), link video ở bảng "Bảy hạng mục" dòng 7, cập nhật bảng "Phần nào thật / giả" khi web xong | Hùng | U6, B2 | 14:20 | `README.md` | Người ngoài làm theo README chạy được CLI + web; không còn `____` | xong · Bảo làm: mục chạy web, bảng thật / giả (B4, AI chọn thẻ), link video web |
+| X2 | `docs/ai-usage.md`: mỗi người thêm dòng phần mình dùng AI (công cụ · AI làm gì · mình kiểm gì) | Cả nhóm | — | 14:20 | `docs/ai-usage.md` | Mỗi người ≥ 1 dòng; giải thích được phần có tên mình | Bảo, Minh, Hải đã có dòng; Hùng ở nhánh `docs/hung-reflection-ai-usage` chờ merge |
 | X3 | `spec.md` §10: mỗi thay đổi sau CP2 thêm 1 dòng (giờ · đổi gì · vì sao trỏ câu thử / lỗi) | Người đổi | — | liên tục | `spec.md` §10 | Không có thay đổi nào sau CP2 thiếu dòng | |
-| X4 | `docs/ARCHITECTURE.md` đồng bộ code thật (công cụ, thuật toán, ma trận, app) | Minh | B4 | 14:20 | `docs/ARCHITECTURE.md` | Không mô tả thứ code không có | |
+| X4 | `docs/ARCHITECTURE.md` đồng bộ code thật (công cụ, thuật toán, ma trận, app) | Minh | B4 | 14:20 | `docs/ARCHITECTURE.md` | Không mô tả thứ code không có | mở khoá · B4 xong (endpoint ở `docs/api-examples.md` mục 9b) |
 | D8 | Tự soát guide 4.4 + nộp form CP4 | Hùng | tất cả CP4 | 14:30 | form CP4 | Đủ 7 hạng mục; lượt 1 → cải tiến; chi phí / task; slide; video; phần chưa xong | |
 
 ### Sau CP4 · demo 14:30–18:00 · hạn chót 23:59 hôm nay (28/11)
@@ -91,7 +91,7 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 |---|---|---|---|---|---|---|---|
 | F1 | Demo Zone (14:30–16:00), Demo Phòng nếu vào top (16:00–18:00): Hùng — pain + impact · Bảo — demo web (1 thường + 1 khó) · Minh — kiến trúc + bộ kiểm lịch · Hải — đánh giá + chi phí; chạy câu thử lạ giám khảo đưa, mở trace 1 câu trượt; mạng hỏng thì chiếu video dự phòng | Cả nhóm | D8 | 18:00 | buổi demo | Mỗi người nói ≥ 1 phần; ai cũng trả lời được 4 câu guide 5.2 (vì sao chọn hình dạng này · lỗi nguy hiểm nhất · chi phí / task thành công tính thế nào · phần mình làm) | |
 | F2 | Sửa theo góp ý demo; mỗi thay đổi 1 dòng `spec.md` §10 "Sau CP4" (giờ · đổi gì · vì sao); chạy thêm thì thành lượt mới (`run-N` tiếp theo) | Người sở hữu phần bị góp ý | F1 | 23:00 | commit + dòng §10 | Không sửa chuẩn "đạt", câu thử đã có, số bằng chứng, kết quả các lượt đã chạy | |
-| F3 | Reflection: mỗi người 1 file `reflection/<ten-khong-dau>.md` theo `reflection/TEMPLATE.md` (vai + phần mình làm trỏ file / commit · AI hỗ trợ thế nào · một bài học từ một câu thử trượt của nhóm) | Bảo, Minh, Hải, Hùng | — | 23:30 | 4 file `reflection/doan-xuan-duy-bao.md`, `nguyen-dinh-minh.md`, `nguyen-dinh-vu-hai.md`, `vu-tien-hung.md` | Đủ 4 file, mỗi file đủ 3 ý | |
+| F3 | Reflection: mỗi người 1 file `reflection/<ten-khong-dau>.md` theo `reflection/TEMPLATE.md` (vai + phần mình làm trỏ file / commit · AI hỗ trợ thế nào · một bài học từ một câu thử trượt của nhóm) | Bảo, Minh, Hải, Hùng | — | 23:30 | 4 file `reflection/doan-xuan-duy-bao.md`, `nguyen-dinh-minh.md`, `nguyen-dinh-vu-hai.md`, `vu-tien-hung.md` | Đủ 4 file, mỗi file đủ 3 ý | Hùng có bản nháp (nhánh `docs/hung-reflection-ai-usage`); Bảo, Minh, Hải chưa |
 | F4 | Checklist cuối guide 5.2: repo đủ thư mục bắt buộc · không có API key / dữ liệu cá nhân thật · video mở được bằng cửa sổ ẩn danh · `TEAMS.md` khớp vai · README không còn `____` · `python run.py check` sạch · commit cuối trước 23:59 | Hùng | F2, F3 | 23:45 | checklist tích đủ (ghi vào `TASKS.md`) | Mọi mục tích; commit cuối đã push trước 23:59 | |
 
 ## 0. Luật chung cho mọi việc
@@ -167,12 +167,12 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 - DoD: bản đồ hiện đúng thứ tự điểm; bản cũ hiện nhãn "hết hiệu lực" sau khi sửa; văn bản sao chép có giờ, tên, nguồn giờ mở cửa, câu "thời gian đi là ước tính".
 - Yêu cầu output: không hiển thị con số nào không đến từ API.
 
-**U5 · Nối UI với API thật** — Chờ: B3, B4 — Trạng thái: chờ B4 · hợp đồng API cho Minh đã ghi ở `docs/api-examples.md` mục 9b
+**U5 · Nối UI với API thật** — Chờ: B3, B4 — Trạng thái: xong · `itinerary-api.js` gộp lịch từ server, duyệt không tạo bản thừa; 2 trình duyệt (trưởng nhóm + thành viên) đi trọn quẹt → xếp → bỏ → ghim → duyệt → bảng tổng quan, không request lỗi
 - Làm: thay JSON mẫu bằng gọi API; xử lý lỗi (mã nhóm sai, AI lỗi → thông báo + nút thử lại).
 - Deliverable: commit nối API.
 - DoD: `docker compose up` → đi trọn luồng 2 trình duyệt (2 thành viên) từ tạo nhóm đến duyệt lịch không lỗi console.
 
-**U6 · Video demo dự phòng bằng web** — Chờ: U5 — Trạng thái:
+**U6 · Video demo dự phòng bằng web** — Chờ: U5 — Trạng thái: xong · https://drive.google.com/file/d/1r-TX3-MzRoY-uGY-nh_W2mmXqI13XLGd/view?usp=sharing
 - Deliverable: link video ~2 phút gửi Hùng (cho form CP4).
 - DoD: có 1 trường hợp thường + 1 trường hợp khó (điểm đóng cửa bị loại có lý do); mở được ẩn danh.
 
@@ -192,11 +192,11 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 - Làm: `GET /api/config/options` · `POST /api/groups` · `GET /api/groups/{code}` · `POST /api/groups/{code}/members` · `POST|GET /api/groups/{code}/deck` · `POST /api/groups/{code}/swipes` · `GET /api/groups/{code}/progress` · `GET /api/places/{id}`. Ghi JSON mẫu từng endpoint vào `docs/api-examples.md` trước 10:30.
 - DoD: mã nhóm 6 ký tự duy nhất; biệt danh trùng trả 409; thiếu ngày đi trả 422; quẹt lại ghi đè phiếu cũ.
 
-**B4 · Gộp phiếu + lịch trình** — Chờ: A3 — Trạng thái: chưa bắt đầu · GẤP, chặn U5, U6, B5 · hợp đồng ở `docs/api-examples.md` mục 9b
+**B4 · Gộp phiếu + lịch trình** — Chờ: A3 — Trạng thái: xong · Bảo làm · `app/main.py` (POST/GET itinerary, PATCH duyệt / bỏ / ghim)
 - Làm: `POST /api/groups/{code}/itinerary` (chỉ trưởng nhóm; điểm = trung bình phiếu của người đã quẹt thẻ đó, lấy ≥ 0,5 và ≥ 1 phiếu, hoà theo rating, cộng điểm ghim → `plan_group`) · `PATCH /api/itineraries/{id}` (`approve` / `drop` / `pin` → tính lại, bản cũ `stale`).
 - DoD: lịch trả về luôn có `violations: []`; người không phải trưởng nhóm gọi → 403; ghim điểm đóng vào ngày đi → báo lỗi có lý do.
 
-**B5 · Test end-to-end qua HTTP** — Chờ: B4 — Trạng thái:
+**B5 · Test end-to-end qua HTTP** — Chờ: B4 — Trạng thái: xong · Bảo làm · `tests/test_api.py` 10/10 ok
 - Làm: `tests/test_api.py` dùng test client: tạo nhóm → 2 thành viên vào → quẹt → xếp lịch → kiểm 0 vi phạm, chi phí mỗi người ≤ budget mỗi người; model chế độ giả.
 - DoD: `python tests/test_api.py` (hoặc pytest) in ok; `tests/test_core.py` vẫn ok.
 
@@ -270,5 +270,5 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 |---|---|---|---|---|---|
 | F1 | Demo: Hùng — pain + impact · Bảo — demo web (1 thường + 1 khó) · Minh — kiến trúc + bộ kiểm lịch · Hải — đánh giá + chi phí. Chạy được 1 câu thử lạ giám khảo đưa; mở được trace 1 câu trượt | Cả nhóm | 14:30–18:00 | Ai cũng trả lời được 4 câu guide 5.2 | |
 | F2 | Sửa theo góp ý; ghi `spec.md` §10 (giờ · đổi gì · vì sao); chạy thêm thì thành lượt mới | Người sở hữu phần đó | 23:00 | Không đụng chuẩn "đạt", câu thử, lượt cũ | |
-| F3 | `reflection/<ten-khong-dau>.md`: vai + phần mình làm (trỏ file / commit) · AI hỗ trợ thế nào · một bài học từ một câu thử trượt của nhóm | Cả nhóm | 23:30 | 4 file | |
+| F3 | `reflection/<ten-khong-dau>.md`: vai + phần mình làm (trỏ file / commit) · AI hỗ trợ thế nào · một bài học từ một câu thử trượt của nhóm | Cả nhóm | 23:30 | 4 file | Hùng có bản nháp (nhánh `docs/hung-reflection-ai-usage`); Bảo, Minh, Hải chưa |
 | F4 | Checklist guide 5.2: không có key / dữ liệu cá nhân trong repo, video mở được ẩn danh, `TEAMS.md` khớp vai, `docs/ai-usage.md` + README mục "Dùng AI vào việc gì" điền đủ, `python run.py check` sạch | Hùng | 23:45 | Checklist tích đủ | |

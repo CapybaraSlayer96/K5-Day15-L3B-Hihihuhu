@@ -1,4 +1,4 @@
-"""HTTP B1–B3: cấu hình, nhóm, bộ thẻ tạm, phiếu quẹt và tiến độ."""
+"""HTTP B1–B4: cấu hình, nhóm, bộ thẻ, phiếu quẹt, tiến độ và lịch trình nhóm."""
 import datetime as dt
 import os
 import re
@@ -16,9 +16,13 @@ from fastapi.templating import Jinja2Templates
 from psycopg.types.json import Jsonb
 from starlette.concurrency import run_in_threadpool
 
-from app.catalogue import eligible, minute, place_view, planning_config, start_options
+from app.catalogue import clock, eligible, minute, place_view, planning_config, start_options
 from app.db import Database
-from app.schemas import CreateGroup, DeckRequest, JoinGroup, RouteRequest, SwipeRequest, UndoRequest
+from app.schemas import (CreateGroup, DeckRequest, ItineraryPatch, ItineraryRequest, JoinGroup, RouteRequest,
+                         SwipeRequest, UndoRequest)
+from codebase.group import MODEL_PROVIDER, build_deck, plan_group
+from codebase.places import PLACES, windows
+from codebase.planner import reason as closed_reason
 from codebase.routing import route as build_route
 
 APP_DIR = Path(__file__).resolve().parent
@@ -129,6 +133,54 @@ def active_cards(conn, group):
     return [r for r in rows if eligible(r["data"], cfg)]
 
 
+LEADER_DROP = "trưởng nhóm bỏ khỏi lịch — ghim lại nếu đổi ý"
+
+
+def vote_rows(conn, group):
+    active = [r["place_id"] for r in active_cards(conn, group)]
+    rows = conn.execute("SELECT place_id, count(*) AS swiped, count(*) FILTER (WHERE liked) AS likes FROM swipes "
+                        "WHERE group_id = %s AND place_id = ANY(%s) GROUP BY place_id ORDER BY place_id",
+                        (group["id"], active)).fetchall()
+    return [{**r, "like_score": round(r["likes"] / r["swiped"], 2)} for r in rows]
+
+
+def save_plan(conn, group, pinned, excluded):
+    """Gộp phiếu (trung bình ≥ 0,5), xếp lịch, lưu bản draft mới; bản draft cũ thành stale."""
+    votes = vote_rows(conn, group)
+    pinned = [p for p in dict.fromkeys(pinned) if p not in excluded]
+    scores = {v["place_id"]: v["likes"] / v["swiped"] for v in votes
+              if v["likes"] / v["swiped"] >= 0.5 and v["place_id"] not in excluded}
+    cfg = config_for(conn, group)
+    plan = plan_group(cfg, scores, pinned)
+    if plan["violations"]:
+        raise HTTPException(500, {"message": "Bộ kiểm lịch phát hiện vi phạm.", "violations": plan["violations"]})
+    prices = [it["price_max_vnd"] for it in plan["items"] if it["price_max_vnd"] is not None]
+    data = {
+        "version": conn.execute("SELECT count(*) AS n FROM itineraries WHERE group_id = %s",
+                                (group["id"],)).fetchone()["n"] + 1,
+        "pinned": pinned, "excluded": sorted(excluded),
+        "items": [{"id": it["id"], "name": it["name"], "arrive": clock(it["arrive"]), "leave": clock(it["leave"]),
+                   "travel_min": it["travel_min"], "no_hours": it["no_hours"], "meal": it["meal_slot"],
+                   "price_max_vnd": it["price_max_vnd"]} for it in plan["items"]],
+        "dropped": plan["dropped"] + [{"id": p, "name": PLACES[p]["name"] if p in PLACES else p, "reason": LEADER_DROP}
+                                      for p in sorted(excluded)],
+        "violations": [],
+        "cost_per_person": sum(prices) if prices else None,
+        "budget_per_person": cfg["budget_per_person"],
+        "votes": votes,
+    }
+    conn.execute("UPDATE itineraries SET status = 'stale' WHERE group_id = %s AND status = 'draft'", (group["id"],))
+    row = conn.execute("INSERT INTO itineraries (id, group_id, data) VALUES (%s, %s, %s) RETURNING *",
+                       ("it_" + uuid.uuid4().hex, group["id"], Jsonb(data))).fetchone()
+    conn.execute("UPDATE groups SET status = 'planned' WHERE id = %s", (group["id"],))
+    return row
+
+
+def itinerary_view(row):
+    data = {k: v for k, v in row["data"].items() if k != "excluded"}
+    return {"id": row["id"], "status": row["status"], "created_at": row["created_at"].isoformat(), **data}
+
+
 def create_app(database=None, deck_builder=None):
     @asynccontextmanager
     async def lifespan(app):
@@ -138,7 +190,7 @@ def create_app(database=None, deck_builder=None):
         yield
 
     app = FastAPI(title="TripSwipe API", version="0.1.0", lifespan=lifespan,
-                  description="Backend B1–B3. Bộ thẻ tạm được gắn nhãn; chưa có API xếp lịch B4.")
+                  description="Backend B1–B3. Bộ thẻ tạm được gắn nhãn; B4 xếp lịch nhóm qua codebase/group.py.")
     app.mount("/static", StaticFiles(directory=APP_DIR / "static"), name="static")
     templates = Jinja2Templates(directory=APP_DIR / "templates")
 
@@ -310,7 +362,54 @@ def create_app(database=None, deck_builder=None):
                 "all_finished": bool(total) and all(r["finished"] for r in rows),
                 "budget_per_person": config_for(conn, group)["budget_per_person"]}
 
+    @app.post("/api/groups/{code}/itinerary", status_code=201, tags=["Lịch trình"])
+    def create_itinerary(code: str, payload: ItineraryRequest, conn=Depends(connection)):
+        group = load_group(conn, code, lock=True)
+        writable(conn, group)
+        member(conn, group, payload.member_id, leader=True)
+        return itinerary_view(save_plan(conn, group, payload.pinned, set()))
+
+    @app.get("/api/groups/{code}/itinerary", tags=["Lịch trình"])
+    def latest_itinerary(code: str, conn=Depends(connection)):
+        group = load_group(conn, code)
+        row = conn.execute("SELECT * FROM itineraries WHERE group_id = %s AND status IN ('approved', 'draft') "
+                           "ORDER BY status = 'approved' DESC, created_at DESC LIMIT 1", (group["id"],)).fetchone()
+        if not row:
+            raise HTTPException(404, "Nhóm chưa có lịch.")
+        return itinerary_view(row)
+
+    @app.patch("/api/itineraries/{itinerary_id}", tags=["Lịch trình"])
+    def patch_itinerary(itinerary_id: str, payload: ItineraryPatch, conn=Depends(connection)):
+        found = conn.execute("SELECT g.code FROM itineraries i JOIN groups g ON g.id = i.group_id WHERE i.id = %s",
+                             (itinerary_id,)).fetchone()
+        if not found:
+            raise HTTPException(404, "Không tìm thấy lịch.")
+        group = load_group(conn, found["code"], lock=True)
+        member(conn, group, payload.member_id, leader=True)
+        writable(conn, group)
+        row = conn.execute("SELECT * FROM itineraries WHERE id = %s", (itinerary_id,)).fetchone()
+        if row["status"] != "draft":
+            raise HTTPException(409, "Lịch này đã cũ, hãy tải lại lịch mới nhất.")
+        if payload.action == "approve":
+            row = conn.execute("UPDATE itineraries SET status = 'approved' WHERE id = %s RETURNING *",
+                               (itinerary_id,)).fetchone()
+            conn.execute("UPDATE groups SET status = 'approved' WHERE id = %s", (group["id"],))
+            return itinerary_view(row)
+        pinned, excluded = list(row["data"]["pinned"]), set(row["data"]["excluded"])
+        pid = payload.place_id
+        if payload.action == "drop":
+            excluded.add(pid)
+        else:
+            if pid not in PLACES:
+                raise HTTPException(422, "Địa điểm không có trong dữ liệu.")
+            cfg = config_for(conn, group)
+            if windows(pid, cfg["date"]) == []:
+                raise HTTPException(422, "Không ghim được: " + closed_reason(pid, cfg))
+            excluded.discard(pid)
+            pinned.append(pid)
+        return itinerary_view(save_plan(conn, group, pinned, excluded))
+
     return app
 
 
-app = create_app()
+app = create_app(deck_builder=None if MODEL_PROVIDER == "fake" else build_deck)

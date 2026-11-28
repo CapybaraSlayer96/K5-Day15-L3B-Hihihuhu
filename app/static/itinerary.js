@@ -20,6 +20,8 @@
       (group.config.start_approximate ? " (xấp xỉ)" : "");
     const deck = await api("GET", `/api/groups/${code}/deck`);
     for (const c of deck.cards) places[c.id] = c;
+    list = Itin.sync(code, await Itin.latest(code));
+    shown = list.length - 1;
   } catch (e) {
     error(e.status === 404 ? "Không tìm thấy nhóm." : e.message);
   }
@@ -42,7 +44,7 @@
     if (!it) {
       $("timeline").replaceChildren(h("li.empty-line", {}, leader
         ? h("span", {}, "Chưa có lịch. ", h("a", { href: `/g/${code}/lobby` }, "Về phòng chờ để bấm Xếp lịch"))
-        : "Chưa có lịch trên trình duyệt này. Trưởng nhóm sẽ gửi bản sao chép khi đã duyệt."));
+        : "Trưởng nhóm chưa xếp lịch. Mở lại trang này sau khi trưởng nhóm bấm Xếp lịch."));
       $("dropped").replaceChildren();
       $("copy").disabled = true;
       $("approve").hidden = true;

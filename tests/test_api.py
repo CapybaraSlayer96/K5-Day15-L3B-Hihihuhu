@@ -1,4 +1,4 @@
-"""Integration B1–B3 trên Postgres thật, dùng schema ngẫu nhiên và xóa sau test.
+"""Integration B1–B4 trên Postgres thật, dùng schema ngẫu nhiên và xóa sau test.
 
 TEST_DATABASE_URL=postgresql://... .venv/bin/python tests/test_api.py
 Không gọi LLM hay sửa benchmark/eval/traces.
@@ -186,6 +186,62 @@ class ApiTests(unittest.TestCase):
         with TestClient(create_app(database=self.database, deck_builder=broken)) as client:
             self.assertEqual(client.get(f"/api/groups/{code}/deck").status_code, 502)
         self.assertIsNone(self.client.get(f"/api/groups/{code}").json()["deck_source"])
+
+    def test_itinerary_vote_plan_patch_and_approve(self):
+        code, leader = self.group()
+        base = f"/api/groups/{code}"
+        friend = self.client.post(base + "/members", json={"nickname": "Bảo"}).json()["member_id"]
+        self.assertEqual(self.client.get(base + "/itinerary").json(), {"detail": "Nhóm chưa có lịch."})
+        ids = [p["id"] for p in self.client.get(base + "/deck").json()["cards"]][:6]
+        for n, pid in enumerate(ids):
+            self.client.post(base + "/swipes", json={"member_id": leader, "place_id": pid, "liked": True})
+            self.client.post(base + "/swipes", json={"member_id": friend, "place_id": pid, "liked": n % 3 != 2})
+        self.assertEqual(self.client.post(base + "/itinerary", json={"member_id": friend}).status_code, 403)
+        r = self.client.post(base + "/itinerary", json={"member_id": leader})
+        self.assertEqual(r.status_code, 201, r.text)
+        first = r.json()
+        self.assertEqual(first["status"], "draft")
+        self.assertEqual(first["violations"], [])
+        self.assertTrue(first["items"])
+        self.assertRegex(first["items"][0]["arrive"], r"^\d\d:\d\d$")
+        self.assertEqual({v["place_id"] for v in first["votes"]}, set(ids))
+        self.assertTrue(all(v["swiped"] == 2 for v in first["votes"]))
+        self.assertTrue({i["id"] for i in first["items"]} <= {v["place_id"] for v in first["votes"] if v["like_score"] >= 0.5})
+        self.assertEqual(self.client.get(base + "/itinerary").json()["id"], first["id"])
+        self.assertEqual(self.client.get(base).json()["status"], "planned")
+
+        url = "/api/itineraries/"
+        drop = first["items"][0]["id"]
+        self.assertEqual(self.client.patch(url + first["id"], json={"member_id": friend, "action": "approve"}).status_code, 403)
+        second = self.client.patch(url + first["id"], json={"member_id": leader, "action": "drop", "place_id": drop}).json()
+        self.assertEqual(second["version"], first["version"] + 1)
+        self.assertNotIn(drop, [i["id"] for i in second["items"]])
+        self.assertIn(drop, [d["id"] for d in second["dropped"]])
+        self.assertEqual(self.client.patch(url + first["id"], json={"member_id": leader, "action": "approve"}).status_code, 409)
+        closed = self.client.patch(url + second["id"], json={"member_id": leader, "action": "pin", "place_id": "hn_04"})
+        self.assertEqual(closed.status_code, 422)
+        self.assertIn("Không ghim được", closed.json()["detail"])
+        third = self.client.patch(url + second["id"], json={"member_id": leader, "action": "pin", "place_id": drop}).json()
+        self.assertIn(drop, [i["id"] for i in third["items"]])
+        self.assertEqual(third["violations"], [])
+        self.assertEqual(self.client.patch(url + third["id"], json={"member_id": leader, "action": "drop"}).status_code, 422)
+        approved = self.client.patch(url + third["id"], json={"member_id": leader, "action": "approve"}).json()
+        self.assertEqual(approved["status"], "approved")
+        self.assertEqual(self.client.get(base + "/itinerary").json()["id"], third["id"])
+        self.assertEqual(self.client.post(base + "/itinerary", json={"member_id": leader}).status_code, 409)
+        self.assertEqual(self.client.post(base + "/swipes", json={"member_id": leader, "place_id": ids[0], "liked": False}).status_code, 409)
+        self.assertEqual(self.client.patch(url + "it_missing", json={"member_id": leader, "action": "approve"}).status_code, 404)
+
+    def test_new_swipe_marks_draft_stale(self):
+        code, leader = self.group()
+        base = f"/api/groups/{code}"
+        pid = self.client.get(base + "/deck").json()["cards"][0]["id"]
+        self.client.post(base + "/swipes", json={"member_id": leader, "place_id": pid, "liked": True})
+        draft = self.client.post(base + "/itinerary", json={"member_id": leader}).json()
+        self.client.post(base + "/swipes", json={"member_id": leader, "place_id": pid, "liked": False})
+        self.assertEqual(self.client.get(base + "/itinerary").status_code, 404)
+        r = self.client.patch("/api/itineraries/" + draft["id"], json={"member_id": leader, "action": "approve"})
+        self.assertEqual(r.status_code, 409)
 
 
 if __name__ == "__main__":
