@@ -16,7 +16,10 @@ services:
     build: .
     environment:
       DATABASE_URL: postgresql://tripswipe:${TRIPSWIPE_DB_PASSWORD:-tripswipe_local_only}@db:5432/tripswipe
-      MODEL_PROVIDER: fake
+    # Model thật cho AI chọn thẻ lấy từ file env của repo; không có file thì chạy model giả.
+    env_file:
+      - path: .env
+        required: false
     ports:
       - "127.0.0.1:${TRIPSWIPE_PORT:-9000}:9000"
     depends_on:

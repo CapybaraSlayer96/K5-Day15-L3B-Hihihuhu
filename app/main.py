@@ -20,7 +20,7 @@ from app.catalogue import clock, eligible, minute, place_view, planning_config, 
 from app.db import Database
 from app.schemas import (CreateGroup, DeckRequest, ItineraryPatch, ItineraryRequest, JoinGroup, RouteRequest,
                          SwipeRequest, UndoRequest)
-from codebase.group import plan_group
+from codebase.group import MODEL_PROVIDER, build_deck, plan_group
 from codebase.places import PLACES, windows
 from codebase.planner import reason as closed_reason
 from codebase.routing import route as build_route
@@ -412,4 +412,4 @@ def create_app(database=None, deck_builder=None):
     return app
 
 
-app = create_app()
+app = create_app(deck_builder=None if MODEL_PROVIDER == "fake" else build_deck)
