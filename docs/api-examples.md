@@ -219,7 +219,7 @@ Response 201 (giao diện đọc đúng các khoá này):
 ```
 
 - `dropped[].reason`: phần sau `" — "` là gợi ý, giao diện tách ra dòng "Gợi ý".
-- `cost_per_person`: tổng `price_max_vnd` các điểm có giá ÷ … theo công thức budget ở PRD TS-06 (null nếu không tính được).
+- `cost_per_person`: tổng `price_max_vnd` (giá vé theo người) của các điểm có giá trong lịch, so với `budget_per_person` của nhóm (PRD TS-06); `null` nếu không điểm nào có giá.
 - `violations` luôn `[]` khi trả 201; nếu khác rỗng là lỗi, trả 500 kèm danh sách.
 
 ### `PATCH /api/itineraries/{id}` — duyệt / bỏ / ghim
