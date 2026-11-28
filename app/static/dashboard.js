@@ -119,6 +119,10 @@
       if (!geo) line.bindTooltip("đường ước tính");
       lines.push(line);
     }
+    window.addEventListener("themechange", () => {
+      const c = getComputedStyle(document.body).getPropertyValue("--accent").trim();
+      map.eachLayer((l) => { if (l instanceof L.Polyline) l.setStyle({ color: c }); });
+    });
     if (points.length) map.fitBounds(points.map((p) => [p.lat, p.lng]), { padding: [48, 48], maxZoom: 15 });
     else map.setView([21.0285, 105.8542], 13);
     lines.forEach((line, k) => { if (!line.options.dashArray) drawIn(line, k); });

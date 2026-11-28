@@ -37,7 +37,11 @@
   radios($("modes"), "mode", opts.transport_modes, opts.defaults.mode);
 
   const today = todayHanoi();
+  const lastDay = (() => { const d = new Date(today + "T00:00:00"); d.setDate(d.getDate() + 365); return d.toLocaleDateString("en-CA"); })();
+  const ddmmyyyy = (iso) => iso.split("-").reverse().join("/");
   $("date").min = today;
+  $("date").max = lastDay;
+  $("date-note").textContent = `Từ hôm nay (${ddmmyyyy(today)}) đến ${ddmmyyyy(lastDay)}.`;
   $("start_time").value = opts.defaults.start_time;
   $("end_time").value = opts.defaults.end_time;
 
@@ -84,23 +88,50 @@
     if (name === "Ngày đi") {
       const v = $("date").value;
       if (!v) return fieldError("date", "Hãy chọn ngày đi."), false;
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(v)) return fieldError("date", "Ngày chưa đúng dạng ngày/tháng/năm."), false;
       if (v < today) return fieldError("date", "Ngày đi đã qua, hãy chọn hôm nay hoặc sau này."), false;
+      if (v > lastDay) return fieldError("date", "Chỉ lên lịch trong vòng một năm tới (đến " + ddmmyyyy(lastDay) + ")."), false;
     }
     if (name === "Khung giờ") {
       const a = $("start_time").value, b = $("end_time").value;
       if (!a || !b) return fieldError("end_time", "Nhập đủ giờ bắt đầu và kết thúc."), false;
-      if (b <= a) return fieldError("end_time", "Giờ kết thúc phải sau giờ bắt đầu, trong cùng một ngày."), false;
+      if (b <= a) return fieldError("end_time", `Giờ kết thúc phải sau ${a}, trong cùng một ngày.`), false;
     }
     if (name === "Xuất phát" && !sel.value) return fieldError("start_id", "Hãy chọn điểm xuất phát."), false;
     if (name === "Ngân sách") {
       const v = budget.value;
       if (v === "" || !Number.isInteger(Number(v)) || Number(v) < 0)
         return fieldError("budget_total", "Nhập số tiền nguyên, không âm."), false;
+      if (Number(v) > 1_000_000_000) return fieldError("budget_total", "Tối đa 1.000.000.000đ cho cả nhóm."), false;
     }
     if (name === "Phương tiện" && !$("nickname").value.trim())
       return fieldError("nickname", "Nhập biệt danh để cả nhóm nhận ra bạn."), false;
     return true;
   }
+
+  // Kiểm ngay khi gõ: bước chưa hợp lệ thì khoá nút Tiếp tục, lỗi hiện dưới đúng ô.
+  function live() {
+    form.querySelectorAll(".step:not([hidden]) .field-error").forEach((p) => (p.textContent = ""));
+    form.querySelectorAll(".step:not([hidden]) [aria-invalid]").forEach((i) => i.removeAttribute("aria-invalid"));
+    const ok = validate(at);
+    next.disabled = !ok;
+    return ok;
+  }
+  const syncTimes = () => {
+    $("end_time").min = $("start_time").value || "";
+    $("start_time").max = $("end_time").value || "";
+  };
+  const readDate = () => {
+    const v = $("date").value;
+    $("date-read").textContent = v && v >= today && v <= lastDay ? dateVi(v) : "";
+  };
+  form.addEventListener("input", (ev) => {
+    if (ev.target.id === "date") readDate();
+    if (ev.target.id === "start_time" || ev.target.id === "end_time") syncTimes();
+    live();
+  });
+  form.addEventListener("change", () => live());
+  syncTimes();
 
   function minutes(t) { const [x, y] = t.split(":").map(Number); return x * 60 + y; }
   for (const id of ["start_time", "end_time"]) $(id).addEventListener("input", () => {
@@ -119,6 +150,10 @@
     next.textContent = i === steps.length - 1 ? "Tạo nhóm" : "Tiếp tục";
     const first = steps[i].querySelector("input:not([disabled]), select");
     if (first) first.focus({ preventScroll: true });
+    // Bước chưa chạm vào thì chỉ khoá nút, chưa báo lỗi.
+    next.disabled = !validate(i);
+    form.querySelectorAll(".step:not([hidden]) .field-error").forEach((p) => (p.textContent = ""));
+    form.querySelectorAll(".step:not([hidden]) [aria-invalid]").forEach((x) => x.removeAttribute("aria-invalid"));
   }
 
   back.addEventListener("click", () => { clearErrors(); show(Math.max(0, at - 1)); });

@@ -86,5 +86,41 @@ const TS = (() => {
     if (slot && m) slot.textContent = m.nickname + (m.is_leader ? " · trưởng nhóm" : "");
   }
 
-  return { api, ApiError, getMember, setMember, clearMember, getJSON, setJSON, h, vnd, todayHanoi, dateVi, CATEGORY, hoursSource, header };
+  // Nút sáng / tối ở thanh trên: lưu lựa chọn, báo trang vẽ lại (bản đồ, biểu đồ).
+  function initTheme() {
+    const btn = document.getElementById("theme-toggle");
+    if (!btn) return;
+    const root = document.documentElement;
+    const sync = () => {
+      const light = root.dataset.theme === "light";
+      btn.setAttribute("aria-label", light ? "Chuyển sang chế độ tối" : "Chuyển sang chế độ sáng");
+      btn.title = btn.getAttribute("aria-label");
+      document.querySelector('meta[name="theme-color"]').content = light ? "#f4f1eb" : "#0e0d0c";
+    };
+    btn.addEventListener("click", () => {
+      root.dataset.theme = root.dataset.theme === "light" ? "dark" : "light";
+      try { localStorage.setItem("tripswipe:theme", root.dataset.theme); } catch { /* chế độ riêng tư */ }
+      sync();
+      window.dispatchEvent(new CustomEvent("themechange"));
+    });
+    sync();
+  }
+  initTheme();
+
+  // Pop-up ngắn trong màn: tiêu đề, một dòng phụ, tự tắt sau vài giây.
+  function toast(title, note) {
+    document.querySelector(".toast")?.remove();
+    const close = h("button.btn.small", { type: "button", "aria-label": "Đóng thông báo" }, "Đóng");
+    const box = h("div.toast", { role: "status", "aria-live": "polite" },
+      h("span.toast-mark", { "aria-hidden": "true" }),
+      h("div", {}, h("strong", {}, title), note ? h("p", {}, note) : null),
+      close);
+    box.firstChild.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>';
+    const dismiss = () => { box.classList.add("out"); setTimeout(() => box.remove(), 240); };
+    close.addEventListener("click", dismiss);
+    document.body.append(box);
+    setTimeout(dismiss, 4500);
+  }
+
+  return { toast, api, ApiError, getMember, setMember, clearMember, getJSON, setJSON, h, vnd, todayHanoi, dateVi, CATEGORY, hoursSource, header };
 })();

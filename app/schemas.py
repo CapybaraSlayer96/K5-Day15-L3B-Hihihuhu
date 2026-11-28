@@ -31,6 +31,9 @@ class JoinGroup(Payload):
         return clean_nickname(value)
 
 
+MAX_DAYS_AHEAD = 365
+
+
 class CreateGroup(JoinGroup):
     city_id: Literal["ha_noi"] = "ha_noi"
     scope: Literal["noi_thanh"] = "noi_thanh"
@@ -46,6 +49,8 @@ class CreateGroup(JoinGroup):
     def not_in_past(cls, value):
         if value < today_hanoi():
             raise ValueError("Ngày đi không được ở trong quá khứ theo giờ Hà Nội.")
+        if value > today_hanoi() + dt.timedelta(days=MAX_DAYS_AHEAD):
+            raise ValueError("Ngày đi chỉ trong vòng một năm tới.")
         return value
 
     @model_validator(mode="after")
@@ -84,11 +89,17 @@ class ItineraryRequest(DeckRequest):
 
 
 class ItineraryPatch(DeckRequest):
-    action: Literal["approve", "drop", "pin"]
+    action: Literal["approve", "drop", "pin", "reorder", "replace"]
     place_id: str | None = Field(default=None, min_length=1, max_length=100)
+    new_place_id: str | None = Field(default=None, min_length=1, max_length=100)
+    order: list[str] | None = Field(default=None, min_length=1, max_length=30)
 
     @model_validator(mode="after")
-    def place_needed(self):
-        if self.action != "approve" and not self.place_id:
-            raise ValueError("Cần place_id khi bỏ hoặc ghim điểm.")
+    def fields_needed(self):
+        if self.action in ("drop", "pin", "replace") and not self.place_id:
+            raise ValueError("Cần place_id cho thao tác này.")
+        if self.action == "replace" and not self.new_place_id:
+            raise ValueError("Cần new_place_id khi đổi địa điểm.")
+        if self.action == "reorder" and not self.order:
+            raise ValueError("Cần order khi đổi thứ tự.")
         return self

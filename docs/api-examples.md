@@ -229,6 +229,15 @@ Request: `{"member_id": "…", "action": "approve" | "drop" | "pin", "place_id":
 - `drop` / `pin` → xếp lại với điểm đó bị loại / ghim thêm → bản mới (`version + 1`, `draft`), bản cũ `stale`; trả bản mới (cùng dạng response ở trên).
 - 403 không phải trưởng nhóm · 409 bản đã `stale` / nhóm đã duyệt · 422 ghim điểm đóng vào ngày đi (`detail` nêu lý do).
 
+Thêm hai thao tác chỉ dùng thứ tự người chọn, không gọi lại bộ xếp lịch:
+- `{"action": "reorder", "order": ["hn_09", "hn_01", …]}`: `order` phải gồm đúng các điểm đang có trong lịch.
+- `{"action": "replace", "place_id": "hn_01", "new_place_id": "hn_11"}`: đổi một điểm sang điểm khác ở cùng vị trí; điểm mới được ghim, điểm cũ vào danh sách bị bỏ.
+- Cả hai tính lại giờ bằng code (`simulate`); lỡ giờ mở cửa, vượt giờ kết thúc hoặc vượt ngân sách mỗi người → 422, lịch giữ nguyên.
+
+### `GET /api/groups/{code}/votes` — ai thích / bỏ qua từng thẻ
+
+Trả `{"code", "cards": [{"place_id", "name", "category", "district", "image_url", "liked_by": ["Minh"], "skipped_by": ["Bảo"]}]}` theo thứ tự bộ thẻ, chỉ các thẻ đang hợp lệ. Phòng chờ dùng cho băng chuyền phiếu.
+
 ### `GET /api/groups/{code}/itinerary` — lịch mới nhất cho mọi thành viên
 
 Trả bản `approved` nếu có, không thì bản `draft` mới nhất (cùng dạng response). Chưa có lịch → 404 `{"detail": "Nhóm chưa có lịch."}` (không dùng `"Not Found"`).

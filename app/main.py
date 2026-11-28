@@ -22,7 +22,7 @@ from app.schemas import (CreateGroup, DeckRequest, ItineraryPatch, ItineraryRequ
                          SwipeRequest, UndoRequest)
 from codebase.group import MODEL_PROVIDER, build_deck, plan_group
 from codebase.places import PLACES, windows
-from codebase.planner import reason as closed_reason
+from codebase.planner import reason as closed_reason, simulate
 from codebase.routing import route as build_route
 
 APP_DIR = Path(__file__).resolve().parent
@@ -157,26 +157,46 @@ def save_plan(conn, group, pinned, excluded):
     plan = plan_group(cfg, scores, pinned)
     if plan["violations"]:
         raise HTTPException(500, {"message": "Bộ kiểm lịch phát hiện vi phạm.", "violations": plan["violations"]})
-    prices = [it["price_max_vnd"] for it in plan["items"] if it["price_max_vnd"] is not None]
+    items = [{"id": it["id"], "name": it["name"], "arrive": clock(it["arrive"]), "leave": clock(it["leave"]),
+              "travel_min": it["travel_min"], "no_hours": it["no_hours"], "meal": it["meal_slot"],
+              "price_max_vnd": it["price_max_vnd"]} for it in plan["items"]]
+    dropped = plan["dropped"] + [{"id": p, "name": PLACES[p]["name"] if p in PLACES else p, "reason": LEADER_DROP}
+                                 for p in sorted(excluded)]
+    return store_version(conn, group, cfg, items, dropped, pinned, excluded, votes)
+
+
+def store_version(conn, group, cfg, items, dropped, pinned, excluded, votes):
+    """Lưu bản draft mới từ danh sách điểm đã có giờ; bản draft cũ thành stale."""
+    prices = [it["price_max_vnd"] for it in items if it["price_max_vnd"] is not None]
     data = {
         "version": conn.execute("SELECT count(*) AS n FROM itineraries WHERE group_id = %s",
                                 (group["id"],)).fetchone()["n"] + 1,
-        "pinned": pinned, "excluded": sorted(excluded),
-        "items": [{"id": it["id"], "name": it["name"], "arrive": clock(it["arrive"]), "leave": clock(it["leave"]),
-                   "travel_min": it["travel_min"], "no_hours": it["no_hours"], "meal": it["meal_slot"],
-                   "price_max_vnd": it["price_max_vnd"]} for it in plan["items"]],
-        "dropped": plan["dropped"] + [{"id": p, "name": PLACES[p]["name"] if p in PLACES else p, "reason": LEADER_DROP}
-                                      for p in sorted(excluded)],
-        "violations": [],
-        "cost_per_person": sum(prices) if prices else None,
-        "budget_per_person": cfg["budget_per_person"],
-        "votes": votes,
+        "pinned": list(pinned), "excluded": sorted(excluded), "items": items, "dropped": dropped,
+        "violations": [], "cost_per_person": sum(prices) if prices else None,
+        "budget_per_person": cfg["budget_per_person"], "votes": votes,
     }
     conn.execute("UPDATE itineraries SET status = 'stale' WHERE group_id = %s AND status = 'draft'", (group["id"],))
     row = conn.execute("INSERT INTO itineraries (id, group_id, data) VALUES (%s, %s, %s) RETURNING *",
                        ("it_" + uuid.uuid4().hex, group["id"], Jsonb(data))).fetchone()
     conn.execute("UPDATE groups SET status = 'planned' WHERE id = %s", (group["id"],))
     return row
+
+
+def fixed_order(conn, group, row, order):
+    """Tính lại giờ cho thứ tự người chọn; 422 nếu lỡ giờ mở cửa, vượt giờ về hoặc vượt ngân sách."""
+    cfg = config_for(conn, group)
+    if any(p not in PLACES for p in order) or len(set(order)) != len(order):
+        raise HTTPException(422, "Danh sách điểm không hợp lệ.")
+    result = simulate(order, cfg)
+    if result is None:
+        raise HTTPException(422, "Thứ tự này làm lỡ giờ mở cửa hoặc vượt giờ kết thúc, lịch giữ nguyên.")
+    if sum(PLACES[p].get("price_max_vnd") or 0 for p in order) > cfg["budget_per_person"]:
+        raise HTTPException(422, "Đổi như vậy vượt ngân sách mỗi người, lịch giữ nguyên.")
+    meals = {it["id"]: it.get("meal") for it in row["data"]["items"]}
+    items = [{"id": it["id"], "name": it["name"], "arrive": clock(it["arrive"]), "leave": clock(it["leave"]),
+              "travel_min": it["travel_min"], "no_hours": it["no_hours"], "meal": meals.get(it["id"]),
+              "price_max_vnd": PLACES[it["id"]].get("price_max_vnd")} for it in result[0]]
+    return cfg, items
 
 
 def itinerary_view(row):
@@ -347,6 +367,22 @@ def create_app(database=None, deck_builder=None):
         invalidate_drafts(conn, group)
         return {"place_id": payload.place_id, "removed": bool(row)}
 
+    @app.get("/api/groups/{code}/votes", tags=["Quẹt"])
+    def votes_by_member(code: str, conn=Depends(connection)):
+        """Từng thẻ đang hợp lệ kèm biệt danh người thích / bỏ qua, theo thứ tự bộ thẻ."""
+        group = load_group(conn, code)
+        rows = conn.execute("SELECT s.place_id, s.liked, m.nickname FROM swipes s JOIN members m ON m.id = s.member_id "
+                            "WHERE s.group_id = %s ORDER BY m.joined_at, m.id", (group["id"],)).fetchall()
+        out = []
+        for c in active_cards(conn, group):
+            mine = [r for r in rows if r["place_id"] == c["place_id"]]
+            d = c["data"]
+            out.append({"place_id": c["place_id"], "name": d["name"], "category": d.get("category"),
+                        "district": d.get("district"), "image_url": d.get("image_url"),
+                        "liked_by": [r["nickname"] for r in mine if r["liked"]],
+                        "skipped_by": [r["nickname"] for r in mine if not r["liked"]]})
+        return {"code": group["code"], "cards": out}
+
     @app.get("/api/groups/{code}/progress", tags=["Tiến độ"])
     def progress(code: str, conn=Depends(connection, scope="function")):
         group = load_group(conn, code, lock=True)
@@ -399,6 +435,26 @@ def create_app(database=None, deck_builder=None):
             conn.execute("UPDATE groups SET status = 'approved' WHERE id = %s", (group["id"],))
             return itinerary_view(row)
         pinned, excluded = list(row["data"]["pinned"]), set(row["data"]["excluded"])
+        current = [it["id"] for it in row["data"]["items"]]
+        if payload.action == "reorder":
+            if sorted(payload.order) != sorted(current):
+                raise HTTPException(422, "Thứ tự mới phải gồm đúng các điểm đang có trong lịch.")
+            cfg, items = fixed_order(conn, group, row, payload.order)
+            return itinerary_view(store_version(conn, group, cfg, items, row["data"]["dropped"], pinned, excluded,
+                                                vote_rows(conn, group)))
+        if payload.action == "replace":
+            old, new = payload.place_id, payload.new_place_id
+            if old not in current:
+                raise HTTPException(422, "Điểm cần đổi không có trong lịch.")
+            if new in current:
+                raise HTTPException(422, "Điểm mới đã có trong lịch.")
+            cfg, items = fixed_order(conn, group, row, [new if p == old else p for p in current])
+            excluded = (excluded | {old}) - {new}
+            pinned = [p for p in pinned if p != old] + [new]
+            dropped = [d for d in row["data"]["dropped"] if d["id"] not in (old, new)]
+            dropped.append({"id": old, "name": PLACES[old]["name"], "reason": LEADER_DROP})
+            return itinerary_view(store_version(conn, group, cfg, items, dropped, pinned, excluded,
+                                                vote_rows(conn, group)))
         pid = payload.place_id
         if payload.action == "drop":
             excluded.add(pid)

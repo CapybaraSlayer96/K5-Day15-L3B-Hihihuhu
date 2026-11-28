@@ -22,15 +22,17 @@
   <fieldset class="step" data-step="Ngày đi" hidden>
     <legend>Ngày đi</legend>
     <label for="date">Chọn ngày (theo giờ Hà Nội)</label>
-    <input type="date" id="date" name="date" required aria-describedby="date-err">
+    <input type="date" id="date" name="date" required aria-describedby="date-read date-err date-note">
+    <p class="date-read" id="date-read" aria-live="polite"></p>
+    <p class="muted small" id="date-note">Từ hôm nay đến một năm tới.</p>
     <p class="field-error" id="date-err" data-for="date"></p>
   </fieldset>
 
   <fieldset class="step" data-step="Khung giờ" hidden>
     <legend>Khung giờ trong ngày</legend>
     <div class="row">
-      <div class="field"><label for="start_time">Bắt đầu</label><input type="time" id="start_time" name="start_time" required></div>
-      <div class="field"><label for="end_time">Kết thúc</label><input type="time" id="end_time" name="end_time" required aria-describedby="time-err time-warn"></div>
+      <div class="field"><label for="start_time">Bắt đầu</label><input type="time" id="start_time" name="start_time" required step="300" aria-describedby="time-err"></div>
+      <div class="field"><label for="end_time">Kết thúc</label><input type="time" id="end_time" name="end_time" required step="300" aria-describedby="time-err time-warn"></div>
     </div>
     <p class="field-error" id="time-err" data-for="start_time end_time"></p>
     <p class="hint" id="time-warn" hidden>Khung giờ dưới một giờ, có thể không xếp được lịch.</p>
@@ -47,7 +49,7 @@
   <fieldset class="step" data-step="Ngân sách" hidden>
     <legend>Ngân sách cả nhóm</legend>
     <label for="budget_total">Tổng tiền (VND)</label>
-    <input type="number" id="budget_total" name="budget_total" min="0" step="1000" required inputmode="numeric" aria-describedby="budget-note budget-err">
+    <input type="number" id="budget_total" name="budget_total" min="0" max="1000000000" step="1000" required inputmode="numeric" aria-describedby="budget-note budget-err">
     <p class="muted small" id="budget-note">Chia đều theo số thành viên. Nhập 0 nếu chỉ muốn điểm miễn phí.</p>
     <p class="field-error" id="budget-err" data-for="budget_total"></p>
   </fieldset>
