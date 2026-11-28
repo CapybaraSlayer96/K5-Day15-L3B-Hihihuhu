@@ -18,7 +18,8 @@ from starlette.concurrency import run_in_threadpool
 
 from app.catalogue import eligible, minute, place_view, planning_config, start_options
 from app.db import Database
-from app.schemas import CreateGroup, DeckRequest, JoinGroup, SwipeRequest, UndoRequest
+from app.schemas import CreateGroup, DeckRequest, JoinGroup, RouteRequest, SwipeRequest, UndoRequest
+from codebase.routing import route as build_route
 
 APP_DIR = Path(__file__).resolve().parent
 
@@ -231,6 +232,11 @@ def create_app(database=None, deck_builder=None):
         if not row:
             raise HTTPException(404, "Không tìm thấy địa điểm.")
         return place_view(row["data"], date)
+
+    @app.post("/api/route", tags=["Chỉ đường"])
+    def route_legs(payload: RouteRequest):
+        """Hình đường đi thật + phút / mét từng chặng (ước tính) cho bản đồ lịch trình."""
+        return build_route([p.model_dump() for p in payload.points], payload.mode)
 
     @app.get("/api/groups/{code}/deck", tags=["Bộ thẻ"])
     def get_deck(code: str, request: Request, member_id: str | None = Query(default=None, max_length=64),

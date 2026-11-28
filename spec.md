@@ -184,6 +184,7 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 | 28/11 01:00 | Agent: thứ / giờ / điểm xuất phát đọc bằng luật khi luật bắt được; gợi ý model chọn mục tour đêm | Thử 3 câu: model đọc "thứ Bảy" thành Chủ nhật (B01), chọn Văn Miếu ngày cho "buổi tối" (B03) |
 | 28/11 01:05 | Thêm 6 câu thử B17–B22 (chỉ thêm, không sửa câu cũ) | CP3 cần 20–30 câu; dựng từ trích khảo sát |
 | 28/11 01:45 | `ai.py` thử lại khi proxy treo kết nối | Lượt 1: 8/22 câu lỗi timeout → chạy lại thành lượt 2 cùng cấu hình |
+| 28/11 sáng | Thời gian đi dùng đường thật OSRM thay cho max(OSRM, đường chim bay): xe máy = quãng đường profile xe đạp ÷ 18 km/h, ô tô = thời gian OSRM × 2, đi bộ = OSRM; thêm `POST /api/route` trả hình đường thật cho bản đồ | Đường chim bay không theo đường phố; profile ô tô OSRM đi vòng xa (Văn Miếu → Trấn Quốc 6,9 km so với 3,0 km theo đường nhỏ). Hệ số 18 km/h và × 2 là *(tự ước tính)*. Các lượt eval sau dùng mô hình mới |
 | 28/11 03:02 | B1–B3: thêm FastAPI/Postgres 7 bảng, Docker Compose, API cấu hình/nhóm/địa điểm/bộ thẻ/quẹt/hoàn tác/tiến độ và hợp đồng JSON cho UI; 8 integration test qua Postgres thật | Mở đường nối UI U2–U5; giữ lõi CLI và file khung, metric, kết quả eval. Bộ thẻ tạm theo rating có nhãn rõ, chờ A3; B4 chưa triển khai |
 
 **Sau CP4 (đến 23:59 Thứ Bảy 28/11)** (sửa theo góp ý — không sửa chuẩn "đạt", câu thử, số bằng chứng, kết quả các lượt đã chạy)
