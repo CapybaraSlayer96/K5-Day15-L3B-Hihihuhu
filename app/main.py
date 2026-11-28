@@ -29,6 +29,9 @@ APP_DIR = Path(__file__).resolve().parent
 
 
 def connection(request: Request):
+    # Dùng với Depends(connection, scope="function"): lệnh COMMIT chạy ngay khi hàm xử lý xong, TRƯỚC khi
+    # phản hồi được gửi. Nếu để mặc định (scope "request") thì COMMIT chạy sau phản hồi, nên một GET
+    # gửi ngay sau POST (< ~0,2 giây) có thể không thấy dữ liệu vừa ghi (404 / thiếu phiếu).
     with request.app.state.database.connect() as conn:
         yield conn
 
@@ -220,13 +223,13 @@ def create_app(database=None, deck_builder=None):
         return templates.TemplateResponse(request=request, name=page + ".html", context={"code": code, "page": page})
 
     @app.get("/health", tags=["Hệ thống"])
-    def health(conn=Depends(connection)):
+    def health(conn=Depends(connection, scope="function")):
         counts = conn.execute("SELECT (SELECT count(*) FROM places) AS places, "
                               "(SELECT count(*) FROM travel_times) AS travel_times").fetchone()
         return {"status": "ok", **counts}
 
     @app.get("/api/config/options", tags=["Cấu hình"])
-    def options(conn=Depends(connection)):
+    def options(conn=Depends(connection, scope="function")):
         return {"cities": [{"id": "ha_noi", "name": "Hà Nội", "enabled": True}],
                 "scopes": [{"id": "noi_thanh", "name": "Nội thành", "enabled": True},
                            {"id": "ngoai_thanh", "name": "Ngoại thành — sắp có", "enabled": False}],
@@ -237,7 +240,7 @@ def create_app(database=None, deck_builder=None):
                 "deck_limit": 20, "deck_strategy": "ai" if deck_builder else "provisional_rating"}
 
     @app.post("/api/groups", status_code=201, tags=["Nhóm"])
-    def create_group(payload: CreateGroup, conn=Depends(connection)):
+    def create_group(payload: CreateGroup, conn=Depends(connection, scope="function")):
         starts = {p["id"]: p for p in start_options(places(conn))}
         if payload.start_id not in starts:
             raise HTTPException(422, "Điểm xuất phát không hợp lệ hoặc ngoài nội thành.")
@@ -262,11 +265,11 @@ def create_app(database=None, deck_builder=None):
         return {"group": group_view(conn, row), "member_id": mid, "is_leader": True}
 
     @app.get("/api/groups/{code}", tags=["Nhóm"])
-    def get_group(code: str, conn=Depends(connection)):
+    def get_group(code: str, conn=Depends(connection, scope="function")):
         return group_view(conn, load_group(conn, code))
 
     @app.post("/api/groups/{code}/members", status_code=201, tags=["Nhóm"])
-    def join_group(code: str, payload: JoinGroup, conn=Depends(connection)):
+    def join_group(code: str, payload: JoinGroup, conn=Depends(connection, scope="function")):
         group = load_group(conn, code, lock=True)
         writable(conn, group)
         mid = uuid.uuid4().hex
@@ -279,7 +282,7 @@ def create_app(database=None, deck_builder=None):
         return {"member_id": mid, "is_leader": False, "group": group_view(conn, group)}
 
     @app.get("/api/places/{place_id}", tags=["Địa điểm"])
-    def detail(place_id: str, date: dt.date | None = None, conn=Depends(connection)):
+    def detail(place_id: str, date: dt.date | None = None, conn=Depends(connection, scope="function")):
         row = conn.execute("SELECT data FROM places WHERE id = %s", (place_id,)).fetchone()
         if not row:
             raise HTTPException(404, "Không tìm thấy địa điểm.")
@@ -292,7 +295,7 @@ def create_app(database=None, deck_builder=None):
 
     @app.get("/api/groups/{code}/deck", tags=["Bộ thẻ"])
     def get_deck(code: str, request: Request, member_id: str | None = Query(default=None, max_length=64),
-                 conn=Depends(connection)):
+                 conn=Depends(connection, scope="function")):
         group = load_group(conn, code, lock=True)
         if member_id:
             member(conn, group, member_id)
@@ -314,7 +317,7 @@ def create_app(database=None, deck_builder=None):
                              if group["deck_source"] == "provisional_rating" else [])}
 
     @app.post("/api/groups/{code}/deck", tags=["Bộ thẻ"])
-    def build_deck(code: str, payload: DeckRequest, request: Request, conn=Depends(connection)):
+    def build_deck(code: str, payload: DeckRequest, request: Request, conn=Depends(connection, scope="function")):
         group = load_group(conn, code, lock=True)
         writable(conn, group)
         member(conn, group, payload.member_id, leader=True)
@@ -322,7 +325,7 @@ def create_app(database=None, deck_builder=None):
         return {"code": group["code"], "source": group["deck_source"], "total": len(active_cards(conn, group))}
 
     @app.post("/api/groups/{code}/swipes", tags=["Quẹt"])
-    def swipe(code: str, payload: SwipeRequest, conn=Depends(connection)):
+    def swipe(code: str, payload: SwipeRequest, conn=Depends(connection, scope="function")):
         group = load_group(conn, code, lock=True)
         writable(conn, group)
         member(conn, group, payload.member_id)
@@ -335,7 +338,7 @@ def create_app(database=None, deck_builder=None):
         return {"member_id": payload.member_id, "place_id": payload.place_id, "liked": payload.liked, "saved": True}
 
     @app.delete("/api/groups/{code}/swipes", tags=["Quẹt"])
-    def undo(code: str, payload: UndoRequest, conn=Depends(connection)):
+    def undo(code: str, payload: UndoRequest, conn=Depends(connection, scope="function")):
         group = load_group(conn, code, lock=True)
         writable(conn, group)
         member(conn, group, payload.member_id)
@@ -345,7 +348,7 @@ def create_app(database=None, deck_builder=None):
         return {"place_id": payload.place_id, "removed": bool(row)}
 
     @app.get("/api/groups/{code}/progress", tags=["Tiến độ"])
-    def progress(code: str, conn=Depends(connection)):
+    def progress(code: str, conn=Depends(connection, scope="function")):
         group = load_group(conn, code, lock=True)
         active_ids = [r["place_id"] for r in active_cards(conn, group)]
         rows = conn.execute("SELECT m.nickname, m.is_leader, count(s.place_id) FILTER (WHERE s.place_id = ANY(%s)) AS swiped_count "
@@ -363,14 +366,14 @@ def create_app(database=None, deck_builder=None):
                 "budget_per_person": config_for(conn, group)["budget_per_person"]}
 
     @app.post("/api/groups/{code}/itinerary", status_code=201, tags=["Lịch trình"])
-    def create_itinerary(code: str, payload: ItineraryRequest, conn=Depends(connection)):
+    def create_itinerary(code: str, payload: ItineraryRequest, conn=Depends(connection, scope="function")):
         group = load_group(conn, code, lock=True)
         writable(conn, group)
         member(conn, group, payload.member_id, leader=True)
         return itinerary_view(save_plan(conn, group, payload.pinned, set()))
 
     @app.get("/api/groups/{code}/itinerary", tags=["Lịch trình"])
-    def latest_itinerary(code: str, conn=Depends(connection)):
+    def latest_itinerary(code: str, conn=Depends(connection, scope="function")):
         group = load_group(conn, code)
         row = conn.execute("SELECT * FROM itineraries WHERE group_id = %s AND status IN ('approved', 'draft') "
                            "ORDER BY status = 'approved' DESC, created_at DESC LIMIT 1", (group["id"],)).fetchone()
@@ -379,7 +382,7 @@ def create_app(database=None, deck_builder=None):
         return itinerary_view(row)
 
     @app.patch("/api/itineraries/{itinerary_id}", tags=["Lịch trình"])
-    def patch_itinerary(itinerary_id: str, payload: ItineraryPatch, conn=Depends(connection)):
+    def patch_itinerary(itinerary_id: str, payload: ItineraryPatch, conn=Depends(connection, scope="function")):
         found = conn.execute("SELECT g.code FROM itineraries i JOIN groups g ON g.id = i.group_id WHERE i.id = %s",
                              (itinerary_id,)).fetchone()
         if not found:
