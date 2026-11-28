@@ -162,7 +162,7 @@ def create_app(database=None, deck_builder=None):
     @app.get("/g/{code}/{page}", include_in_schema=False)
     def group_page(request: Request, code: str, page: str):
         code = code.upper()
-        if page not in ("swipe", "lobby", "itinerary") or not re.fullmatch(r"[A-Z0-9]{6}", code):
+        if page not in ("swipe", "lobby", "itinerary", "dashboard") or not re.fullmatch(r"[A-Z0-9]{6}", code):
             raise HTTPException(404, "Không tìm thấy trang.")
         return templates.TemplateResponse(request=request, name=page + ".html", context={"code": code, "page": page})
 

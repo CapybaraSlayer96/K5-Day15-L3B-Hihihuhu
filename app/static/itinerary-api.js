@@ -63,8 +63,18 @@ const Itin = (() => {
     return next;
   }
 
+  // Lịch mới nhất: GET B4 nếu có, không thì bản lưu trên trình duyệt này.
+  async function latest(code) {
+    try {
+      return await api("GET", `/api/groups/${code}/itinerary`);
+    } catch (e) {
+      if (!notBuilt(e) && e.status !== 404) throw e;
+      return versions(code).at(-1) || null;
+    }
+  }
+
   return {
-    versions, create, patch,
+    versions, create, patch, latest,
     pins: (code) => getJSON(pinsKey(code), []),
     setPins: (code, ids) => setJSON(pinsKey(code), ids),
   };

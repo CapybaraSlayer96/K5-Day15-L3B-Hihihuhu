@@ -1,0 +1,43 @@
+{% extends "layout.html" %}
+{% block title %}Bảng tổng quan{% endblock %}
+{% block head %}<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">{% endblock %}
+{% block main_class %}dash-page{% endblock %}
+{% block body %}
+<header class="dash-head">
+  <div>
+    <h1 class="dash-code"><span class="sr">Bảng tổng quan nhóm </span>{{ code }}</h1>
+    <p class="dash-trip" id="trip">Đang tải nhóm…</p>
+  </div>
+  <ul class="dash-members" id="members" aria-label="Thành viên và tiến độ quẹt"></ul>
+</header>
+<p class="banner" id="mock-banner" hidden>Dữ liệu mẫu: API xếp lịch (B4) chưa có, giờ ghé dưới đây là JSON mẫu, không phải lịch thật của nhóm.</p>
+<p class="form-error" id="dash-error" role="alert" hidden></p>
+<section aria-label="Tóm tắt">
+  <dl class="figures" id="figures"></dl>
+</section>
+<div class="dash-grid">
+  <section aria-label="Bản đồ lộ trình">
+    <div id="dash-map"></div>
+    <div class="map-note small muted"><span id="route-note">Đang lấy đường đi…</span><span>Nền © OpenStreetMap contributors</span></div>
+  </section>
+  <section aria-labelledby="rail-h">
+    <h2 class="sec" id="rail-h">Dòng thời gian</h2>
+    <ol class="rail-list" id="rail"><li class="muted empty-line">Đang tải…</li></ol>
+  </section>
+</div>
+<div class="dash-lower">
+  <section aria-labelledby="drop-h">
+    <h2 class="sec" id="drop-h">Điểm bị bỏ</h2>
+    <ul class="dropped" id="dropped"></ul>
+  </section>
+  <section aria-labelledby="vote-h" id="vote-section" hidden>
+    <h2 class="sec" id="vote-h">Phiếu của nhóm</h2>
+    <ul class="votes" id="votes"></ul>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script src="/static/itinerary-api.js"></script>
+<script src="/static/dashboard.js"></script>
+{% endblock %}
