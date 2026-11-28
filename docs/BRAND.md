@@ -8,7 +8,7 @@ Một nhóm bạn quẹt chung một xấp thẻ, và xấp thẻ đó thành m�
 
 - Viết đúng **TripSwipe**: một từ, hai chữ hoa T và S. Không viết "Trip Swipe", "TRIPSWIPE", "Tripswipe".
 - File: `app/static/brand/mark.svg` (biểu tượng), `wordmark.svg` (biểu tượng + chữ), `favicon.svg` (biểu tượng trên nền tối, bo góc).
-- Kích thước tối thiểu của biểu tượng: 16px (favicon). Trên thanh trên cùng dùng 28px kèm chữ "TripSwipe" bằng Inter 600.
+- Kích thước tối thiểu của biểu tượng: 16px (favicon). Trên thanh trên cùng dùng 28px kèm chữ "TripSwipe" bằng Be Vietnam Pro 600.
 - Khoảng trống quanh logo ≥ ¼ chiều cao biểu tượng. Không đổi màu lá ngọc, không xoay, không thêm bóng hay viền.
 - Chỉ dùng trên nền tối (`--ground`, `--surface`). Lá sau `#3a3835` sẽ chìm trên nền sáng; app chưa có chế độ sáng (xem bên dưới).
 
