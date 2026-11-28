@@ -17,7 +17,7 @@ Cách chạy: `python run.py` → gõ từng câu ở dưới → chép nguyên 
 
 ## Kết quả
 
-Chạy lúc: 13:05 28/11/2026 · model: `gpt-4.1-mini` (qua proxy OpenAI-compatible, token > 0 ở cả 5 câu) · `main` tại `21db060` · lệnh: `python run.py`, gõ lần lượt 5 câu. Không sửa code, không sửa `eval/benchmark.csv`.
+Chạy lúc: khoảng 12:58 28/11/2026 · model: `gpt-4.1-mini` (qua proxy OpenAI-compatible, token > 0 ở cả 5 câu) · `main` tại `21db060` · lệnh: `python run.py`, gõ lần lượt 5 câu. Không sửa code, không sửa `eval/benchmark.csv`.
 
 | # | Output (tóm tắt nguyên văn) | Token > 0? | Đúng / sai | Vì sao | Báo Hải? |
 |---|---|---|---|---|---|
