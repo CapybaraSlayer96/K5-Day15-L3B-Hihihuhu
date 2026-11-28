@@ -42,6 +42,8 @@ MODEL_PROVIDER = (os.environ.get("MODEL_PROVIDER") or "fake").strip().lower()
 MODEL_NAME = (os.environ.get("MODEL_NAME") or "").strip()
 API_KEY = (os.environ.get("API_KEY") or "").strip()
 BASE_URL = (os.environ.get("BASE_URL") or "").strip().rstrip("/")
+MIN_CALL_INTERVAL = float(os.environ.get("MIN_CALL_INTERVAL") or 0)
+_LAST_CALL_TS = 0.0
 DEFAULT_BASE = {"gemini": "https://generativelanguage.googleapis.com/v1beta", "anthropic": "https://api.anthropic.com/v1",
                 "openai": "https://api.openai.com/v1"}
 _VERSION = {"gemini": "/v1beta", "anthropic": "/v1", "openai": "/v1"}
@@ -95,8 +97,14 @@ def _post(url, headers, body):
     req = urllib.request.Request(url, data=json.dumps(body).encode(), method="POST",
                                  headers={"content-type": "application/json", **headers})
     import time
+    global _LAST_CALL_TS
+    if MIN_CALL_INTERVAL > 0 and _LAST_CALL_TS > 0:
+        gap = MIN_CALL_INTERVAL - (time.monotonic() - _LAST_CALL_TS)
+        if gap > 0:
+            time.sleep(gap)
     for attempt in range(4):  # 429 / 5xx / treo kết nối: chờ tăng dần rồi thử lại
         try:
+            _LAST_CALL_TS = time.monotonic()
             with urllib.request.urlopen(req, timeout=45) as f:
                 return json.load(f)
         except urllib.error.HTTPError as e:
