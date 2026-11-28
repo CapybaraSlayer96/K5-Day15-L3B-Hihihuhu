@@ -143,25 +143,25 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 
 ### Bảo · UI
 
-**U1 · Video CP3 30 giây** — Trạng thái:
+**U1 · Video CP3 30 giây** — Trạng thái: xong · https://drive.google.com/file/d/1RzTKvLulMP5FgSRcz-a8JrkJU5J7FmGj/view?usp=sharing
 - Làm: sửa file cấu hình môi trường thành `MODEL_PROVIDER=openai`, `MODEL_NAME=gpt-4.1-mini` → `python run.py` → gõ 1 câu thường (B01) và 1 câu khó (Lăng Bác thứ Hai) → quay màn hình.
 - Deliverable: link video (YouTube "Không công khai" hoặc Drive "Bất kỳ ai có link") gửi Hùng; ghi link vào `README.md` mục "Bảy hạng mục" dòng 7.
 - DoD: mở được bằng cửa sổ ẩn danh; thấy dòng `(model: gpt-4.1-mini · token vào … / ra …)` với token > 0; thấy câu khó bị loại đúng lý do.
 - Yêu cầu output: ≤ 30 giây, thao tác thật, AI trả kết quả thật (README CP3). Không lộ key trên màn hình.
 
-**U2 · Trang Tạo nhóm + Vào nhóm (TS-01, TS-02)** — Chờ: không (dùng JSON mẫu) — Trạng thái:
+**U2 · Trang Tạo nhóm + Vào nhóm (TS-01, TS-02)** — Chờ: không (dùng JSON mẫu) — Trạng thái: xong · `create.html`, `join.html` (PR #2, #3)
 - Làm: wizard 7 bước (tỉnh — chỉ Hà Nội bật, tỉnh khác "sắp có"; phạm vi — chỉ nội thành; ngày đi; giờ bắt đầu / kết thúc; điểm xuất phát chọn từ danh sách; budget cả nhóm; phương tiện) → màn mã + link nhóm. Trang vào nhóm: nhập biệt danh, lưu `member_id` trong trình duyệt.
 - Deliverable: `app/templates/create.html`, `join.html`, `app/static/*.js|css`.
 - DoD: không qua được bước ngày đi khi trống; giờ kết thúc > giờ bắt đầu; tiếng Việt; vừa màn hình máy tính 1366×768.
 - Yêu cầu output: đúng acceptance criteria TS-01, TS-02 trong PRD.
 
-**U3 · Trang Quẹt 2 lớp (TS-04)** — Chờ: không (JSON mẫu) — Trạng thái:
+**U3 · Trang Quẹt 2 lớp (TS-04)** — Chờ: không (JSON mẫu) — Trạng thái: xong · `swipe.html`, `swipe.js` (PR #2, #3)
 - Làm: thẻ tổng quan (ảnh, tên, loại, quận, `card_hook`, tag, khoảng giá, rating, "mở / đóng vào ngày đi", lý do AI) · vuốt lên / bấm "Chi tiết" → lớp chi tiết (mô tả, `why_visit`, `what_to_do`, giờ cả tuần, ngày đóng, thời lượng, `tips`, review, địa chỉ, link bản đồ, nguồn xác minh) · kéo phải = thích, trái = bỏ qua (pointer events) + 2 nút · hoàn tác · đếm thẻ còn lại.
 - Deliverable: `app/templates/swipe.html`, `app/static/swipe.js`.
 - DoD: quẹt được bằng chuột và bằng nút; hoàn tác xoá lượt vừa rồi; ảnh lỗi không vỡ bố cục; thẻ thiếu giờ có nhãn "chưa có dữ liệu giờ".
 - Yêu cầu output: đúng TS-04; không gọi API bản đồ ngoài.
 
-**U4 · Phòng chờ + Lịch trình (TS-05, TS-06, TS-07)** — Chờ: không (JSON mẫu) — Trạng thái:
+**U4 · Phòng chờ + Lịch trình (TS-05, TS-06, TS-07)** — Chờ: không (JSON mẫu) — Trạng thái: xong · `lobby.html`, `itinerary.html`; lịch trình đang chạy dữ liệu mẫu, chờ B4 (PR #2, #3)
 - Làm: phòng chờ (danh sách thành viên, ai xong, polling 3 giây; nút "Xếp lịch" chỉ hiện với trưởng nhóm; ghim điểm) · lịch trình (dòng thời gian giờ đến / rời / phút đi "ước tính"; bản đồ Leaflet nền OpenStreetMap có đường nối theo thứ tự; danh sách điểm bị bỏ + lý do + gợi ý; nút bỏ / ghim / duyệt; nút sao chép văn bản).
 - Deliverable: `app/templates/lobby.html`, `itinerary.html`, `app/static/*.js`.
 - DoD: bản đồ hiện đúng thứ tự điểm; bản cũ hiện nhãn "hết hiệu lực" sau khi sửa; văn bản sao chép có giờ, tên, nguồn giờ mở cửa, câu "thời gian đi là ước tính".
@@ -230,16 +230,16 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 
 ### Hùng · BA / tester / tài liệu
 
-**D1 · Tổng hợp bằng chứng (CP3)** — Chờ: không — Trạng thái:
+**D1 · Tổng hợp bằng chứng (CP3)** — Chờ: không — Trạng thái: xong · 31 người, 23/31 (74%)
 - Làm: đóng hoặc chụp số khảo sát (mục tiêu ≥ 20 người đúng vai) → xuất CSV **đã xoá** cột thời gian và mọi cột nhận diện → `evidence/survey/results.csv` + điền `evidence/survey/TEMPLATE.md` (câu hỏi, cách gửi, số phản hồi) → `evidence/summary.md`.
 - Yêu cầu output: x/N và % cho từng con số chính (vd 9/12 = 75% gặp đi vòng / đóng cửa / bỏ lỡ) · **≥ 5 trích nguyên văn** có nguồn (số phiếu), bỏ tên · kết luận giả thuyết: vế 1 đạt, vế 2 (thời gian ≥ 1 giờ) **không đạt** — ghi đúng như vậy · nếu có đào review thì ghi `evidence/data-mining.md` (cách chọn mẫu, cách đếm, x/N).
 - DoD: ≥ 1 nguồn đạt ngưỡng (khảo sát ≥ 20 người); không còn ô `__` trong `summary.md`.
 
-**D2 · spec §1 §2 §6 (CP3)** — Chờ: không — Trạng thái:
+**D2 · spec §1 §2 §6 (CP3)** — Chờ: không — Trạng thái: xong
 - Làm: §1 số khảo sát + 1–2 trích dẫn · §2 bảng impact: điền ô `__` bằng số khảo sát (người lên lịch, lần / tháng, phút / lần), công thức impact / tháng, mỗi thừa số có nguồn hoặc *(tự ước tính)* · §6 bốn đường đi (suôn sẻ / không chắc / không có căn cứ / người dùng sửa / ngoài phạm vi / đặc thù) — lấy từ kịch bản §5.
 - DoD: `spec.md` §0–§7 không còn ô trống trừ dòng kết quả do Hải điền.
 
-**D3 · Nộp CP3** — Chờ: D1, D2, U1, A1 — Trạng thái:
+**D3 · Nộp CP3** — Chờ: D1, D2, U1, A1 — Trạng thái: xong · form CP3 đã nộp (Bảo nộp)
 - Làm: tự soát guide 3.4 → form CP3: link `evidence/summary.md`, số câu thử (22; kho 12; tu_choi 4), link video, kết quả lượt (x/22 + run ID), link `spec.md`, phần chưa xong (web).
 - DoD: nộp trước 10:00.
 
@@ -251,7 +251,7 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 - Làm: 2–3 người ngoài nhóm đúng vai (từng lên lịch đi chơi cho nhóm) · 5 nhịp, 10 phút / người · không thuyết minh.
 - Deliverable: `validation/log.md`: mỗi người `vai | việc giao | quan sát | trích nguyên văn | mức nghiêm trọng` + 4 dòng tổng hợp (chủ đề lặp · sửa gì trước demo → §10 · giữ gì vì sao · để sau).
 
-**D6 · spec §8 §9 + slide** — Chờ: A5, A6 — Trạng thái:
+**D6 · spec §8 §9 + slide** — Chờ: A5, A6 — Trạng thái: xong · `spec.md` §8 §9 (PR #10); slide PDF chưa có
 - Làm: §8 chép số từ `cost/cost-estimate.md` · §9 rủi ro & an toàn (lấy từ §4 chỗ chặn rủi ro + §5) · slide 8 trang theo guide 5.1 (pain · vì sao chọn · giải pháp · demo · đánh giá · chi phí · kết luận go / iterate / stop · nếu có thêm 1 tuần).
 - Deliverable: `slides/demo-slides.pdf` (+ nguồn slide).
 - Yêu cầu output: **mỗi trang ≥ 1 con số / trích dẫn có nguồn / kết quả đo**; số trùng với repo.
