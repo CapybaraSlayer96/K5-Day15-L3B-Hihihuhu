@@ -1,4 +1,4 @@
-// Lớp gọi API lịch trình (B4). Khi endpoint chưa có, dùng dữ liệu mẫu có nhãn để U5 nối sau.
+// Lớp gọi API lịch trình (B4). Endpoint chưa có (404 "Not Found" / 405) thì dùng dữ liệu mẫu có nhãn.
 const Itin = (() => {
   const { api, getJSON, setJSON } = TS;
   const versionsKey = (code) => "tripswipe:itin:" + code;
@@ -22,9 +22,20 @@ const Itin = (() => {
     return list;
   }
 
+  // Gộp bản từ server (máy khác tạo hoặc đã duyệt) vào danh sách trên trình duyệt này.
+  function sync(code, itin) {
+    if (!itin || itin.mock) return versions(code);
+    const list = versions(code);
+    const i = list.findIndex((v) => v.id === itin.id);
+    if (i < 0) return push(code, itin);
+    list[i] = { ...list[i], ...itin };
+    setJSON(versionsKey(code), list);
+    return list;
+  }
+
   async function create(code, member_id, pinned) {
     try {
-      return push(code, await api("POST", `/api/groups/${code}/itinerary`, { member_id, pinned }));
+      return sync(code, await api("POST", `/api/groups/${code}/itinerary`, { member_id, pinned }));
     } catch (e) {
       if (!notBuilt(e)) throw e;
       return push(code, await mock());
@@ -34,7 +45,7 @@ const Itin = (() => {
   async function patch(code, itin, member_id, action, place_id) {
     if (!itin.mock) {
       try {
-        return push(code, await api("PATCH", `/api/itineraries/${itin.id}`, { member_id, action, place_id }));
+        return sync(code, await api("PATCH", `/api/itineraries/${itin.id}`, { member_id, action, place_id }));
       } catch (e) {
         if (!notBuilt(e)) throw e;
       }
@@ -74,7 +85,7 @@ const Itin = (() => {
   }
 
   return {
-    versions, create, patch, latest,
+    versions, create, patch, latest, sync,
     pins: (code) => getJSON(pinsKey(code), []),
     setPins: (code, ids) => setJSON(pinsKey(code), ids),
   };
