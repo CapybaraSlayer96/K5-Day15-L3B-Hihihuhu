@@ -66,11 +66,12 @@ assert total_price <= 50_000, "tổng chi phí lịch không được vượt bu
 
 full_day = {**cfg(WED, t0=8 * 60, t1=21 * 60), "budget_per_person": 1_000_000}
 res_meals = plan_group(full_day, {"hn_09": 0.9, "hn_10": 0.9, "hn_11": 0.9, "hn_47": 0.9, "hn_14": 0.9,
-                                  "hn_22": 0.9, "hn_25": 0.9, "hn_23": 0.9, "hn_28": 0.9, "hn_29": 0.9})
+                                  "hn_22": 0.9, "hn_25": 0.9, "hn_23": 0.9, "hn_26": 0.9, "hn_27": 0.9, "hn_28": 0.9})
 assert res_meals["violations"] == []
 cats = [it["category"] for it in res_meals["items"]]
 assert not any(a == b == "food_drink" for a, b in zip(cats, cats[1:])), "không được xếp 2 quán ăn liền kề nhau"
-assert len({it["meal_slot"] for it in res_meals["items"] if it["meal_slot"]}) >= 2, "phải chia quán ăn theo nhiều bữa"
+assert sum(1 for it in res_meals["items"] if it["meal_slot"] == "cafe_break") <= 1, "tối đa 1 quán cà phê/ăn vặt mỗi ngày"
+assert len({it["meal_slot"] for it in res_meals["items"] if it["meal_slot"] in ("breakfast", "lunch", "dinner")}) >= 2, "phải chia bữa chính hợp lý"
 
 from places import travel_leg  # noqa: E402
 

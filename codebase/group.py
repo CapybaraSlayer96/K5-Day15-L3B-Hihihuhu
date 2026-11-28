@@ -22,21 +22,24 @@ if _CODEBASE_DIR not in sys.path:
     sys.path.insert(0, _CODEBASE_DIR)
 
 from ai import MODEL_PROVIDER, call_model  # noqa: E402
-from places import INNER_DISTRICTS, PLACES, travel_minutes, windows  # noqa: E402
+from places import INNER_DISTRICTS, PLACES, _plain, travel_minutes, windows  # noqa: E402
 from planner import _fit, check, reason, stay  # noqa: E402
 
 DECK_LIMIT = 20
+MAX_CAFE_CARDS = 4
 MAX_SEARCH_CANDIDATES = 12
 GROUP_NODE_LIMIT = 40_000
 BREAKFAST_WINDOW = (6 * 60, 10 * 60)
 LUNCH_WINDOW = (11 * 60, 14 * 60)
 DINNER_WINDOW = (17 * 60 + 30, 20 * 60 + 30)
+CAFE_BREAK_WINDOWS = ((9 * 60 + 30, 11 * 60 + 30), (14 * 60, 17 * 60 + 30))
+_CAFE_RE = re.compile(r"\b(?:ca phe|cafe|coffee|kem|che|tra sua|tra chanh|banh ngot)\b")
 FALLBACK_REASON = "Địa điểm nổi bật, phù hợp lịch trình một ngày ở Hà Nội."
 
 DECK_SYSTEM = """Bạn chọn và xếp hạng tối đa 20 địa điểm từ DANH SÁCH ỨNG VIÊN cho nhóm bạn đi chơi một ngày ở nội thành Hà Nội.
 Yêu cầu:
 - Chỉ dùng ID có trong DANH SÁCH ỨNG VIÊN. Không tự bịa ID.
-- Cân bằng cả điểm tham quan (culture, landmark, nature, show_experience) và quán ăn / đồ uống (food_drink) nếu danh sách có đủ.
+- Cân bằng điểm tham quan (culture, landmark, nature, show_experience), quán ăn chính (3–5 điểm) và tối đa 3–4 quán cà phê / ăn vặt nếu danh sách có đủ.
 - Mỗi địa điểm viết lý do ngắn (≤ 20 chữ, tiếng Việt) vì sao nhóm nên ghé.
 - TUYỆT ĐỐI không viết bất kỳ chữ số nào (0–9) trong lý do.
 Trả về đúng JSON và không thêm chữ nào khác:
@@ -98,14 +101,25 @@ def is_eligible(place, cfg):
     return price is None or price <= budget
 
 
+def _food_kind(place):
+    """Phân tách food_drink thành 'cafe_snack' (cà phê/kem/chè) và 'meal' (bữa chính)."""
+    if place.get("category") != "food_drink":
+        return None
+    if _CAFE_RE.search(_plain(place.get("name") or "")):
+        return "cafe_snack"
+    return "meal"
+
+
 def _balanced_pick(candidates, limit=DECK_LIMIT):
-    """Chọn tối đa `limit` ứng viên theo rating, cân bằng tham quan và ăn uống."""
+    """Chọn tối đa `limit` ứng viên theo rating, cân bằng tham quan, bữa chính và tối đa 4 cà phê."""
     ranked = sorted(candidates, key=lambda p: (-(p.get("rating") or 0), p["id"]))
     sight = [p for p in ranked if p.get("category") != "food_drink"]
-    food = [p for p in ranked if p.get("category") == "food_drink"]
-    target_food = min(len(food), max(0, limit // 3))
-    target_sight = min(len(sight), limit - target_food)
-    picked = sight[:target_sight] + food[:target_food]
+    meals = [p for p in ranked if _food_kind(p) == "meal"]
+    cafes = [p for p in ranked if _food_kind(p) == "cafe_snack"]
+    target_cafe = min(len(cafes), min(MAX_CAFE_CARDS, max(0, limit // 5)))
+    target_meal = min(len(meals), max(0, limit // 4))
+    target_sight = min(len(sight), limit - target_cafe - target_meal)
+    picked = sight[:target_sight] + meals[:target_meal] + cafes[:target_cafe]
     picked_ids = {p["id"] for p in picked}
     if len(picked) < limit:
         for p in ranked:
@@ -166,7 +180,7 @@ def _overlaps(a, b, win):
 
 
 def _meal_tag(pid, arrive, leave, need_breakfast, need_lunch, need_dinner):
-    if PLACES[pid].get("category") != "food_drink":
+    if _food_kind(PLACES[pid]) != "meal":
         return None
     if need_breakfast and _overlaps(arrive, leave, BREAKFAST_WINDOW):
         return "breakfast"
@@ -269,16 +283,17 @@ def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
             "score": float(scores.get(pid, 1.0 if pid in pinned_set else 0.0)),
             "pinned": pid in pinned_set,
             "category": p.get("category"),
+            "food_kind": _food_kind(p),
         }
 
     best = None  # (rank_key, items_list)
     nodes = [0]
 
-    def dfs(items, used, t, here, here_xy, moving, spent, pin_cnt, score_sum, meals, snack_cnt):
+    def dfs(items, used, t, here, here_xy, moving, spent, pin_cnt, score_sum, meals, cafe_cnt, cafe_bonus):
         nonlocal best
         nodes[0] += 1
         if items:
-            rank_key = (pin_cnt, round(score_sum + 0.8 * len(meals), 4), len(items), -moving)
+            rank_key = (pin_cnt, round(score_sum + 0.8 * len(meals) + cafe_bonus, 4), len(items), -moving)
             if best is None or rank_key > best[0]:
                 best = (rank_key, list(items))
         if nodes[0] > GROUP_NODE_LIMIT:
@@ -288,10 +303,12 @@ def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
             if pid in used:
                 continue
             meta = info[pid]
-            is_food = meta["category"] == "food_drink"
-            # Không xếp 2 quán ăn liền kề nhau (trừ điểm trưởng nhóm ghim).
-            if is_food and prev_food and not meta["pinned"]:
+            fkind = meta["food_kind"]
+            # Không xếp 2 quán ăn / cà phê liền kề nhau (trừ điểm trưởng nhóm ghim).
+            if fkind and prev_food and not meta["pinned"]:
                 continue
+            if fkind == "cafe_snack" and cafe_cnt >= 1 and not meta["pinned"]:
+                continue  # tối đa 1 quán cà phê / ăn vặt mỗi ngày trừ khi ghim
             add_price = meta["price"] or 0
             if budget is not None and spent + add_price > budget:
                 continue
@@ -301,13 +318,12 @@ def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
                 continue
             leave = start + meta["dur"]
             mtag = _meal_tag(pid, start, leave, need_breakfast, need_lunch, need_dinner)
-            if is_food and not meta["pinned"]:
-                if mtag is not None and mtag in meals:
-                    continue  # mỗi bữa (sáng/trưa/tối) chỉ xếp tối đa 1 quán
-                if mtag is None and snack_cnt >= 1:
-                    continue  # tối đa 1 quán ăn nhẹ / cà phê ngoài 3 bữa chính
+            if fkind == "meal" and not meta["pinned"]:
+                if mtag is None or mtag in meals:
+                    continue  # quán ăn chính chỉ xếp vào 1 trong 3 bữa sáng/trưa/tối, mỗi bữa tối đa 1 quán
             new_meals = meals | ({mtag} if mtag else set())
-            new_snack = snack_cnt + (1 if (is_food and mtag is None) else 0)
+            new_cafe = cafe_cnt + (1 if fkind == "cafe_snack" else 0)
+            in_break = fkind == "cafe_snack" and any(_overlaps(start, leave, w) for w in CAFE_BREAK_WINDOWS)
             item = {
                 "id": pid,
                 "name": meta["name"],
@@ -320,28 +336,36 @@ def plan_group(cfg: dict, scores: dict, pinned=()) -> dict:
                 "price_max_vnd": meta["price"],
                 "price_missing": meta["price"] is None,
                 "category": meta["category"],
-                "meal_slot": mtag,
+                "meal_slot": mtag or ("cafe_break" if fkind == "cafe_snack" else None),
             }
             items.append(item)
             used.add(pid)
             dfs(items, used, leave, pid, meta["xy"], moving + mins, spent + add_price,
-                pin_cnt + (1 if meta["pinned"] else 0), score_sum + meta["score"], new_meals, new_snack)
+                pin_cnt + (1 if meta["pinned"] else 0), score_sum + meta["score"],
+                new_meals, new_cafe, cafe_bonus + (0.25 if in_break else 0.0))
             used.remove(pid)
             items.pop()
 
-    dfs([], set(), cfg["start_min"], cfg["start_id"], cfg["start_xy"], 0, 0, 0, 0.0, set(), 0)
+    dfs([], set(), cfg["start_min"], cfg["start_id"], cfg["start_xy"], 0, 0, 0, 0.0, set(), 0, 0.0)
 
     items = best[1] if best else []
     placed = {it["id"] for it in items}
     spent_total = sum((it["price_max_vnd"] or 0) for it in items)
+    has_cafe = any(_food_kind(PLACES[it["id"]]) == "cafe_snack" for it in items)
+    filled_meals = {it["meal_slot"] for it in items if it["meal_slot"] in ("breakfast", "lunch", "dinner")}
 
     for pid in schedulable:
         if pid in placed or pid in pre_dropped:
             continue
         p = PLACES[pid]
         price = p.get("price_max_vnd")
+        fkind = _food_kind(p)
         if budget is not None and price is not None and spent_total + price > budget:
             why = "vượt ngân sách mỗi người khi gộp lịch"
+        elif fkind == "cafe_snack" and has_cafe:
+            why = "đã có quán cà phê / ăn vặt trong lịch (ghim điểm này nếu nhóm muốn ưu tiên)"
+        elif fkind == "meal" and filled_meals:
+            why = "các khung bữa ăn phù hợp đã có quán (ghim điểm này hoặc nới khung giờ nếu muốn đổi)"
         else:
             why = reason(pid, cfg)
         dropped.append({"id": pid, "name": p["name"], "reason": why})
