@@ -6,17 +6,20 @@
   <title>{% block title %}TripSwipe{% endblock %} · TripSwipe</title>
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="icon" href="/static/brand/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#0e0d0c">
   {% block head %}{% endblock %}
   <link rel="stylesheet" href="/static/base.css">
 </head>
 <body data-code="{{ code or '' }}">
   <header class="bar">
-    <a class="brand" href="/"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><rect x="3" y="5" width="13" height="16" rx="3" fill="var(--raised)"/><rect x="8" y="3" width="13" height="16" rx="3" fill="var(--accent)"/></svg>TripSwipe</a>
+    <a class="brand" href="/" aria-label="TripSwipe, trang chủ"><img src="/static/brand/mark.svg" width="28" height="28" alt="">TripSwipe</a>
     {% if code %}
     <nav class="steps" aria-label="Các bước">
       <a href="/g/{{ code }}/swipe" {% if page == 'swipe' %}aria-current="page"{% endif %}>Quẹt thẻ</a>
       <a href="/g/{{ code }}/lobby" {% if page == 'lobby' %}aria-current="page"{% endif %}>Phòng chờ</a>
       <a href="/g/{{ code }}/itinerary" {% if page == 'itinerary' %}aria-current="page"{% endif %}>Lịch trình</a>
+      <a href="/g/{{ code }}/dashboard" {% if page == 'dashboard' %}aria-current="page"{% endif %}>Bảng tổng quan</a>
     </nav>
     <div class="bar-end"><span class="code-tag" title="Mã nhóm">{{ code }}</span><span id="who" class="muted"></span></div>
     {% endif %}
