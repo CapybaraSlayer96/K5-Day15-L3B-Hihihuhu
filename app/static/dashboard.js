@@ -11,6 +11,7 @@
   const markers = [];
   const lines = [];
 
+  const reduced = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   function error(msg) { $("dash-error").textContent = msg || ""; $("dash-error").hidden = !msg; }
   const hue = (s) => { let x = 0; for (const c of s) x = (x * 31 + c.codePointAt(0)) % 360; return x; };
 
@@ -88,13 +89,14 @@
     const hi = items.reduce((a, x) => a + ((places[x.id] || {}).price_max_vnd || 0), 0);
     const cost = it && it.cost_per_person != null ? vnd(it.cost_per_person) : hi > lo ? `${vnd(lo)}–${vnd(hi)}` : vnd(hi);
     const over = (it && it.cost_per_person != null ? it.cost_per_person : hi) > group.budget_per_person;
-    const fig = (label, value, note, cls) => h("div.figure", {}, h("dt", {}, label), h("dd", { class: cls || null }, value, note ? h("small", {}, " " + note) : null));
+    const fig = (label, value, note, cls, box) => h("div.figure" + (box ? "." + box : ""), {}, h("dt", {}, label), h("dd", { class: cls || null }, h("span", {}, value), note ? h("small", {}, " " + note) : null));
     $("figures").replaceChildren(
       fig("Điểm ghé", String(items.length)),
       fig("Tổng thời gian đi", travel == null ? "—" : `${travel} phút`, "ước tính"),
       fig("Tổng quãng đường", dist == null ? "—" : `${(dist / 1000).toLocaleString("vi-VN", { maximumFractionDigits: 1 })} km`, dist == null ? "chưa có dữ liệu" : "ước tính"),
-      fig("Chi phí mỗi người", it ? cost : "—", `/ ngân sách ${vnd(group.budget_per_person)}`, over ? "over" : null),
+      fig("Chi phí mỗi người", it ? cost : "—", `/ ngân sách ${vnd(group.budget_per_person)}`, over ? "over" : null, "cost"),
       fig("Điểm bị bỏ", String(it ? it.dropped.length : 0)));
+    $("figures").querySelectorAll("dd > span").forEach(countUp);
   }
 
   function initMap(points, legs) {
@@ -119,6 +121,40 @@
     }
     if (points.length) map.fitBounds(points.map((p) => [p.lat, p.lng]), { padding: [48, 48], maxZoom: 15 });
     else map.setView([21.0285, 105.8542], 13);
+    lines.forEach((line, k) => { if (!line.options.dashArray) drawIn(line, k); });
+  }
+
+  // Đếm dần từ 0 tới đúng chữ đã render; kết thúc luôn gán lại chuỗi gốc nên không đổi số liệu.
+  function countUp(el) {
+    const final = el.textContent;
+    const nums = final.match(/\d[\d.,]*/g);
+    if (!nums || reduced) return;
+    const parse = (t) => Number(t.replace(/\./g, "").replace(",", "."));
+    const decimals = (t) => (t.includes(",") ? t.split(",")[1].length : 0);
+    const t0 = performance.now(), dur = 700;
+    const step = (now) => {
+      const k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+      if (k >= 1) { el.textContent = final; return; }
+      let i = 0;
+      el.textContent = final.replace(/\d[\d.,]*/g, (t) => {
+        const v = parse(nums[i++]) * e;
+        return v.toLocaleString("vi-VN", { minimumFractionDigits: decimals(t), maximumFractionDigits: decimals(t) });
+      });
+      requestAnimationFrame(step);
+    };
+    requestAnimationFrame(step);
+  }
+
+  // Vẽ dần từng chặng đường thật theo thứ tự đi.
+  function drawIn(line, order) {
+    const path = line.getElement && line.getElement();
+    if (!path || reduced || !path.getTotalLength) return;
+    const len = path.getTotalLength();
+    path.style.strokeDasharray = len;
+    path.style.strokeDashoffset = len;
+    path.classList.add("route-draw");
+    setTimeout(() => { path.style.strokeDashoffset = 0; }, 150 + order * 250);
+    path.addEventListener("transitionend", () => { path.style.strokeDasharray = ""; path.style.strokeDashoffset = ""; }, { once: true });
   }
 
   function legLine(i, legs, item) {

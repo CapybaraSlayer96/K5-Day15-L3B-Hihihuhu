@@ -369,10 +369,15 @@ main.dash-page { max-width: 1600px; }
 
 /* Số liệu: mono + tabular để giờ, phút, km, tiền thẳng cột */
 .code-tag, .big-code, .dash-code, .code-input, .stop-time, .travel, .num, .rating, #remaining, #total,
-.figure dd, .member-count, .leg, .vote-row > :not(:first-child) {
+.figure dd, .member-count, .leg, .vote-row > :not(:first-child), .mono {
   font-family: var(--mono); font-variant-numeric: tabular-nums;
 }
 .figure dd small { font-family: var(--font); }
+/* Ô chi phí là một khoảng tiền dài: nhỏ hơn để giữ một dòng trên máy tính */
+.figure.cost dd { font-size: 21px; letter-spacing: -0.03em; }
+.figure.cost dd > :not(small) { white-space: nowrap; }
+/* Đường đi vẽ dần: Leaflet SVG path, độ dài đặt bằng JS */
+.route-draw { transition: stroke-dashoffset 900ms var(--ease); }
 .leg { border-left: 2px dotted var(--control); margin-left: 26px; padding-left: 28px; border-radius: 0; }
 
 /* Trang chủ: tiêu đề lệch trái, cột hành động bên phải */
