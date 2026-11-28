@@ -69,10 +69,12 @@
 
     const order = it.items.map((x) => x.id);
     const n = order.length;
+    const movable = editable && n > 1;
+    $("move-hint").hidden = !movable;
     $("timeline").replaceChildren(...(n ? it.items.flatMap((x, i) => {
       const p = places[x.id];
-      const li = h("li.stop" + (editable ? ".movable" : ""), { "data-id": x.id, draggable: editable && n > 1 ? "true" : null },
-        editable ? h("span.grip", { title: "Kéo để đổi thứ tự", "aria-hidden": "true" }) : null,
+      const li = h("li.stop" + (movable ? ".movable" : ""), { "data-id": x.id, draggable: movable ? "true" : null },
+        movable ? h("span.grip", { title: "Kéo để đổi thứ tự", "aria-hidden": "true" }) : null,
         h("span.num", { "aria-hidden": "true" }, String(i + 1)),
         h("div.stop-main", {},
           x.travel_min != null ? h("p.travel", {}, `Đi ${x.travel_min} phút (ước tính)`) : null,
@@ -88,8 +90,7 @@
           h("button.btn.small", { type: "button", "aria-expanded": swapOpen === x.id ? "true" : "false",
             onclick: () => { swapOpen = swapOpen === x.id ? null : x.id; render(); } }, "Đổi địa điểm"),
           h("button.btn.small", { type: "button", onclick: () => act("drop", x.id) }, "Bỏ điểm")) : null);
-      if (editable) li.querySelector(".grip").innerHTML = GRIP;
-      if (editable && n > 1) dragRow(li, order);
+      if (movable) { li.querySelector(".grip").innerHTML = GRIP; dragRow(li, order); }
       return editable && swapOpen === x.id ? [li, swapPanel(it, x)] : [li];
     }) : [h("li.empty-line", {}, "Không có điểm nào xếp vừa khung giờ. Xem gợi ý ở danh sách điểm bị bỏ.")]));
 
@@ -148,15 +149,31 @@
 
   // Kéo thả trên máy tính; điện thoại và bàn phím dùng nút lên / xuống.
   let dragId = null;
+  // Trình duyệt không tự cuộn khi kéo thả HTML5: con trỏ sát mép trên / dưới thì tự cuộn trang.
+  let dragY = null, scrollTimer = null;
+  const EDGE = 90;
+  document.addEventListener("dragover", (ev) => { if (dragId) dragY = ev.clientY; });
+  function autoScroll() {
+    if (!dragId) { scrollTimer = null; return; }
+    if (dragY != null) {
+      if (dragY < EDGE) window.scrollBy(0, -Math.ceil((EDGE - dragY) / 4));
+      else if (dragY > innerHeight - EDGE) window.scrollBy(0, Math.ceil((dragY - innerHeight + EDGE) / 4));
+    }
+    scrollTimer = requestAnimationFrame(autoScroll);
+  }
   function dragRow(li, order) {
     li.addEventListener("dragstart", (ev) => {
       dragId = li.dataset.id;
+      dragY = null;
+      document.body.classList.add("itin-dragging");
+      if (!scrollTimer) scrollTimer = requestAnimationFrame(autoScroll);
       li.classList.add("dragging");
       ev.dataTransfer.effectAllowed = "move";
       ev.dataTransfer.setData("text/plain", dragId);
     });
     li.addEventListener("dragend", () => {
       dragId = null;
+      document.body.classList.remove("itin-dragging");
       document.querySelectorAll(".stop").forEach((x) => x.classList.remove("dragging", "drop-before", "drop-after"));
     });
     li.addEventListener("dragover", (ev) => {

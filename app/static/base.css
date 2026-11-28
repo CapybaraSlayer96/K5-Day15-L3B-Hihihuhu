@@ -514,6 +514,11 @@ main.home .home-grid .panel + .panel { margin-top: 0; }
 .grip { width: 20px; height: 30px; display: grid; place-items: center; color: var(--faint); cursor: grab; touch-action: none; border-radius: 6px; }
 .grip:hover { color: var(--text); background: var(--raised); }
 .grip svg { width: 14px; height: 14px; }
+.stop.movable { cursor: grab; border-radius: var(--radius-inner); transition: background 0.15s var(--ease); }
+.stop.movable:hover { background: var(--surface); }
+.stop.movable .grip { color: var(--muted); background: var(--raised); }
+.itin-dragging .stop.movable { cursor: grabbing; }
+.move-hint { display: flex; align-items: center; gap: 8px; color: var(--muted); margin: 0 0 var(--s-2); }
 .stop.dragging { opacity: 0.45; }
 .stop.drop-before { box-shadow: inset 0 2px 0 var(--accent); }
 .stop.drop-after { box-shadow: inset 0 -2px 0 var(--accent); }
@@ -548,6 +553,7 @@ main.home .home-grid .panel + .panel { margin-top: 0; }
 @media (max-width: 600px) {
   .stop.movable { grid-template-columns: 30px 1fr; }
   .stop.movable .grip { display: none; }
+  .move-hint .on-desk { display: none; }
   .stop.movable .stop-tools { grid-column: 2; }
   .reel { grid-auto-columns: 78%; }
   .toast { top: 16px; }
