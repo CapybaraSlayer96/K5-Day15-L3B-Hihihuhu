@@ -107,7 +107,7 @@
       L.marker([p.lat, p.lng], { icon: L.divIcon({ className: "pin", html: String(i + 1), iconSize: [30, 30] }), title: x.name })
         .bindTooltip(`${i + 1}. ${x.name} · ${x.arrive}–${x.leave}`).addTo(layer);
     });
-    if (pts.length > 1) L.polyline(pts, { color: getComputedStyle(document.body).getPropertyValue("--accent").trim(), weight: 3 }).addTo(layer);
+    if (pts.length > 1) L.polyline(pts, { color: getComputedStyle(document.body).getPropertyValue("--accent").trim(), weight: 4 }).addTo(layer);
     if (pts.length) map.fitBounds(pts, { padding: [40, 40], maxZoom: 15 });
     else map.setView([21.0285, 105.8542], 13);
   }

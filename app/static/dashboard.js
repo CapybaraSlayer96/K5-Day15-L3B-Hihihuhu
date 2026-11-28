@@ -26,6 +26,8 @@
   } catch (e) {
     error(e.status === 404 ? "Không tìm thấy nhóm." : e.message);
     $("trip").textContent = "";
+    $("figures").replaceChildren();
+    $("rail").replaceChildren();
     return;
   }
 
