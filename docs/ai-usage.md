@@ -16,5 +16,8 @@ README của nhóm có mục "Dùng AI vào việc gì" (2–3 dòng, bắt bu�
 | Sinh data `synthetic` (nếu có) | Không dùng | — | — | — |
 | Chấm cột `pass` bằng LLM (nếu có) | Claude Sonnet (agent độc lập) | Chỉ làm người chấm thử thứ hai cho 5 output (BA9) | Khớp người chấm 1: 5/5 câu, 29/30 ô; cột `pass` các lượt do người chấm | Bảo |
 | Slide, văn bản | Claude Code | Soạn nháp spec, PRD, data card, TASKS, summary | Số liệu kiểm bằng `count.py` / `score`; trích dẫn đối chiếu nguyên văn phiếu | Bảo, Hùng |
+| Đào review App Store (BA2) | Claude Code | Viết `evidence/fetch_reviews.py`, `evidence/count.py`; tải 922 review qua RSS của Apple; gắn nhãn thô bằng từ khoá; đọc và phán từng ứng viên | Từ khoá thô cho 99/922 nhưng nhiễu nặng ("close to awesome" bị tính là giờ đóng cửa) → số 20/922 là phán thủ công trên 99 ứng viên, ghi rõ trong `evidence/data-mining.md`; chưa có người thứ hai chấm | Hùng |
+| Soạn form khảo sát, tổng hợp số khảo sát nháp | Claude Code | Viết script Apps Script dựng form; script tính x/N từ CSV (`tong-hop.py`, chưa đưa vào repo) | Số chính thức trong `evidence/summary.md` do Bảo đếm bằng `evidence/survey/count.py` | Hùng |
+| Slide demo 8 trang, `spec.md` §8 §9 | Claude Code | Soạn nháp slide HTML → PDF, viết §8 §9 từ `cost/cost-estimate.md`, `docs/PRD.md`, `docs/ARCHITECTURE.md` | Số chép nguyên từ file nguồn, không tự tính; kết luận "Iterate" ở trang 7 là đề xuất cần nhóm chốt | Hùng |
 
 **Không dùng AI để:** tạo người được phỏng vấn, trích dẫn, câu trả lời khảo sát; sửa kết quả các lượt đã chạy (`eval/run-*.csv`, `cost/simulate-*.csv`, `traces/`).
