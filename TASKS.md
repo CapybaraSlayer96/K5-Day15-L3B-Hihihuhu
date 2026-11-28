@@ -64,9 +64,9 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 
 | Mã | Việc | Người | Chờ | Hạn | Deliverable | DoD | Trạng thái |
 |---|---|---|---|---|---|---|---|
-| U2 | Trang Tạo nhóm (wizard 7 bước) + Vào nhóm | Bảo | — (JSON mẫu) | 11:00 | `app/templates/create.html`, `join.html`, `app/static/` | Đúng TS-01, TS-02; chặn thiếu ngày đi || xong · `create.html`, `join.html` (PR #2, #3) |
-| U3 | Trang Quẹt 2 lớp (tổng quan / vuốt lên chi tiết), kéo + nút, hoàn tác | Bảo | — (JSON mẫu) | 12:00 | `swipe.html`, `swipe.js` | Đúng TS-04 || xong · `swipe.html`, `swipe.js` (PR #2, #3) |
-| U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API || xong · `lobby.html`, `itinerary.html`; lịch trình đang chạy dữ liệu mẫu, chờ B4 (PR #2, #3) |
+| U2 | Trang Tạo nhóm (wizard 7 bước) + Vào nhóm | Bảo | — (JSON mẫu) | 11:00 | `app/templates/create.html`, `join.html`, `app/static/` | Đúng TS-01, TS-02; chặn thiếu ngày đi | xong · `create.html`, `join.html` (PR #2, #3) |
+| U3 | Trang Quẹt 2 lớp (tổng quan / vuốt lên chi tiết), kéo + nút, hoàn tác | Bảo | — (JSON mẫu) | 12:00 | `swipe.html`, `swipe.js` | Đúng TS-04 | xong · `swipe.html`, `swipe.js` (PR #2, #3) |
+| U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API | xong · `lobby.html`, `itinerary.html`; lịch trình đang chạy dữ liệu mẫu, chờ B4 (PR #2, #3) |
 | U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console | |
 | U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | |
 | B3 | API nhóm, bộ thẻ, quẹt, tiến độ, chi tiết địa điểm + JSON mẫu | Minh | B1 | 11:30 (JSON mẫu 10:30) | `app/`, `docs/api-examples.md` | 409 biệt danh trùng, 422 thiếu ngày, quẹt lại ghi đè | xong · `docs/api-examples.md`, 8 integration test qua; deck tạm có nhãn, chờ A3 |
