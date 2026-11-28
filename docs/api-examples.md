@@ -190,6 +190,49 @@ Hoàn tác: `DELETE /api/groups/{code}/swipes` với body `{member_id, place_id}
 
 UI có thể polling mỗi 3 giây. Chưa tạo deck thì `deck_ready: false`, tổng thẻ 0 và `all_finished: false`; bộ thẻ rỗng cũng không coi mọi người đã hoàn thành. Chưa gộp điểm/vote thành lịch vì thuộc B4.
 
+## 9b. Hợp đồng B4 — lịch trình nhóm (CHƯA LÀM, giao diện đã code theo đúng hợp đồng này)
+
+Giao diện (`app/static/itinerary-api.js`, `itinerary.js`, `dashboard.js`) gọi 3 endpoint dưới. Khi endpoint trả 404 với `detail` đúng là `"Not Found"` (route chưa có) hoặc 405, giao diện tự dùng dữ liệu mẫu; mọi 404 khác phải có `detail` tiếng Việt để giao diện hiện lỗi thật.
+
+**Lõi đã có:** `codebase/group.py` · `plan_group(cfg, scores, pinned) -> {"items", "dropped", "violations"}` (Hải, A3). `cfg` lấy từ `app.catalogue.planning_config(config, member_count)`.
+
+### `POST /api/groups/{code}/itinerary` — trưởng nhóm xếp lịch
+
+Request: `{"member_id": "…", "pinned": ["hn_09", "hn_76"]}`
+
+1. 403 nếu không phải trưởng nhóm; 409 nếu nhóm đã có lịch `approved`.
+2. Điểm mỗi địa điểm = trung bình phiếu (thích = 1, bỏ qua = 0) của những người đã quẹt thẻ đó; chỉ giữ điểm ≥ 0,5 và có ≥ 1 phiếu; điểm ghim luôn giữ.
+3. `plan_group(cfg, scores, pinned)` → lưu bảng `itineraries` (`status = draft`), các bản `draft` cũ chuyển `stale`.
+
+Response 201 (giao diện đọc đúng các khoá này):
+
+```json
+{
+  "id": "it_…", "version": 2, "status": "draft", "created_at": "2026-12-05T08:00:00+07:00",
+  "items": [{"id": "hn_09", "name": "Văn Miếu - Quốc Tử Giám", "arrive": "08:15", "leave": "09:45",
+             "travel_min": 15, "no_hours": false, "meal": null}],
+  "dropped": [{"id": "hn_04", "name": "Lăng Chủ tịch Hồ Chí Minh", "reason": "đóng cửa Thứ Hai — đổi sang ngày khác hoặc bỏ điểm"}],
+  "violations": [],
+  "cost_per_person": 155000,
+  "votes": [{"place_id": "hn_09", "likes": 2, "swiped": 3, "like_score": 0.67}]
+}
+```
+
+- `dropped[].reason`: phần sau `" — "` là gợi ý, giao diện tách ra dòng "Gợi ý".
+- `cost_per_person`: tổng `price_max_vnd` (giá vé theo người) của các điểm có giá trong lịch, so với `budget_per_person` của nhóm (PRD TS-06); `null` nếu không điểm nào có giá.
+- `violations` luôn `[]` khi trả 201; nếu khác rỗng là lỗi, trả 500 kèm danh sách.
+
+### `PATCH /api/itineraries/{id}` — duyệt / bỏ / ghim
+
+Request: `{"member_id": "…", "action": "approve" | "drop" | "pin", "place_id": "hn_09"}` (`place_id` bỏ trống khi `approve`).
+- `approve` → bản đó thành `approved`, trả lại bản đó.
+- `drop` / `pin` → xếp lại với điểm đó bị loại / ghim thêm → bản mới (`version + 1`, `draft`), bản cũ `stale`; trả bản mới (cùng dạng response ở trên).
+- 403 không phải trưởng nhóm · 409 bản đã `stale` / nhóm đã duyệt · 422 ghim điểm đóng vào ngày đi (`detail` nêu lý do).
+
+### `GET /api/groups/{code}/itinerary` — lịch mới nhất cho mọi thành viên
+
+Trả bản `approved` nếu có, không thì bản `draft` mới nhất (cùng dạng response). Chưa có lịch → 404 `{"detail": "Nhóm chưa có lịch."}` (không dùng `"Not Found"`).
+
 ## 10. Database, chạy lại và giới hạn
 
 - Bảy bảng: `places`, `travel_times`, `groups`, `members`, `deck_cards`, `swipes`, `itineraries`. Nạp lại nguồn bằng upsert lúc startup, không nhân đôi POI/tuyến hay xóa nhóm/phiếu.
