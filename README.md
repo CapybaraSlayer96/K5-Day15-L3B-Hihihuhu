@@ -58,10 +58,10 @@ Cần Docker Desktop đang chạy, Docker Compose v2. Từ thư mục repo:
 docker compose up --build -d
 ```
 
-Mở [localhost:8000](http://localhost:8000) và [tài liệu API](http://localhost:8000/docs). Đây là backend cấu hình/tạo và vào nhóm/bộ thẻ/quẹt/tiến độ; giao diện quẹt và API xếp lịch nhóm B4 đang chờ triển khai. JSON mẫu và hợp đồng nối UI: [docs/api-examples.md](docs/api-examples.md).
+Mở [localhost:9000](http://localhost:9000) và [tài liệu API](http://localhost:9000/docs). Đây là backend cấu hình/tạo và vào nhóm/bộ thẻ/quẹt/tiến độ; giao diện quẹt và API xếp lịch nhóm B4 đang chờ triển khai. JSON mẫu và hợp đồng nối UI: [docs/api-examples.md](docs/api-examples.md).
 
 - Compose chờ Postgres khỏe, tạo bảy bảng và upsert dữ liệu lúc khởi động. Dữ liệu nhóm/phiếu lưu trong volume `postgres-data`, giữ qua `docker compose restart` và `docker compose down`.
-- Web chỉ mở trên `127.0.0.1:8000`; Postgres mặc định không mở cổng ra máy host. Kiểm tra: `docker compose ps`, `docker compose logs app`, hoặc `GET /health`.
+- Web chỉ mở trên `127.0.0.1:9000`; Postgres mặc định không mở cổng ra máy host. Kiểm tra: `docker compose ps`, `docker compose logs app`, hoặc `GET /health`.
 - Bộ thẻ hiện là phương án **tạm theo rating trong dữ liệu** sau lọc ngày/giờ/giá; response có `source: provisional_rating`. Chưa gọi AI chọn thẻ; có adapter chờ hàm `build_deck` của Hải. Không cần API key để thử B1–B3.
 - Image chỉ chép thư mục app/codebase/data, không chép `.env`, khảo sát hoặc trace. Compose dùng mật khẩu DB mẫu chỉ cho demo nội bộ và `MODEL_PROVIDER=fake`; không đọc key vào image. Có thể đổi cổng qua `TRIPSWIPE_PORT` và mật khẩu qua `TRIPSWIPE_DB_PASSWORD` (dùng ký tự an toàn trong URL: chữ/số/gạch dưới/gạch ngang).
 - Dừng: `docker compose down`. Tránh thêm `-v` nếu muốn giữ dữ liệu nhóm.
@@ -72,7 +72,7 @@ Nếu chạy Python trực tiếp với Postgres riêng:
 python3 -m venv .venv
 .venv/bin/python -m pip install -r requirements.txt
 export DATABASE_URL='postgresql://tripswipe:tripswipe_local_only@127.0.0.1:54329/tripswipe'
-.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 8000
+.venv/bin/uvicorn app.main:app --host 127.0.0.1 --port 9000
 ```
 
 `DATABASE_URL` phải trỏ DB của bạn đang chạy; ví dụ trên dùng cổng test localhost. Backend đọc URL từ môi trường, không tự nạp `.env`. Lõi `python run.py`, eval và simulate vẫn chạy theo cách cũ, không cần Postgres hoặc các gói web.
