@@ -1,5 +1,24 @@
-<!doctype html>
-<html lang="vi">
-  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>TripSwipe</title><link rel="stylesheet" href="/static/base.css"></head>
-  <body><main><h1>TripSwipe</h1><p>Backend đã sẵn sàng cho cấu hình chuyến đi, tạo/vào nhóm, địa điểm và phiếu quẹt.</p><p>Giao diện tạo nhóm và quẹt thẻ đang được phát triển.</p><a href="/docs">Mở tài liệu API</a></main></body>
-</html>
+{% extends "layout.html" %}
+{% block title %}Trang chủ{% endblock %}
+{% block main_class %}narrow{% endblock %}
+{% block body %}
+<h1>Cả nhóm quẹt, máy xếp lịch một ngày ở Hà Nội</h1>
+<p class="lead">Mỗi người quẹt thích hoặc bỏ qua từng địa điểm. TripSwipe gộp ý số đông và xếp lịch đúng giờ mở cửa.</p>
+<div class="home-grid">
+  <section class="panel">
+    <h2>Trưởng nhóm</h2>
+    <p class="muted">Chọn ngày, giờ, điểm xuất phát và ngân sách, nhận mã để gửi cho nhóm.</p>
+    <a class="btn primary" href="/create">Tạo nhóm</a>
+  </section>
+  <section class="panel">
+    <h2>Thành viên</h2>
+    <p class="muted">Nhập mã trưởng nhóm gửi, không cần tài khoản.</p>
+    <form class="row" action="/join" method="get">
+      <label class="sr" for="code">Mã nhóm</label>
+      <input id="code" name="code" required minlength="6" maxlength="6" pattern="[A-Za-z0-9]{6}" placeholder="Ví dụ HN7K2Q" autocomplete="off" class="code-input">
+      <button class="btn">Vào nhóm</button>
+    </form>
+  </section>
+</div>
+<p class="foot muted small"><a href="/docs">Tài liệu API</a></p>
+{% endblock %}
