@@ -67,10 +67,10 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | U2 | Trang Tạo nhóm (wizard 7 bước) + Vào nhóm | Bảo | — (JSON mẫu) | 11:00 | `app/templates/create.html`, `join.html`, `app/static/` | Đúng TS-01, TS-02; chặn thiếu ngày đi || xong · `create.html`, `join.html` (PR #2, #3) |
 | U3 | Trang Quẹt 2 lớp (tổng quan / vuốt lên chi tiết), kéo + nút, hoàn tác | Bảo | — (JSON mẫu) | 12:00 | `swipe.html`, `swipe.js` | Đúng TS-04 || xong · `swipe.html`, `swipe.js` (PR #2, #3) |
 | U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API || xong · `lobby.html`, `itinerary.html`; lịch trình đang chạy dữ liệu mẫu, chờ B4 (PR #2, #3) |
-| U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console | |
+| U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console || chờ B4 · hợp đồng API cho Minh đã ghi ở `docs/api-examples.md` mục 9b |
 | U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | |
 | B3 | API nhóm, bộ thẻ, quẹt, tiến độ, chi tiết địa điểm + JSON mẫu | Minh | B1 | 11:30 (JSON mẫu 10:30) | `app/`, `docs/api-examples.md` | 409 biệt danh trùng, 422 thiếu ngày, quẹt lại ghi đè | xong · `docs/api-examples.md`, 8 integration test qua; deck tạm có nhãn, chờ A3 |
-| B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Minh | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm | |
+| B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Minh | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm || chưa bắt đầu · GẤP, chặn U5, U6, B5 · hợp đồng ở `docs/api-examples.md` mục 9b |
 | B5 | Test end-to-end qua HTTP | Minh | B4 | 13:30 | `tests/test_api.py` | In ok; `tests/test_core.py` vẫn ok | |
 | A4 | Lượt cải tiến: gom nhóm lỗi → một cải tiến → eval trọn bộ → chấm → `score` | Hải | A1 | 12:30 | `eval/run-3.csv` đã chấm | Chạy đủ 22 câu (+ câu mới chỉ thêm); ghi cấu hình đổi gì | xong · `run-3` (20/22, lộ bug parse trưa) → `run-4` (21/22 = 95%, `gemini-3.5-flash-lite`) |
 | A5 | `eval/report.md` + `eval/README.md` | Hải | A4 | 13:30 | 2 file | % từng lượt so với chuẩn; ≥ 3 lỗi (input · output · vì sao sai · đã sửa · còn lại) | xong · `eval/report.md`, `eval/README.md` khớp `score` |
@@ -167,7 +167,7 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 - DoD: bản đồ hiện đúng thứ tự điểm; bản cũ hiện nhãn "hết hiệu lực" sau khi sửa; văn bản sao chép có giờ, tên, nguồn giờ mở cửa, câu "thời gian đi là ước tính".
 - Yêu cầu output: không hiển thị con số nào không đến từ API.
 
-**U5 · Nối UI với API thật** — Chờ: B3, B4 — Trạng thái:
+**U5 · Nối UI với API thật** — Chờ: B3, B4 — Trạng thái: chờ B4 · hợp đồng API cho Minh đã ghi ở `docs/api-examples.md` mục 9b
 - Làm: thay JSON mẫu bằng gọi API; xử lý lỗi (mã nhóm sai, AI lỗi → thông báo + nút thử lại).
 - Deliverable: commit nối API.
 - DoD: `docker compose up` → đi trọn luồng 2 trình duyệt (2 thành viên) từ tạo nhóm đến duyệt lịch không lỗi console.
@@ -192,7 +192,7 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 - Làm: `GET /api/config/options` · `POST /api/groups` · `GET /api/groups/{code}` · `POST /api/groups/{code}/members` · `POST|GET /api/groups/{code}/deck` · `POST /api/groups/{code}/swipes` · `GET /api/groups/{code}/progress` · `GET /api/places/{id}`. Ghi JSON mẫu từng endpoint vào `docs/api-examples.md` trước 10:30.
 - DoD: mã nhóm 6 ký tự duy nhất; biệt danh trùng trả 409; thiếu ngày đi trả 422; quẹt lại ghi đè phiếu cũ.
 
-**B4 · Gộp phiếu + lịch trình** — Chờ: A3 — Trạng thái:
+**B4 · Gộp phiếu + lịch trình** — Chờ: A3 — Trạng thái: chưa bắt đầu · GẤP, chặn U5, U6, B5 · hợp đồng ở `docs/api-examples.md` mục 9b
 - Làm: `POST /api/groups/{code}/itinerary` (chỉ trưởng nhóm; điểm = trung bình phiếu của người đã quẹt thẻ đó, lấy ≥ 0,5 và ≥ 1 phiếu, hoà theo rating, cộng điểm ghim → `plan_group`) · `PATCH /api/itineraries/{id}` (`approve` / `drop` / `pin` → tính lại, bản cũ `stale`).
 - DoD: lịch trả về luôn có `violations: []`; người không phải trưởng nhóm gọi → 403; ghim điểm đóng vào ngày đi → báo lỗi có lý do.
 
