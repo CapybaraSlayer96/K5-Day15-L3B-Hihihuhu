@@ -68,6 +68,14 @@ CREATE TABLE IF NOT EXISTS itineraries (
 """
 
 
+def travel_rows(matrix):
+    """Ma trận OSRM ([phút, mét] theo profile car / bike / foot) → phút theo phương tiện, cùng công thức với bộ xếp lịch."""
+    from codebase.places import PROFILE, travel_leg
+    pairs = {tuple(key.split("|")[:2]) for key in matrix}
+    return [(a, b, mode, travel_leg(a, (0, 0), b, (0, 0), mode)[0])
+            for a, b in sorted(pairs) for mode in PROFILE if "%s|%s|%s" % (a, b, PROFILE[mode]) in matrix]
+
+
 class Database:
     def __init__(self, url, schema=None):
         if not url:
@@ -97,5 +105,5 @@ class Database:
                 cur.executemany(
                     "INSERT INTO travel_times (from_id, to_id, mode, duration_mins) VALUES (%s, %s, %s, %s) "
                     "ON CONFLICT (from_id, to_id, mode) DO UPDATE SET duration_mins = EXCLUDED.duration_mins",
-                    [(*key.split("|"), value) for key, value in matrix.items()],
+                    travel_rows(matrix),
                 )
