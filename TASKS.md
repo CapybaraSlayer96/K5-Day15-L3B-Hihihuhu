@@ -68,7 +68,7 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | U3 | Trang Quẹt 2 lớp (tổng quan / vuốt lên chi tiết), kéo + nút, hoàn tác | Bảo | — (JSON mẫu) | 12:00 | `swipe.html`, `swipe.js` | Đúng TS-04 | xong · `swipe.html`, `swipe.js` (PR #2, #3) |
 | U4 | Phòng chờ + Lịch trình (dòng thời gian, Leaflet, điểm bị bỏ, duyệt / bỏ / ghim, sao chép) | Bảo | — (JSON mẫu) | 13:00 | `lobby.html`, `itinerary.html` | Đúng TS-05–TS-07; mọi số lấy từ API | xong · `lobby.html`, `itinerary.html`; lịch trình đang chạy dữ liệu mẫu, chờ B4 (PR #2, #3) |
 | U5 | Nối UI với API thật | Bảo | B3, B4 | 13:45 | commit nối API | 2 trình duyệt đi trọn luồng, không lỗi console | xong · `itinerary-api.js` gộp lịch từ server, duyệt không tạo bản thừa; 2 trình duyệt (trưởng nhóm + thành viên) đi trọn quẹt → xếp → bỏ → ghim → duyệt → bảng tổng quan, không request lỗi |
-| U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | |
+| U6 | Video demo dự phòng bằng web | Bảo | U5 | 14:20 | link video | 1 trường hợp thường + 1 khó; mở được ẩn danh | đang quay · web đã chạy lịch thật (U5) |
 | B3 | API nhóm, bộ thẻ, quẹt, tiến độ, chi tiết địa điểm + JSON mẫu | Minh | B1 | 11:30 (JSON mẫu 10:30) | `app/`, `docs/api-examples.md` | 409 biệt danh trùng, 422 thiếu ngày, quẹt lại ghi đè | xong · `docs/api-examples.md`, 8 integration test qua; deck tạm có nhãn, chờ A3 |
 | B4 | Gộp phiếu (trung bình ≥ 0,5) + `POST` itinerary + `PATCH` (duyệt / bỏ / ghim, bản cũ `stale`) | Bảo | A3 | 13:00 | `app/` | Lịch luôn `violations: []`; 403 nếu không phải trưởng nhóm | xong · `app/main.py` (POST/GET itinerary, PATCH duyệt / bỏ / ghim), chạy thật qua cổng 9000 |
 | B5 | Test end-to-end qua HTTP | Bảo | B4 | 13:30 | `tests/test_api.py` | In ok; `tests/test_core.py` vẫn ok | xong · `tests/test_api.py` 10/10 ok trên Postgres thật; `tests/test_core.py` ok |
@@ -78,11 +78,11 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | D4 | Kiểm thử CLI 5 câu lạ | Hùng | — | 11:00 | `validation/cli-test.md` | Mỗi câu: input · output · đúng / sai · vì sao | |
 | D5 | *(Bonus)* 2–3 người ngoài nhóm dùng thử, 5 nhịp | Hùng | có bản chạy | 13:30 | `validation/log.md` | Đủ cột mỗi người + 4 dòng tổng hợp | |
 | D6 | `spec.md` §8 §9 + slide 8 trang | Hùng | A5, A6 | 14:15 | `spec.md`, `slides/demo-slides.pdf` | Mỗi trang slide ≥ 1 số có nguồn, khớp repo | xong · `spec.md` §8 §9 (PR #10); slide 8 trang ở nhánh `docs/d6-slides` (`demo-slides.pdf`), chờ merge |
-| D7 | Kiểm thử luồng web + corner case PRD | Hùng | U5, B5 | 14:10 | `validation/web-test.md` | Không còn lỗi chặn luồng demo | |
+| D7 | Kiểm thử luồng web + corner case PRD | Hùng | U5, B5 | 14:10 | `validation/web-test.md` | Không còn lỗi chặn luồng demo | mở khoá · U5, B5 xong, làm được |
 | X1 | README hoàn thiện: mục "Chạy web" (`docker compose up`), link video ở bảng "Bảy hạng mục" dòng 7, cập nhật bảng "Phần nào thật / giả" khi web xong | Hùng | U6, B2 | 14:20 | `README.md` | Người ngoài làm theo README chạy được CLI + web; không còn `____` | |
 | X2 | `docs/ai-usage.md`: mỗi người thêm dòng phần mình dùng AI (công cụ · AI làm gì · mình kiểm gì) | Cả nhóm | — | 14:20 | `docs/ai-usage.md` | Mỗi người ≥ 1 dòng; giải thích được phần có tên mình | |
 | X3 | `spec.md` §10: mỗi thay đổi sau CP2 thêm 1 dòng (giờ · đổi gì · vì sao trỏ câu thử / lỗi) | Người đổi | — | liên tục | `spec.md` §10 | Không có thay đổi nào sau CP2 thiếu dòng | |
-| X4 | `docs/ARCHITECTURE.md` đồng bộ code thật (công cụ, thuật toán, ma trận, app) | Minh | B4 | 14:20 | `docs/ARCHITECTURE.md` | Không mô tả thứ code không có | |
+| X4 | `docs/ARCHITECTURE.md` đồng bộ code thật (công cụ, thuật toán, ma trận, app) | Minh | B4 | 14:20 | `docs/ARCHITECTURE.md` | Không mô tả thứ code không có | mở khoá · B4 xong (endpoint ở `docs/api-examples.md` mục 9b) |
 | D8 | Tự soát guide 4.4 + nộp form CP4 | Hùng | tất cả CP4 | 14:30 | form CP4 | Đủ 7 hạng mục; lượt 1 → cải tiến; chi phí / task; slide; video; phần chưa xong | |
 
 ### Sau CP4 · demo 14:30–18:00 · hạn chót 23:59 hôm nay (28/11)
@@ -172,7 +172,7 @@ Giờ      Bảo (UI)              Minh (BE)                 Hải (AI)         
 - Deliverable: commit nối API.
 - DoD: `docker compose up` → đi trọn luồng 2 trình duyệt (2 thành viên) từ tạo nhóm đến duyệt lịch không lỗi console.
 
-**U6 · Video demo dự phòng bằng web** — Chờ: U5 — Trạng thái:
+**U6 · Video demo dự phòng bằng web** — Chờ: U5 — Trạng thái: đang quay · web đã chạy lịch thật (U5)
 - Deliverable: link video ~2 phút gửi Hùng (cho form CP4).
 - DoD: có 1 trường hợp thường + 1 trường hợp khó (điểm đóng cửa bị loại có lý do); mở được ẩn danh.
 
