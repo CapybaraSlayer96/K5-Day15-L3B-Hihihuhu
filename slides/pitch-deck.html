@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>TripSwipe — Pitch</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&subset=vietnamese&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ground: #0e0d0c; --surface: #181716; --raised: #2a2927; --rule: #23211f;
+    --text: #f4f2ee; --muted: #b4b0a9; --faint: #8f8b85;
+    --accent: #5fd3a6; --negative: #e5566f; --warning: #e5a93b;
+    --font: "Be Vietnam Pro", system-ui, sans-serif; --mono: "JetBrains Mono", ui-monospace, monospace;
+  }
+  @page { size: 1280px 720px; margin: 0; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; background: var(--ground); }
+  body { font-family: var(--font); color: var(--text); font-variant-numeric: tabular-nums;
+         -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .slide { width: 1280px; height: 720px; padding: 48px 80px 32px; position: relative; overflow: hidden;
+           background: var(--ground); break-after: page; display: flex; flex-direction: column; }
+  .slide:last-child { break-after: auto; }
+  .top { display: flex; align-items: center; gap: 12px; margin-bottom: 28px; color: var(--muted); font-size: 16px; }
+  .top img, .top svg { width: 28px; height: 28px; }
+  .top b { color: var(--text); font-weight: 600; }
+  .top .pg { margin-left: auto; font-family: var(--mono); color: var(--faint); font-size: 14px; }
+  .kicker { font-size: 16px; font-weight: 600; color: var(--muted); margin-bottom: 12px; }
+  h1 { font-size: 46px; line-height: 1.15; letter-spacing: -0.02em; font-weight: 700; margin: 0 0 26px; max-width: 1060px; text-wrap: balance; }
+  h3 { font-size: 22px; font-weight: 600; margin: 0 0 10px; letter-spacing: -0.01em; }
+  p { font-size: 20px; line-height: 1.5; margin: 0; color: var(--muted); }
+  p b { color: var(--text); font-weight: 600; }
+  .card { background: var(--surface); border-radius: 20px; padding: 26px 28px; }
+  .grid { display: grid; gap: 16px; }
+  .g2 { grid-template-columns: 1fr 1fr; } .g3 { grid-template-columns: repeat(3, 1fr); }
+  .num { font-family: var(--mono); font-weight: 600; color: var(--accent); font-size: 64px; line-height: 1; letter-spacing: -0.03em; }
+  .num small { font-family: var(--font); font-weight: 500; letter-spacing: 0; font-size: 20px; color: var(--muted); margin-left: 8px; }
+  .tag { display: inline-block; font-size: 14px; font-weight: 600; padding: 4px 12px; border-radius: 999px;
+         background: #2b2414; color: var(--warning); margin-top: 14px; }
+  .quote { font-size: 22px; line-height: 1.5; color: var(--text); border-left: 3px solid var(--accent); padding-left: 20px; margin: 0; }
+  .cite { font-size: 15px; color: var(--faint); margin-top: 10px; padding-left: 23px; }
+  .foot { margin-top: auto; padding-top: 18px; font-size: 14px; color: var(--faint); }
+  .hero .foot { position: absolute; left: 80px; bottom: 20px; }
+  .nsm { background: var(--surface); border-radius: 20px; padding: 26px 28px; border: 1px solid var(--accent); }
+  .nsm .label { font-family: var(--mono); font-size: 14px; color: var(--accent); letter-spacing: .04em; margin-bottom: 10px; }
+  .nsm .metric { font-size: 30px; font-weight: 700; line-height: 1.25; letter-spacing: -0.02em; margin-bottom: 14px; }
+  ul.clean { list-style: none; padding: 0; margin: 14px 0 0; }
+  ul.clean li { font-size: 18px; color: var(--muted); line-height: 1.5; padding-left: 22px; position: relative; margin-bottom: 6px; }
+  ul.clean li::before { content: ""; position: absolute; left: 4px; top: 11px; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); }
+  .vs { font-size: 16px; color: var(--faint); margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--rule); }
+  .flow { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .step { background: var(--surface); border-radius: 20px; padding: 22px 20px; position: relative; }
+  .step .n { font-family: var(--mono); font-weight: 600; width: 34px; height: 34px; border-radius: 50%; background: var(--accent);
+             color: var(--ground); display: grid; place-items: center; font-size: 15px; margin-bottom: 16px; }
+  .step.code .n { background: var(--text); }
+  .step h3 { font-size: 19px; } .step p { font-size: 16px; }
+  .who { font-family: var(--mono); font-size: 13px; color: var(--faint); margin-top: 12px; }
+  .row { display: flex; gap: 16px; margin-top: 16px; }
+  .row .card { flex: 1; padding: 20px 24px; }
+  .row .card p { font-size: 17px; }
+  .price { font-family: var(--mono); font-size: 15px; color: var(--accent); margin-bottom: 8px; }
+  /* Intro / outro */
+  .hero { justify-content: center; }
+  .hero .logo { display: flex; align-items: center; gap: 22px; margin-bottom: 40px; }
+  .hero .logo svg { width: 88px; height: 88px; }
+  .hero .logo span { font-size: 56px; font-weight: 700; letter-spacing: -0.03em; }
+  .hero h1 { font-size: 64px; max-width: 980px; margin-bottom: 24px; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p { font-size: 24px; max-width: 820px; }
+  .deck { position: absolute; right: -60px; top: 110px; width: 420px; height: 500px; }
+  .deck div { position: absolute; width: 300px; height: 400px; border-radius: 24px; }
+  .deck .back { background: var(--raised); transform: rotate(-10deg); left: 40px; top: 30px; }
+  .deck .front { background: var(--surface); border: 1px solid var(--rule); left: 110px; top: 0; padding: 28px; }
+  .deck .front svg { width: 100%; height: 100%; }
+  .ask { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 8px; max-width: 1120px; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="mark" viewBox="0 0 32 32">
+    <rect x="3" y="7" width="17" height="22" rx="4" fill="#3a3835" transform="rotate(-8 11.5 18)"/>
+    <rect x="11" y="3" width="17" height="22" rx="4" fill="#5fd3a6"/>
+    <path d="M15 20.5c2.5 0 2.5-4 5-4s2.5-4 4.5-4" fill="none" stroke="#0e0d0c" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="15" cy="20.5" r="1.8" fill="#0e0d0c"/><circle cx="24.5" cy="8.5" r="2.4" fill="#0e0d0c"/>
+  </symbol>
+</svg>
+
+<!-- 1. Intro -->
+<section class="slide hero">
+  <div class="deck" aria-hidden="true">
+    <div class="back"></div>
+    <div class="front">
+      <svg viewBox="0 0 240 340" fill="none">
+        <path d="M40 290 C 110 290, 60 200, 130 190 S 170 90, 200 60" stroke="#5fd3a6" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 12"/>
+        <circle cx="40" cy="290" r="14" fill="#f4f2ee"/><text x="40" y="295" text-anchor="middle" font-family="JetBrains Mono" font-size="11" font-weight="600" fill="#0e0d0c">XP</text>
+        <circle cx="130" cy="190" r="14" fill="#5fd3a6"/><text x="130" y="195" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="600" fill="#0e0d0c">1</text>
+        <circle cx="200" cy="60" r="14" fill="#5fd3a6"/><text x="200" y="65" text-anchor="middle" font-family="JetBrains Mono" font-size="13" font-weight="600" fill="#0e0d0c">2</text>
+      </svg>
+    </div>
+  </div>
+  <div class="logo"><svg><use href="#mark"/></svg><span>TripSwipe</span></div>
+  <h1>Cả nhóm quẹt thẻ, lịch đi chơi <em>tự xếp đúng giờ mở cửa</em></h1>
+  <p>Lịch trình một ngày ở Hà Nội cho nhóm 3–6 bạn: chọn chung, đi không vòng, không gặp cửa đóng.</p>
+  <div class="foot">Nhóm Hihihuhu · AI20K Hackathon · 28/11/2026</div>
+</section>
+
+<!-- 2. Pain + NSM -->
+<section class="slide">
+  <div class="top"><svg><use href="#mark"/></svg><b>TripSwipe</b><span class="pg">02 / 06</span></div>
+  <div class="kicker">Nỗi đau và thước đo tăng trưởng</div>
+  <h1>Ba phần tư người lên lịch cho nhóm từng làm hỏng buổi đi</h1>
+  <div class="grid g2" style="grid-template-columns: 1.15fr 1fr">
+    <div class="card" style="display:flex;flex-direction:column;gap:24px">
+      <div style="display:flex;gap:40px">
+        <div><div class="num">74%</div><p style="margin-top:10px"><b>23/31</b> người gặp sự cố: đi vòng, cửa đóng, bỏ lỡ điểm</p></div>
+        <div><div class="num">58%</div><p style="margin-top:10px"><b>18/31</b> đến nơi thì đã đóng hoặc chưa mở</p></div>
+      </div>
+      <div>
+        <p class="quote">"Đến nơi thì bảo tàng đã ngừng đón khách. Cả nhóm phải thay đổi kế hoạch buổi chiều."</p>
+        <div class="cite">Người trả lời khảo sát, phiếu S23</div>
+      </div>
+    </div>
+    <div class="nsm">
+      <div class="label">NORTH STAR METRIC</div>
+      <div class="metric">Số chuyến đi nhóm được duyệt lịch mỗi tháng</div>
+      <p>Một chuyến được tính khi có <b>≥ 3 bạn cùng quẹt</b> và trưởng nhóm <b>duyệt lịch</b>. Mỗi chuyến như vậy là một nhóm đã cùng chọn xong và có lịch dùng được.</p>
+      <ul class="clean">
+        <li>Chỉ số phụ: tỉ lệ chuyến không gặp điểm đóng cửa (hỏi lại sau chuyến)</li>
+        <li>Chỉ số phụ: số bạn mời được trên mỗi chuyến</li>
+      </ul>
+      <span class="tag">Chưa đo — chưa có người dùng thật</span>
+    </div>
+  </div>
+  <div class="foot">Khảo sát online 27–28/11/2026, 31 người từng lên lịch cho nhóm đi chơi một ngày ở Hà Nội trong 3 tháng qua.</div>
+</section>
+
+<!-- 3. USP -->
+<section class="slide">
+  <div class="top"><svg><use href="#mark"/></svg><b>TripSwipe</b><span class="pg">03 / 06</span></div>
+  <div class="kicker">Điểm khác biệt</div>
+  <h1>Không chỉ gợi ý chỗ đi, mà ra một lịch cả nhóm đồng ý và đi được</h1>
+  <div class="grid g3">
+    <div class="card">
+      <h3>Cả nhóm cùng chọn</h3>
+      <p>Mỗi bạn quẹt thẻ trên điện thoại. Không còn ném link TikTok vào group chat rồi một người tự ghép.</p>
+      <div class="vs">Group chat: một người gánh, kết quả theo ý người đó</div>
+    </div>
+    <div class="card">
+      <h3>Đúng giờ mở cửa</h3>
+      <p>Giờ mở cửa và thời gian đi được kiểm trước khi trả lịch. Không đưa nhóm tới nơi đang đóng.</p>
+      <div class="num" style="font-size:44px;margin-top:18px">0<small>vi phạm giờ · 21/22 câu thử đạt</small></div>
+      <div class="vs">ChatGPT: lịch nghe hợp lý nhưng có thể sai giờ</div>
+    </div>
+    <div class="card">
+      <h3>Nói thật khi không vừa</h3>
+      <p>Điểm nào không xếp được thì ghi lý do và cách nới: đổi ngày, thêm giờ, bỏ bớt điểm.</p>
+      <div class="vs">Google Maps: người dùng tự xếp thứ tự, không cảnh báo</div>
+    </div>
+  </div>
+  <div class="foot">Kết quả trên bộ 22 câu thử của nhóm, lượt chạy ngày 28/11/2026. Chưa thử với người dùng ngoài nhóm.</div>
+</section>
+
+<!-- 4. Business model -->
+<section class="slide">
+  <div class="top"><svg><use href="#mark"/></svg><b>TripSwipe</b><span class="pg">04 / 06</span></div>
+  <div class="kicker">Mô hình kinh doanh dự kiến</div>
+  <h1>Miễn phí cho cả nhóm; thu tiền từ trưởng nhóm hay đi và từ địa điểm</h1>
+  <div class="grid g3" style="flex:0">
+    <div class="card">
+      <div class="price">MIỄN PHÍ</div>
+      <h3>Thành viên</h3>
+      <p>Vào bằng mã nhóm, quẹt thẻ, xem lịch. Không cần tài khoản, để mời bạn không vướng gì.</p>
+    </div>
+    <div class="card">
+      <div class="price">FREEMIUM</div>
+      <h3>Trưởng nhóm</h3>
+      <p>Vài chuyến miễn phí mỗi tháng. Gói trả phí cho người hay tổ chức: chuyến nhiều ngày, nhóm đông, xuất lịch.</p>
+    </div>
+    <div class="card">
+      <div class="price">HOA HỒNG</div>
+      <h3>Địa điểm, đặt chỗ</h3>
+      <p>Đặt bàn, mua vé ngay từ lịch đã duyệt. Nhóm đã có giờ đến cụ thể nên dễ chốt hơn.</p>
+    </div>
+  </div>
+  <div class="row">
+    <div class="card">
+      <div class="num" style="font-size:44px">≈ 38 ₫</div>
+      <p style="margin-top:8px">Chi phí AI cho <b>một lịch thành công</b> với model nhẹ</p>
+    </div>
+    <div class="card">
+      <div class="num" style="font-size:44px">$10–20</div>
+      <p style="margin-top:8px">Máy chủ và database mỗi tháng <span style="color:var(--faint)">(ước tính)</span>, lớn hơn chi phí AI</p>
+    </div>
+    <div class="card">
+      <h3 style="font-size:19px">Việc phải kiểm</h3>
+      <p>Mức giá và tỉ lệ trả tiền: chưa hỏi người dùng. Bước tiếp theo là khảo sát mức sẵn sàng trả.</p>
+    </div>
+  </div>
+  <div class="foot">Chi phí AI từ 50 phiên mô phỏng, giá model tra ngày 28/11/2026. Ba nguồn thu là đề xuất, chưa kiểm với thị trường.</div>
+</section>
+
+<!-- 5. Tech solution -->
+<section class="slide">
+  <div class="top"><svg><use href="#mark"/></svg><b>TripSwipe</b><span class="pg">05 / 06</span></div>
+  <div class="kicker">Giải pháp</div>
+  <h1>AI lo phần chọn, phần kiểm giờ do máy tính đếm chính xác</h1>
+  <div class="flow">
+    <div class="step code"><div class="n">1</div><h3>Tạo nhóm</h3><p>Ngày đi, khung giờ, điểm xuất phát, ngân sách.</p><div class="who">Trưởng nhóm</div></div>
+    <div class="step"><div class="n">2</div><h3>AI chọn 20 thẻ</h3><p>Hợp sở thích, lọc sẵn các điểm đóng cửa hôm đó.</p><div class="who">AI</div></div>
+    <div class="step code"><div class="n">3</div><h3>Cả nhóm quẹt</h3><p>Thích hoặc bỏ qua; phòng chờ hiện ai chọn gì.</p><div class="who">Cả nhóm</div></div>
+    <div class="step code"><div class="n">4</div><h3>Xếp lịch và kiểm</h3><p>Thứ tự, giờ đến, thời gian đi, ngân sách.</p><div class="who">Quy tắc cố định</div></div>
+    <div class="step code"><div class="n">5</div><h3>Duyệt</h3><p>Kéo đổi thứ tự, đổi điểm, rồi duyệt cho cả nhóm.</p><div class="who">Trưởng nhóm</div></div>
+  </div>
+  <div class="row" style="margin-top:20px">
+    <div class="card"><div class="num" style="font-size:44px">119</div><p style="margin-top:8px">địa điểm Hà Nội, giờ mở cửa đối chiếu nguồn chính thức</p></div>
+    <div class="card"><div class="num" style="font-size:44px">95%</div><p style="margin-top:8px">câu thử đạt chuẩn (21/22), không lịch nào sai giờ mở cửa</p></div>
+    <div class="card"><h3 style="font-size:19px">Con người giữ quyền chốt</h3><p>AI không tự đặt vé, trả tiền hay nhắn tin thay ai. Lịch chỉ đi khi trưởng nhóm duyệt.</p></div>
+  </div>
+  <div class="foot">Chạy trên web điện thoại, không cần cài app.</div>
+</section>
+
+<!-- 6. Outro -->
+<section class="slide hero">
+  <div class="logo"><svg><use href="#mark"/></svg><span>TripSwipe</span></div>
+  <h1 style="font-size:52px">Bước tiếp theo: đưa cho <em>nhóm bạn thật</em> dùng và đo North Star</h1>
+  <div class="ask">
+    <div class="card"><div class="price">TUẦN 1</div><p>2–3 nhóm ngoài đội dùng thử cho chuyến đi thật, đếm số chuyến được duyệt.</p></div>
+    <div class="card"><div class="price">TUẦN 2</div><p>Hỏi lại sau chuyến: có gặp điểm đóng cửa không, có sẵn sàng trả tiền không.</p></div>
+    <div class="card"><div class="price">TUẦN 3</div><p>Thử một đối tác đặt bàn để kiểm nguồn hoa hồng.</p></div>
+  </div>
+  <p style="margin-top:44px;color:var(--text);font-size:26px;font-weight:600">Cảm ơn. Mời mọi người hỏi.</p>
+  <div class="foot">Nhóm Hihihuhu · AI20K Hackathon</div>
+</section>
+
+</body>
+</html>
