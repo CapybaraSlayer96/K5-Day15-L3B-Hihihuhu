@@ -1,4 +1,4 @@
-# AI SPEC — Lịch trình một ngày ở Hà Nội cho nhóm bạn · Nhóm Hihihuhu · Phòng __ · Zone __
+# AI SPEC — Lịch trình một ngày ở Hà Nội cho nhóm bạn · Nhóm Hihihuhu · Phòng D303 · Zone 2
 
 > Mốc nộp: §7 chốt chuẩn "đạt" tại **CP2 19:30 Thứ Sáu 27/11** · §0–§7 nộp **CP3 10:00 Thứ Bảy 28/11** · đủ §0–§10 **CP4 14:30 Thứ Bảy 28/11** · §10 changelog ghi tiếp đến **23:59 Thứ Bảy 28/11**.
 
@@ -185,6 +185,7 @@ Thêm câu B08 (hai bảo tàng cùng đóng thứ Hai, lớp 4) và B01–B04 (
 | 28/11 01:00 | Agent: thứ / giờ / điểm xuất phát đọc bằng luật khi luật bắt được; gợi ý model chọn mục tour đêm | Thử 3 câu: model đọc "thứ Bảy" thành Chủ nhật (B01), chọn Văn Miếu ngày cho "buổi tối" (B03) |
 | 28/11 01:05 | Thêm 6 câu thử B17–B22 (chỉ thêm, không sửa câu cũ) | CP3 cần 20–30 câu; dựng từ trích khảo sát |
 | 28/11 | `spec.md` §8, §9: điền chi phí (chép từ `cost/cost-estimate.md`) và rủi ro & an toàn | Hoàn thiện spec cho CP4 (D6); không đổi chuẩn "đạt", câu thử hay số đã chạy |
+| 28/11 | `spec.md` dòng tiêu đề: điền Phòng D303 · Zone 2 | Tra Cổng Tra Cứu lúc 12:35 (Hihihuhu: D303, Zone 2, đội #1); không đổi nội dung đánh giá |
 | 28/11 01:45 | `ai.py` thử lại khi proxy treo kết nối | Lượt 1: 8/22 câu lỗi timeout → chạy lại thành lượt 2 cùng cấu hình |
 | 28/11 sáng | Thời gian đi dùng đường thật OSRM thay cho max(OSRM, đường chim bay): xe máy = quãng đường profile xe đạp ÷ 18 km/h, ô tô = thời gian OSRM × 2, đi bộ = OSRM; thêm `POST /api/route` trả hình đường thật cho bản đồ | Đường chim bay không theo đường phố; profile ô tô OSRM đi vòng xa (Văn Miếu → Trấn Quốc 6,9 km so với 3,0 km theo đường nhỏ). Hệ số 18 km/h và × 2 là *(tự ước tính)*. Các lượt eval sau dùng mô hình mới |
 | 28/11 03:02 | B1–B3: thêm FastAPI/Postgres 7 bảng, Docker Compose, API cấu hình/nhóm/địa điểm/bộ thẻ/quẹt/hoàn tác/tiến độ và hợp đồng JSON cho UI; 8 integration test qua Postgres thật | Mở đường nối UI U2–U5; giữ lõi CLI và file khung, metric, kết quả eval. Bộ thẻ tạm theo rating có nhãn rõ, chờ A3; B4 chưa triển khai |
