@@ -28,7 +28,7 @@ Dữ liệu công cụ: `data/hanoi_places.json` (119 địa điểm Hà Nội, 
 
 - **Người thứ hai chấm thử:** agent Claude Sonnet độc lập (không phải người viết spec, không xem bảng người chấm 1) chấm 5 output (B04, B08, B09, B10, B12) → khớp kết luận **5/5**, khớp ô metric 29/30 — phiếu: `eval/grading-trial.md`
 - LLM chấm: không dùng
-- **Chuẩn "đạt"** (chép nguyên từ `spec.md` §7, chốt trước 19:30 Thứ Sáu 27/11): "__"
+- **Chuẩn "đạt"** (chép nguyên từ `spec.md` §7, chốt trước 19:30 Thứ Sáu 27/11): "Đạt khi ≥ 75% câu qua, và 0 vi phạm giờ mở cửa / ngày đóng / nghỉ trưa trên mọi câu có trả lịch (`dung_gio_mo_cua` 100%), và `khong_bia_du_lieu` 100%, và 100% câu `tu_choi` xử lý đúng (`hoi_lai_va_tu_choi_dung`). Câu đạt khi mọi metric áp dụng cho câu đó đều đạt. Ngưỡng từng metric ghi trong `eval/metric_spec.yaml`."
 
 ## 4. Lệnh
 
@@ -40,9 +40,13 @@ Dữ liệu công cụ: `data/hanoi_places.json` (119 địa điểm Hà Nội, 
 |---|---|---|---|---|---|---|
 | 1 | run-1@20261128-011133 | gpt-4.1-mini (proxy, OpenAI-compatible) | workflow cố định: LLM rút cấu hình + ID → code xếp + kiểm → LLM viết lý do | 13/22 | 59% | Chưa — 8 câu lỗi timeout proxy (tính trượt) |
 | 2 | run-2@20261128-015044 | gpt-4.1-mini | như lượt 1; chỉ sửa ai.py thử lại khi proxy treo (lỗi kỹ thuật, không đổi logic) | 20/22 | 91% | Đạt (≥75%, 0 vi phạm giờ, 0 bịa, tu_choi 4/4) |
+| 3 | run-3@20261128-084622 | gemini-3.5-flash-lite | cải tiến `extract()` bù ID khớp tên + siết prompt `EXTRACT_SYSTEM` (hết lỗi B19 bỏ sót & B13 tự thêm điểm) | 20/22 | 91% | Chưa — lộ lỗi `parse_hours` không bắt `"đóng cửa trưa"` ở Chùa Trấn Quốc (B19 vi phạm `dung_gio_mo_cua`) |
+| 4 | run-4@20261128-085230 | gemini-3.5-flash-lite | như lượt 3 + sửa `parse_hours()` trong `places.py` bắt thêm `"dong cua trua"` | 21/22 | 95% | Đạt (≥75%, 0 vi phạm giờ, 0 bịa, tu_choi 4/4) |
 
 Lượt chạy lại vì lỗi kỹ thuật, lượt sau CP4: ghi thêm dòng, không sửa dòng cũ.
 
 ## 6. Lỗi chính
 
-Tóm 2–3 dòng từ `eval/report.md`: nhóm lỗi lớn nhất · đã sửa gì · còn lại gì.
+- **Nhóm lỗi lớn nhất:** (1) 8/22 câu lỗi timeout proxy ở lượt 1 (đã hết từ lượt 2 nhờ retry trong `ai.py`); (2) rút thiếu / tự thêm địa điểm ở `extract()` (B19, B13 lượt 2) và lỗi `parse_hours()` bỏ sót chuỗi `"đóng cửa trưa"` ở Chùa Trấn Quốc (lộ ra ở B19 lượt 3).
+- **Đã sửa:** bù ID khớp tên từ `match_places(text)` + siết prompt trong `codebase/agent.py`; bổ sung điều kiện `"dong cua trua"` trong `codebase/places.py` kèm assert trong `tests/test_core.py` → đạt **21/22 (95%)** ở lượt 4, 0 vi phạm giờ mở cửa.
+- **Còn lại:** 1 câu `B03` (Bảo tàng Phụ nữ không xếp vừa 14:00–17:00 sau Hỏa Lò do thời lượng cố định 90 phút trong dữ liệu); chi tiết xem `eval/report.md`.

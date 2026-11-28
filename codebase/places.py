@@ -74,7 +74,7 @@ def parse_hours(text, closed_weekdays):
             spans.append((a, b))
         if not spans:
             return None
-        if "nghi trua" in p and "khong nghi trua" not in p and len(spans) == 2 and spans[1][0] > spans[0][0]:
+        if ("nghi trua" in p or "dong cua trua" in p) and "khong nghi trua" not in p and len(spans) == 2 and spans[1][0] > spans[0][0]:
             (a, b), (c, d) = spans  # "08:00 - 16:00 (đóng cửa trưa 11:30 - 13:30)"
             if a < c < d < b:
                 spans = [(a, c), (d, b)]
