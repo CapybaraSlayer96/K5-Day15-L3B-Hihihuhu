@@ -52,3 +52,7 @@ docs/adr/
 docs/agents/
 # Worktree của agent
 .claude/worktrees/
+
+# Review thô BA2 (không commit, chỉ giữ số tổng hợp)
+evidence/reviews_raw.csv
+evidence/reviews_labeled.csv
