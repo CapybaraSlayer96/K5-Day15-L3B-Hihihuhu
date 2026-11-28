@@ -9,6 +9,7 @@
   const $ = (id) => document.getElementById(id);
   const stage = $("stage");
   const detail = $("detail");
+  const detailBackdrop = $("detail-backdrop");
   const btn = { like: $("btn-like"), skip: $("btn-skip"), detail: $("btn-detail"), undo: $("btn-undo") };
   const histKey = "tripswipe:history:" + code;
   let history = [];
@@ -190,11 +191,77 @@
     return kids.length ? h("section", {}, h("h3", {}, title), ...kids) : null;
   }
 
+  function reviewSection(place) {
+    const summary = place.review_summary || {};
+    const items = [
+      ...(summary.pros || []).map((text) => ({ text, tone: "pros" })),
+      ...(summary.cons || []).map((text) => ({ text, tone: "cons" })),
+    ].slice(0, 4);
+    if (!items.length) return null;
+    return section("Tóm tắt review",
+      h("p.muted.small", {}, "Tối đa 4 điểm nổi bật đã được tổng hợp trong bộ dữ liệu."),
+      h("ul.review-list", {}, items.map((item) => h("li." + item.tone, {}, item.text))));
+  }
+
+  function reviewLinksSection(place) {
+    const videos = place.video_links || {};
+    const links = [
+      { url: place.google_maps_url, label: "Google Maps" },
+      { url: videos.tiktok_search, label: "TikTok review" },
+      { url: videos.youtube_search, label: "YouTube review" },
+    ].filter((link) => link.url);
+    if (!links.length) return null;
+    return section("Xem review thực tế",
+      h("p.muted.small", {}, "Mở kết quả tìm kiếm ở nguồn tương ứng để kiểm tra review mới nhất."),
+      h("div.review-links", {}, links.map((link) =>
+        h("a.btn.small", { href: link.url, target: "_blank", rel: "noopener noreferrer" }, link.label))));
+  }
+
+  function youtubeReviewCard(review) {
+    const videoId = String(review.video_id || "");
+    if (review.platform !== "youtube" || !/^[A-Za-z0-9_-]{11}$/.test(videoId)) return null;
+    const title = review.title || "Video review trên YouTube";
+    const defaultWatchUrl = "https://www.youtube.com/watch?v=" + videoId;
+    const defaultEmbedUrl = "https://www.youtube-nocookie.com/embed/" + videoId;
+    const defaultThumbnailUrl = "https://i.ytimg.com/vi/" + videoId + "/hqdefault.jpg";
+    const watchUrl = review.url === defaultWatchUrl ? review.url : defaultWatchUrl;
+    const embedUrl = review.embed_url === defaultEmbedUrl ? review.embed_url : defaultEmbedUrl;
+    const thumbnailUrl = review.thumbnail_url === defaultThumbnailUrl ? review.thumbnail_url : defaultThumbnailUrl;
+    const media = h("button.review-video-media", { type: "button", "aria-label": "Phát: " + title },
+      h("img", {
+        src: thumbnailUrl,
+        alt: "", loading: "lazy", referrerpolicy: "no-referrer",
+      }),
+      h("span.review-play", { "aria-hidden": "true" }, "▶"));
+    media.addEventListener("click", () => {
+      media.replaceWith(h("iframe.review-iframe", {
+        src: embedUrl + "?autoplay=1",
+        title, loading: "lazy", allow: "autoplay; encrypted-media; picture-in-picture",
+        allowfullscreen: true, referrerpolicy: "strict-origin-when-cross-origin",
+      }));
+    });
+    return h("article.review-video", {}, media,
+      h("p.small", {}, title),
+      h("a.muted.small", { href: watchUrl, target: "_blank", rel: "noopener noreferrer" }, "Mở trên YouTube"));
+  }
+
+  function featuredReviewsSection(place) {
+    const cards = (place.featured_reviews || []).slice(0, 4).map(youtubeReviewCard).filter(Boolean);
+    if (!cards.length) return null;
+    return section("Video review nổi bật",
+      h("p.muted.small", {}, "Bấm thumbnail để phát video. Kết quả được tuyển từ tìm kiếm YouTube công khai."),
+      h("div.review-video-grid", {}, cards));
+  }
+
   async function openDetail() {
     if (!current) return;
     const card = current;
+    detailBackdrop.hidden = false;
     detail.hidden = false;
-    requestAnimationFrame(() => detail.classList.add("open"));
+    requestAnimationFrame(() => {
+      detailBackdrop.classList.add("open");
+      detail.classList.add("open");
+    });
     const body = $("detail-body");
     body.replaceChildren(h("p.muted", {}, "Đang tải chi tiết…"));
     detail.focus();
@@ -207,7 +274,6 @@
       return;
     }
     if (current !== card) return;
-    const rs = p.review_summary || {};
     const WEEKDAY = ["Thứ 2", "Thứ 3", "Thứ 4", "Thứ 5", "Thứ 6", "Thứ 7", "Chủ nhật"]; // 0 = Thứ 2, như date.weekday()
     const closedWeek = (p.closed_weekdays || []).map((d) => WEEKDAY[d] ?? d).join(", ");
     const closedDays = (p.closed_days || []).join(", ");
@@ -226,14 +292,15 @@
         h("dt", {}, "Địa chỉ"), h("dd", {}, p.address || "chưa có"),
         h("dt", {}, "Nguồn xác minh"), h("dd", {}, hoursSource(p))),
       section("Mẹo", p.tips ? h("p", {}, p.tips) : null),
-      section("Tóm tắt review",
-        (rs.pros || []).length ? h("ul.pros", {}, rs.pros.map((t) => h("li", {}, t))) : null,
-        (rs.cons || []).length ? h("ul.cons", {}, rs.cons.map((t) => h("li", {}, t))) : null),
-      p.google_maps_url ? h("p", {}, h("a", { href: p.google_maps_url, target: "_blank", rel: "noopener" }, "Mở trên Google Maps")) : null);
+      reviewSection(p),
+      featuredReviewsSection(p),
+      reviewLinksSection(p));
   }
 
   function closeDetail() {
+    detailBackdrop.classList.remove("open");
     detail.classList.remove("open");
+    detailBackdrop.hidden = true;
     detail.hidden = true;
   }
 
@@ -282,6 +349,7 @@
   btn.skip.addEventListener("click", () => vote(false));
   btn.undo.addEventListener("click", undo);
   btn.detail.addEventListener("click", openDetail);
+  detailBackdrop.addEventListener("click", closeDetail);
   $("detail-close").addEventListener("click", () => { closeDetail(); btn.detail.focus(); });
   document.addEventListener("keydown", (e) => {
     if (e.target.matches("input, textarea, select")) return;

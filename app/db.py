@@ -68,6 +68,25 @@ CREATE TABLE IF NOT EXISTS itineraries (
 """
 
 
+def load_places():
+    """Nạp catalogue và ghép URL video review đầy đủ để lưu vào JSONB."""
+    places = json.loads((ROOT / "data/hanoi_places.json").read_text(encoding="utf-8-sig"))
+    review_path = ROOT / "data/featured-reviews.json"
+    featured = json.loads(review_path.read_text(encoding="utf-8")) if review_path.exists() else {}
+    for place in places:
+        reviews = []
+        for review in featured.get(place["id"], []):
+            video_id = review["video_id"]
+            reviews.append({
+                **review,
+                "url": f"https://www.youtube.com/watch?v={video_id}",
+                "embed_url": f"https://www.youtube-nocookie.com/embed/{video_id}",
+                "thumbnail_url": f"https://i.ytimg.com/vi/{video_id}/hqdefault.jpg",
+            })
+        place["featured_reviews"] = reviews
+    return places
+
+
 def travel_rows(matrix):
     """Ma trận OSRM ([phút, mét] theo profile car / bike / foot) → phút theo phương tiện, cùng công thức với bộ xếp lịch."""
     from codebase.places import PROFILE, travel_leg
@@ -91,7 +110,7 @@ class Database:
 
     def initialize(self):
         """Nạp lại nguồn bằng upsert, giữ nguyên nhóm/thành viên/phiếu đã lưu."""
-        places = json.loads((ROOT / "data/hanoi_places.json").read_text(encoding="utf-8-sig"))
+        places = load_places()
         matrix = json.loads((ROOT / "data/travel_times.json").read_text(encoding="utf-8"))
         with self.connect() as conn:
             conn.execute("SELECT pg_advisory_xact_lock(790063)")

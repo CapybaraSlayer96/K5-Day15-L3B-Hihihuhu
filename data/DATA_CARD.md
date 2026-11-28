@@ -29,6 +29,17 @@
 - **Mở hàng ngày (kể cả Thứ 2):** Văn Miếu (`vanmieu.gov.vn`), Nhà tù Hỏa Lò (`hoalo.vn`), Bảo tàng Mỹ thuật VN (`vnfam.vn`), Bảo tàng Phụ nữ VN (`baotangphunu.org.vn`), Nhà hát Múa rối Thăng Long (`thanglongwaterpuppet.com`).
 - **Chỉ mở cuối tuần / tối định kỳ:** Phố đi bộ Hồ Gươm & Chợ Đêm Phố Cổ (`T6–CN`, `hanoi.gov.vn`), Tour Đêm Hỏa Lò (`T6–CN`, `hoalo.vn`), Tour Đêm Hoàng Thành (`T7–CN`, `hoangthanhthanglong.vn`), Tour Đêm Văn Miếu 3D Mapping (`T4, T7, CN`, `vanmieu.gov.vn`).
 
+## Dataset video review · `data/featured-reviews.json`
+
+| | |
+|---|---|
+| **Dùng để làm gì** | Hiển thị thumbnail và nhúng lười video YouTube trong phần Chi tiết của thẻ; khi khởi động, backend lưu sẵn `url`, `embed_url`, `thumbnail_url` trong JSONB `places.data.featured_reviews` để các nhánh giao diện dùng lại; TikTok và Google Maps vẫn mở ngoài |
+| **Từ đâu** | Kết quả tìm kiếm YouTube công khai theo truy vấn `<tên địa điểm> Hà Nội review du lịch`; file nguồn lưu `video_id` và tiêu đề, backend dựng rồi upsert các URL đầy đủ vào Postgres |
+| **Số lượng** | **20 địa điểm · 79 video**, tối đa 4 video/địa điểm |
+| **Ngày lấy** | `2026-11-28` |
+| **Nhãn** | Dữ liệu công khai do bên thứ ba đăng; nhóm chỉ tuyển theo mức liên quan của tiêu đề, không sở hữu hoặc xác nhận nội dung video |
+| **Giới hạn** | Thứ tự là kết quả tìm kiếm tại thời điểm lấy, không phải xếp hạng chất lượng; video có thể bị chủ kênh xóa, đổi tiêu đề hoặc tắt quyền nhúng. Giao diện luôn giữ link mở trực tiếp trên YouTube làm phương án dự phòng. |
+
 
 ## Thay đổi để khớp nguồn chính thức (28/11/2026)
 

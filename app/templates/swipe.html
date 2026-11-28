@@ -7,7 +7,8 @@
     <div class="stage-inner" id="stage">
       <p class="muted skel skel-card" id="stage-msg">Đang tải bộ thẻ…</p>
     </div>
-    <article class="detail" id="detail" hidden tabindex="-1" aria-label="Chi tiết địa điểm">
+    <div class="detail-backdrop" id="detail-backdrop" hidden aria-hidden="true"></div>
+    <article class="detail" id="detail" hidden tabindex="-1" role="dialog" aria-modal="true" aria-label="Chi tiết địa điểm">
       <button type="button" class="btn small detail-close" id="detail-close">Đóng chi tiết</button>
       <div id="detail-body"></div>
     </article>

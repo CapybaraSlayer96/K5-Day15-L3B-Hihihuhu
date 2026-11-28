@@ -150,6 +150,11 @@ class ApiTests(unittest.TestCase):
         self.assertEqual(detail["hours_status"], "unknown")
         self.assertIsNone(detail["opening_windows"])
         self.assertIn("verification", detail)
+        reviews = self.client.get("/api/places/hn_01").json()["featured_reviews"]
+        self.assertEqual(len(reviews), 4)
+        self.assertTrue(all(r["url"].startswith("https://www.youtube.com/watch?v=") for r in reviews))
+        self.assertTrue(all(r["embed_url"].startswith("https://www.youtube-nocookie.com/embed/") for r in reviews))
+        self.assertTrue(all(r["thumbnail_url"].startswith("https://i.ytimg.com/vi/") for r in reviews))
         self.assertEqual(self.client.get("/api/places/no-place").status_code, 404)
 
     def test_new_member_rechecks_budget_without_deleting_votes(self):
