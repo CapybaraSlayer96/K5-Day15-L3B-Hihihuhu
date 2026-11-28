@@ -171,5 +171,5 @@ Nhóm dùng Claude (Claude Code) để soạn tài liệu (spec, PRD, data card)
 | 4 | Bản chạy thử làm trọn lát cắt | `codebase/` · lệnh ở mục "Lệnh" |
 | 5 | Định nghĩa "tốt" + bộ câu thử | `data/DATA_CARD.md` · `eval/` |
 | 6 | Mô phỏng chi phí khi dùng thật | `cost/` |
-| 7 | Slide + demo + video dự phòng | slide trong repo (PDF, PPTX, HTML…) hoặc link slide ở form CP4 · link video: ____ |
+| 7 | Slide + demo + video dự phòng | slide trong repo (PDF, PPTX, HTML…) hoặc link slide ở form CP4 · video CP3 (CLI, AI thật): https://drive.google.com/file/d/1RzTKvLulMP5FgSRcz-a8JrkJU5J7FmGj/view?usp=sharing · video demo web: (CP4) |
 | + | *Bonus:* người dùng thử | `validation/log.md` |

@@ -51,7 +51,7 @@ Chi tiết từng việc (các bước, yêu cầu output) ở mục 4. Song son
 | Mã | Việc | Người | Chờ | Hạn | Deliverable | DoD | Trạng thái |
 |---|---|---|---|---|---|---|---|
 | A1 | Chấm cột `pass` lượt 2 + `score`, ghi kết quả vào spec §7 và eval/README mục 5 | Bảo | — | 09:45 | `eval/run-2.csv` đã chấm | Không còn ô `pass` trống; số khớp `score` | xong · 20/22 (91%) |
-| U1 | Video 30 giây CLI gọi AI thật (1 câu thường + 1 câu khó) | Bảo | — | 09:45 | link video (ẩn danh mở được) | token > 0 trên màn hình; ≤ 30 giây | |
+| U1 | Video 30 giây CLI gọi AI thật (1 câu thường + 1 câu khó) | Bảo | — | 09:45 | link video (ẩn danh mở được) | token > 0 trên màn hình; ≤ 30 giây |xong · https://drive.google.com/file/d/1RzTKvLulMP5FgSRcz-a8JrkJU5J7FmGj/view?usp=sharing |
 | B1 | Khung FastAPI + Postgres 7 bảng, nạp dữ liệu lúc khởi động | Minh | — | 10:00 (kéo sang CP4) | `app/` | Khởi động lại không nạp trùng; eval vẫn chạy không cần DB | xong · `app/db.py`, 7 bảng, upsert, test khởi động lại qua Postgres thật |
 | B2 | Docker compose (`db`, `app`, cổng 8000) | Minh | — | 10:00 (kéo sang CP4) | `Dockerfile`, `docker-compose.yml` | `docker compose up` → mở được localhost:8000 | xong · build và chạy app + Postgres 16, healthcheck |
 | A2 | Thử mô phỏng chi phí 10 phiên | Hải | — | 09:50 | `cost/simulate-try.csv` (không commit) | token > 0 | |
