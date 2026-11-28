@@ -1,0 +1,37 @@
+{% extends "layout.html" %}
+{% block title %}Quẹt thẻ{% endblock %}
+{% block main_class %}swipe-page{% endblock %}
+{% block body %}
+<div class="swipe-layout">
+  <section class="stage" aria-label="Thẻ địa điểm">
+    <div class="stage-inner" id="stage">
+      <p class="muted" id="stage-msg">Đang tải bộ thẻ…</p>
+    </div>
+    <article class="detail" id="detail" hidden tabindex="-1" aria-label="Chi tiết địa điểm">
+      <button type="button" class="btn small detail-close" id="detail-close">Đóng chi tiết</button>
+      <div id="detail-body"></div>
+    </article>
+  </section>
+
+  <aside class="rail">
+    <h1 class="rail-title">Quẹt thẻ</h1>
+    <p class="muted" id="trip-line"></p>
+    <p class="counter"><span id="remaining">–</span> <span class="muted">thẻ còn lại / <span id="total">–</span></span></p>
+    <div class="vote-buttons">
+      <button type="button" class="btn vote skip" id="btn-skip" disabled aria-keyshortcuts="ArrowLeft">Bỏ qua</button>
+      <button type="button" class="btn vote like" id="btn-like" disabled aria-keyshortcuts="ArrowRight">Thích</button>
+    </div>
+    <div class="row">
+      <button type="button" class="btn" id="btn-detail" disabled aria-keyshortcuts="ArrowUp">Chi tiết</button>
+      <button type="button" class="btn" id="btn-undo" disabled aria-keyshortcuts="Control+Z">Hoàn tác</button>
+    </div>
+    <p class="muted small">Kéo thẻ sang phải để thích, sang trái để bỏ qua, kéo lên để xem chi tiết. Phím ← → ↑ cũng dùng được.</p>
+    <ul class="warnings" id="deck-warn"></ul>
+    <p class="form-error" id="swipe-error" role="alert" hidden></p>
+    <h2 class="rail-sub">Đã quẹt trong phiên này</h2>
+    <ol class="history" id="history"></ol>
+    <a class="btn primary" id="to-lobby" href="/g/{{ code }}/lobby">Sang phòng chờ</a>
+  </aside>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/swipe.js"></script>{% endblock %}

@@ -66,3 +66,14 @@ class SwipeRequest(DeckRequest):
 
 class UndoRequest(DeckRequest):
     place_id: str = Field(min_length=1, max_length=100)
+
+
+class RoutePoint(Payload):
+    id: str | None = Field(default=None, max_length=100)
+    lat: float = Field(ge=20.5, le=21.5)
+    lng: float = Field(ge=105.3, le=106.2)
+
+
+class RouteRequest(Payload):
+    mode: Literal["xe_may", "o_to", "di_bo"] = "xe_may"
+    points: list[RoutePoint] = Field(min_length=2, max_length=25)

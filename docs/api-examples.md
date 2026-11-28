@@ -1,6 +1,6 @@
 # TripSwipe — Hợp đồng và ví dụ API B1–B3
 
-Backend: FastAPI + Postgres, base URL `http://localhost:8000`; OpenAPI tại `/docs` và `/openapi.json`. Các mã nhóm, biệt danh và ID thành viên dưới đây chỉ là ví dụ. Sửa ngày đi thành hôm nay hoặc ngày tương lai theo giờ Hà Nội khi thử lại.
+Backend: FastAPI + Postgres, base URL `http://localhost:9000`; OpenAPI tại `/docs` và `/openapi.json`. Các mã nhóm, biệt danh và ID thành viên dưới đây chỉ là ví dụ. Sửa ngày đi thành hôm nay hoặc ngày tương lai theo giờ Hà Nội khi thử lại.
 
 ## 1. Quy ước chung cho UI
 

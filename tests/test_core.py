@@ -39,7 +39,6 @@ out = answer("Thứ Hai tuần sau đi 8:00–15:00 từ Hồ Gươm, viếng L�
 assert "Lăng Chủ tịch Hồ Chí Minh: đóng cửa Thứ Hai" in out
 out = answer("Lên lịch 3 ngày Hà Nội – Hạ Long cho nhóm mình.")["output"]
 assert "MỘT ngày" in out and "LICH_JSON" not in out
-
 # Kiểm A3: build_deck + plan_group (TS-03, TS-06)
 mon_cfg = {**cfg(MON), "budget_per_person": 500_000}
 deck_mon = build_deck(mon_cfg)
@@ -64,4 +63,12 @@ res_budget = plan_group(tight_budget, {"hn_09": 0.9, "hn_10": 0.9, "hn_11": 0.9,
 assert res_budget["violations"] == []
 total_price = sum((PLACES[it["id"]].get("price_max_vnd") or 0) for it in res_budget["items"])
 assert total_price <= 50_000, "tổng chi phí lịch không được vượt budget mỗi người"
+
+from places import travel_leg  # noqa: E402
+
+P = {i: (PLACES[i]["lat"], PLACES[i]["lng"]) for i in ("hn_09", "hn_12")}
+m, meters, src = travel_leg("hn_09", P["hn_09"], "hn_12", P["hn_12"], "xe_may")
+assert src == "osrm" and meters > 1000 and m >= 5, "xe máy dùng ma trận đường thật"
+assert travel_leg("x", P["hn_09"], "y", P["hn_12"], "xe_may")[2] == "duong_chim_bay", "điểm lạ → dự phòng"
+assert travel_leg("hn_09", P["hn_09"], "hn_12", P["hn_12"], "di_bo")[0] > m, "đi bộ chậm hơn xe máy"
 print("ok")

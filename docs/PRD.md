@@ -59,7 +59,7 @@ Mức so sánh: chatbot thường không công cụ chỉ "dùng được" 5/16 
 
 **Use Case 1: Nhóm quẹt chọn và nhận lịch (web)**
 
-1. Trưởng nhóm mở `localhost:8000` → **Tạo nhóm**: chọn tỉnh (chỉ Hà Nội bật), phạm vi (chỉ nội thành), ngày đi, giờ bắt đầu / kết thúc, điểm xuất phát, budget cả nhóm, phương tiện → nhận mã + link nhóm.
+1. Trưởng nhóm mở `localhost:9000` → **Tạo nhóm**: chọn tỉnh (chỉ Hà Nội bật), phạm vi (chỉ nội thành), ngày đi, giờ bắt đầu / kết thúc, điểm xuất phát, budget cả nhóm, phương tiện → nhận mã + link nhóm.
 2. Hệ thống lọc địa điểm (nội thành, mở vào thứ của ngày đi, giao khung giờ, giá trong budget mỗi người) → AI chọn và xếp hạng 20 thẻ kèm lý do.
 3. Thành viên mở link → **Vào nhóm** bằng biệt danh → **Quẹt** (thẻ tổng quan; vuốt lên xem chi tiết; phải = thích, trái = bỏ qua; hoàn tác).
 4. **Phòng chờ** hiện ai đã quẹt xong (cập nhật mỗi 3 giây). Trưởng nhóm bấm **Xếp lịch** bất kỳ lúc nào.
@@ -213,7 +213,7 @@ flowchart LR
 
 ## Technical Requirements
 
-* **Tech stack:** Python 3.12 · FastAPI + uvicorn · PostgreSQL 16 · HTML render phía server + JavaScript thuần (quẹt bằng pointer events) · Leaflet + nền OpenStreetMap · Docker Compose (`db`, `app`, cổng 8000) · lõi chỉ dùng thư viện chuẩn.
+* **Tech stack:** Python 3.12 · FastAPI + uvicorn · PostgreSQL 16 · HTML render phía server + JavaScript thuần (quẹt bằng pointer events) · Leaflet + nền OpenStreetMap · Docker Compose (`db`, `app`, cổng 9000) · lõi chỉ dùng thư viện chuẩn.
 * **Key integrations:** Gemini Flash (mặc định, gói miễn phí) / Claude Haiku qua REST, token lấy từ `usage` · OSRM công cộng FOSSGIS — chỉ dùng một lần để tính ma trận, không gọi lúc chạy · dữ liệu `data/hanoi_places.json` (119 điểm, giờ đã đối chiếu nguồn chính thức).
 * **Data model (Postgres):** `places` · `travel_times` · `groups` · `members` · `deck_cards` · `swipes (UNIQUE member_id, place_id)` · `itineraries (status draft | approved | stale)`.
 * **API:** `GET /api/config/options` · `POST /api/groups` · `GET /api/groups/{code}` · `POST /api/groups/{code}/members` · `POST|GET /api/groups/{code}/deck` · `POST /api/groups/{code}/swipes` · `GET /api/groups/{code}/progress` · `POST /api/groups/{code}/itinerary` · `PATCH /api/itineraries/{id}` · `GET /api/places/{id}`.

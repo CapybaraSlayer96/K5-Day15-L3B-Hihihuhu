@@ -50,3 +50,5 @@ CONTEXT.md
 CONTEXT-MAP.md
 docs/adr/
 docs/agents/
+# Worktree của agent
+.claude/worktrees/

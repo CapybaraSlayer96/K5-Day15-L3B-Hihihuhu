@@ -1,0 +1,17 @@
+{
+  "id": "mock-1",
+  "status": "draft",
+  "mock": true,
+  "items": [
+    {"id": "hn_09", "name": "Văn Miếu - Quốc Tử Giám", "arrive": "08:15", "leave": "09:45", "travel_min": 15, "no_hours": false},
+    {"id": "hn_08", "name": "Cột Cờ Hà Nội", "arrive": "09:55", "leave": "10:40", "travel_min": 10, "no_hours": false},
+    {"id": "hn_11", "name": "Di tích Nhà tù Hỏa Lò", "arrive": "10:55", "leave": "12:25", "travel_min": 15, "no_hours": false},
+    {"id": "hn_14", "name": "Đền Ngọc Sơn", "arrive": "12:40", "leave": "13:25", "travel_min": 15, "no_hours": false},
+    {"id": "hn_01", "name": "Hồ Hoàn Kiếm (Hồ Gươm)", "arrive": "13:25", "leave": "14:40", "travel_min": 0, "no_hours": false}
+  ],
+  "dropped": [
+    {"id": "hn_04", "name": "Lăng Chủ tịch Hồ Chí Minh", "reason": "Đóng cửa vào ngày đi — gợi ý đổi sang ngày khác hoặc bỏ khỏi danh sách."},
+    {"id": "hn_33", "name": "Phố đi bộ Hồ Gươm", "reason": "Chỉ mở tối cuối tuần, ngoài khung giờ nhóm — gợi ý kéo dài giờ kết thúc."}
+  ],
+  "violations": []
+}

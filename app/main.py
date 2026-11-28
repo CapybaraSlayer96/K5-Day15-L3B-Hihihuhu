@@ -18,7 +18,8 @@ from starlette.concurrency import run_in_threadpool
 
 from app.catalogue import eligible, minute, place_view, planning_config, start_options
 from app.db import Database
-from app.schemas import CreateGroup, DeckRequest, JoinGroup, SwipeRequest, UndoRequest
+from app.schemas import CreateGroup, DeckRequest, JoinGroup, RouteRequest, SwipeRequest, UndoRequest
+from codebase.routing import route as build_route
 
 APP_DIR = Path(__file__).resolve().parent
 
@@ -149,6 +150,23 @@ def create_app(database=None, deck_builder=None):
     def home(request: Request):
         return templates.TemplateResponse(request=request, name="index.html", context={})
 
+    @app.get("/create", include_in_schema=False)
+    def create_page(request: Request):
+        return templates.TemplateResponse(request=request, name="create.html", context={})
+
+    @app.get("/join", include_in_schema=False)
+    def join_page(request: Request, code: str = ""):
+        code = code.strip().upper()
+        return templates.TemplateResponse(request=request, name="join.html",
+                                          context={"join_code": code if re.fullmatch(r"[A-Z0-9]{6}", code) else ""})
+
+    @app.get("/g/{code}/{page}", include_in_schema=False)
+    def group_page(request: Request, code: str, page: str):
+        code = code.upper()
+        if page not in ("swipe", "lobby", "itinerary", "dashboard") or not re.fullmatch(r"[A-Z0-9]{6}", code):
+            raise HTTPException(404, "Không tìm thấy trang.")
+        return templates.TemplateResponse(request=request, name=page + ".html", context={"code": code, "page": page})
+
     @app.get("/health", tags=["Hệ thống"])
     def health(conn=Depends(connection)):
         counts = conn.execute("SELECT (SELECT count(*) FROM places) AS places, "
@@ -214,6 +232,11 @@ def create_app(database=None, deck_builder=None):
         if not row:
             raise HTTPException(404, "Không tìm thấy địa điểm.")
         return place_view(row["data"], date)
+
+    @app.post("/api/route", tags=["Chỉ đường"])
+    def route_legs(payload: RouteRequest):
+        """Hình đường đi thật + phút / mét từng chặng (ước tính) cho bản đồ lịch trình."""
+        return build_route([p.model_dump() for p in payload.points], payload.mode)
 
     @app.get("/api/groups/{code}/deck", tags=["Bộ thẻ"])
     def get_deck(code: str, request: Request, member_id: str | None = Query(default=None, max_length=64),

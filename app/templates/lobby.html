@@ -1,0 +1,35 @@
+{% extends "layout.html" %}
+{% block title %}Phòng chờ{% endblock %}
+{% block main_class %}lobby-page{% endblock %}
+{% block body %}
+<div class="title-row">
+  <div>
+    <h1>Phòng chờ</h1>
+    <p class="muted" id="summary">Đang tải tiến độ…</p>
+  </div>
+  <div class="row">
+    <a class="btn" href="/g/{{ code }}/dashboard">Bảng tổng quan</a>
+    <button type="button" class="btn primary" id="plan" hidden>Xếp lịch</button>
+  </div>
+</div>
+<p class="form-error" id="lobby-error" role="alert" hidden></p>
+<div class="lobby-grid">
+  <section>
+    <h2 class="sec">Thành viên</h2>
+    <ul class="members" id="members" aria-live="polite"></ul>
+    <p class="muted small" id="updated"></p>
+  </section>
+  <section id="pins-section" hidden>
+    <h2 class="sec">Ghim điểm bắt buộc</h2>
+    <p class="muted small">Điểm ghim luôn được đưa vào xếp lịch, dù nhóm thích hay không.</p>
+    <ul class="pins" id="pins"></ul>
+  </section>
+  <section id="member-note" hidden>
+    <h2 class="sec">Tiếp theo</h2>
+    <p class="muted">Trưởng nhóm sẽ bấm “Xếp lịch” khi cả nhóm sẵn sàng. Bạn có thể quay lại quẹt tiếp.</p>
+    <a class="btn" href="/g/{{ code }}/swipe">Quay lại quẹt</a>
+    <a class="btn" href="/g/{{ code }}/itinerary">Xem lịch trình</a>
+  </section>
+</div>
+{% endblock %}
+{% block scripts %}<script src="/static/itinerary-api.js"></script><script src="/static/lobby.js"></script>{% endblock %}

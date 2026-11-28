@@ -1,0 +1,83 @@
+{% extends "layout.html" %}
+{% block title %}Tạo nhóm{% endblock %}
+{% block main_class %}wizard{% endblock %}
+{% block body %}
+<div class="wizard-head">
+  <h1>Tạo nhóm</h1>
+  <ol class="progress" id="progress" aria-label="Tiến trình"></ol>
+</div>
+<form id="wizard" class="panel" novalidate>
+  <p class="form-error" id="form-error" role="alert" hidden></p>
+
+  <fieldset class="step" data-step="Tỉnh">
+    <legend>Đi chơi ở tỉnh nào?</legend>
+    <div class="choices" id="cities"></div>
+  </fieldset>
+
+  <fieldset class="step" data-step="Phạm vi" hidden>
+    <legend>Phạm vi</legend>
+    <div class="choices" id="scopes"></div>
+  </fieldset>
+
+  <fieldset class="step" data-step="Ngày đi" hidden>
+    <legend>Ngày đi</legend>
+    <label for="date">Chọn ngày (theo giờ Hà Nội)</label>
+    <input type="date" id="date" name="date" required aria-describedby="date-err">
+    <p class="field-error" id="date-err" data-for="date"></p>
+  </fieldset>
+
+  <fieldset class="step" data-step="Khung giờ" hidden>
+    <legend>Khung giờ trong ngày</legend>
+    <div class="row">
+      <div class="field"><label for="start_time">Bắt đầu</label><input type="time" id="start_time" name="start_time" required></div>
+      <div class="field"><label for="end_time">Kết thúc</label><input type="time" id="end_time" name="end_time" required aria-describedby="time-err time-warn"></div>
+    </div>
+    <p class="field-error" id="time-err" data-for="start_time end_time"></p>
+    <p class="hint" id="time-warn" hidden>Khung giờ dưới một giờ, có thể không xếp được lịch.</p>
+  </fieldset>
+
+  <fieldset class="step" data-step="Xuất phát" hidden>
+    <legend>Điểm xuất phát</legend>
+    <label for="start_id">Chọn từ danh sách</label>
+    <select id="start_id" name="start_id" required aria-describedby="start-note start-err"></select>
+    <p class="muted small" id="start-note"></p>
+    <p class="field-error" id="start-err" data-for="start_id"></p>
+  </fieldset>
+
+  <fieldset class="step" data-step="Ngân sách" hidden>
+    <legend>Ngân sách cả nhóm</legend>
+    <label for="budget_total">Tổng tiền (VND)</label>
+    <input type="number" id="budget_total" name="budget_total" min="0" step="1000" required inputmode="numeric" aria-describedby="budget-note budget-err">
+    <p class="muted small" id="budget-note">Chia đều theo số thành viên. Nhập 0 nếu chỉ muốn điểm miễn phí.</p>
+    <p class="field-error" id="budget-err" data-for="budget_total"></p>
+  </fieldset>
+
+  <fieldset class="step" data-step="Phương tiện" hidden>
+    <legend>Phương tiện và biệt danh</legend>
+    <div class="choices" id="modes"></div>
+    <p class="field-error" data-for="mode"></p>
+    <label for="nickname">Biệt danh của bạn (trưởng nhóm)</label>
+    <input id="nickname" name="nickname" maxlength="40" required autocomplete="nickname" aria-describedby="nick-err">
+    <p class="field-error" id="nick-err" data-for="nickname"></p>
+  </fieldset>
+
+  <div class="actions">
+    <button type="button" class="btn" id="back">Quay lại</button>
+    <button type="submit" class="btn primary" id="next">Tiếp tục</button>
+  </div>
+</form>
+
+<section id="done" class="panel" hidden>
+  <h2>Đã tạo nhóm</h2>
+  <p class="muted">Gửi mã hoặc link cho cả nhóm. Mỗi người tự nhập biệt danh.</p>
+  <p class="big-code" id="done-code"></p>
+  <div class="row">
+    <input id="done-link" readonly aria-label="Link nhóm">
+    <button type="button" class="btn" id="copy-link">Sao chép link</button>
+  </div>
+  <ul class="warnings" id="done-warn"></ul>
+  <dl class="facts" id="done-facts"></dl>
+  <div class="actions"><a class="btn primary" id="go-swipe">Bắt đầu quẹt</a></div>
+</section>
+{% endblock %}
+{% block scripts %}<script src="/static/create.js"></script>{% endblock %}

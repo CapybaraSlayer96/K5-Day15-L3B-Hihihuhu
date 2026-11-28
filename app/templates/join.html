@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block title %}Vào nhóm{% endblock %}
+{% block main_class %}narrow{% endblock %}
+{% block body %}
+<h1>Vào nhóm</h1>
+<form id="join" class="panel" novalidate data-code="{{ join_code or '' }}">
+  <p class="form-error" id="form-error" role="alert" hidden></p>
+  <label for="code">Mã nhóm</label>
+  <input id="code" name="code" maxlength="6" required autocomplete="off" class="code-input" value="{{ join_code or '' }}" aria-describedby="code-err">
+  <p class="field-error" id="code-err"></p>
+  <div id="group-info" class="group-info" hidden></div>
+  <label for="nickname">Biệt danh</label>
+  <input id="nickname" name="nickname" maxlength="40" required autocomplete="nickname" aria-describedby="nick-err">
+  <p class="field-error" id="nick-err"></p>
+  <div class="actions"><button class="btn primary" id="submit">Vào nhóm</button></div>
+</form>
+{% endblock %}
+{% block scripts %}<script src="/static/join.js"></script>{% endblock %}

@@ -42,9 +42,9 @@
 | | |
 |---|---|
 | Dùng để làm gì | Nguồn cho công cụ `uoc_thoi_gian_di` |
-| Từ đâu | OSRM server công cộng FOSSGIS (`routing.openstreetmap.de`), profile ô tô (dùng cho cả xe máy) và đi bộ; script `scripts/build_travel_matrix.py` |
-| Xử lý | Chỉ điểm nội thành + 6 điểm xuất phát trung tâm quận; giây → phút. Khi dùng: lấy max(OSRM, đường chim bay × 1,3 ÷ tốc độ), tối thiểu 5 phút, vì OSRM không tính kẹt xe |
-| Số dòng | 117 điểm · 40.716 cặp có hướng |
+| Từ đâu | OSRM server công cộng FOSSGIS (`routing.openstreetmap.de`), 3 profile ô tô / xe đạp / đi bộ, lấy cả thời gian và quãng đường; script `scripts/build_travel_matrix.py` |
+| Xử lý | Chỉ điểm nội thành + 6 điểm xuất phát trung tâm quận; lưu [phút, mét] mỗi cặp. Khi dùng (`codebase/places.py` · `travel_leg`): xe máy = quãng đường profile xe đạp ÷ 18 km/h; ô tô = thời gian OSRM × 2 (kẹt xe nội thành); đi bộ = OSRM; tối thiểu 5 phút cho xe, 2 phút đi bộ. Hệ số là *(tự ước tính)*. Thiếu cặp → đường chim bay × 1,3 ÷ tốc độ. Bản đồ lấy hình đường thật từ OSRM `/route` (`codebase/routing.py`) |
+| Số dòng | 117 điểm · 13.572 cặp có hướng × 3 profile |
 | Phiên bản / ngày lấy | 28/11/2026 |
 | Nhãn | ước tính (không phải thời gian thực) |
 | Giới hạn | Không có giờ cao điểm, chỗ gửi xe, đường một chiều theo giờ |
